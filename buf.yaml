@@ -1,0 +1,6 @@
+version: v2
+modules:
+  - path: api
+deps:
+  - buf.build/bufbuild/protovalidate
+  - buf.build/protocolbuffers/wellknowntypes

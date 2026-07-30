@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+package cortex.v1alpha1;
+
+enum ListOrder {
+  LIST_ORDER_UNSPECIFIED = 0;
+  LIST_ORDER_OLDEST_FIRST = 1;
+  LIST_ORDER_NEWEST_FIRST = 2;
+}

@@ -1,0 +1,6 @@
+version: '3'
+
+tasks:
+  add-migration:
+    cmds:
+      - GOOSE_MIGRATION_DIR="./database/migrations" go tool goose create {{.CLI_ARGS}}
