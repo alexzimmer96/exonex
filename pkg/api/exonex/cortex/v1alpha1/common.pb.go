@@ -9,6 +9,8 @@ package cortexv1alpha1
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
+	_ "google.golang.org/protobuf/types/known/durationpb"
+	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
@@ -77,6 +79,7 @@ const (
 	OrderStatus_ORDER_STATUS_PLANNED     OrderStatus = 1
 	OrderStatus_ORDER_STATUS_SUCCEEDED   OrderStatus = 2
 	OrderStatus_ORDER_STATUS_FAILED      OrderStatus = 3
+	OrderStatus_ORDER_STATUS_ABORTED     OrderStatus = 4
 )
 
 // Enum value maps for OrderStatus.
@@ -86,12 +89,14 @@ var (
 		1: "ORDER_STATUS_PLANNED",
 		2: "ORDER_STATUS_SUCCEEDED",
 		3: "ORDER_STATUS_FAILED",
+		4: "ORDER_STATUS_ABORTED",
 	}
 	OrderStatus_value = map[string]int32{
 		"ORDER_STATUS_UNSPECIFIED": 0,
 		"ORDER_STATUS_PLANNED":     1,
 		"ORDER_STATUS_SUCCEEDED":   2,
 		"ORDER_STATUS_FAILED":      3,
+		"ORDER_STATUS_ABORTED":     4,
 	}
 )
 
@@ -122,20 +127,235 @@ func (OrderStatus) EnumDescriptor() ([]byte, []int) {
 	return file_exonex_cortex_v1alpha1_common_proto_rawDescGZIP(), []int{1}
 }
 
+// ObjectMeta defines typical metadata that is available for most objects.
+type ObjectMeta struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Annotations   map[string]string      `protobuf:"bytes,1,rep,name=annotations,proto3" json:"annotations,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	Finalizers    []string               `protobuf:"bytes,2,rep,name=finalizers,proto3" json:"finalizers,omitempty"`
+	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	LogEvents     []*LogEvent            `protobuf:"bytes,4,rep,name=log_events,json=logEvents,proto3" json:"log_events,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ObjectMeta) Reset() {
+	*x = ObjectMeta{}
+	mi := &file_exonex_cortex_v1alpha1_common_proto_msgTypes[0]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ObjectMeta) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ObjectMeta) ProtoMessage() {}
+
+func (x *ObjectMeta) ProtoReflect() protoreflect.Message {
+	mi := &file_exonex_cortex_v1alpha1_common_proto_msgTypes[0]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ObjectMeta.ProtoReflect.Descriptor instead.
+func (*ObjectMeta) Descriptor() ([]byte, []int) {
+	return file_exonex_cortex_v1alpha1_common_proto_rawDescGZIP(), []int{0}
+}
+
+func (x *ObjectMeta) GetAnnotations() map[string]string {
+	if x != nil {
+		return x.Annotations
+	}
+	return nil
+}
+
+func (x *ObjectMeta) GetFinalizers() []string {
+	if x != nil {
+		return x.Finalizers
+	}
+	return nil
+}
+
+func (x *ObjectMeta) GetCreatedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return nil
+}
+
+func (x *ObjectMeta) GetLogEvents() []*LogEvent {
+	if x != nil {
+		return x.LogEvents
+	}
+	return nil
+}
+
+// A LogEvent contains a Log information about an Object.
+type LogEvent struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Time          *timestamppb.Timestamp `protobuf:"bytes,1,opt,name=time,proto3" json:"time,omitempty"`
+	Author        string                 `protobuf:"bytes,2,opt,name=author,proto3" json:"author,omitempty"`
+	Message       string                 `protobuf:"bytes,3,opt,name=message,proto3" json:"message,omitempty"`
+	RetentionTime *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=retention_time,json=retentionTime,proto3,oneof" json:"retention_time,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *LogEvent) Reset() {
+	*x = LogEvent{}
+	mi := &file_exonex_cortex_v1alpha1_common_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *LogEvent) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*LogEvent) ProtoMessage() {}
+
+func (x *LogEvent) ProtoReflect() protoreflect.Message {
+	mi := &file_exonex_cortex_v1alpha1_common_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use LogEvent.ProtoReflect.Descriptor instead.
+func (*LogEvent) Descriptor() ([]byte, []int) {
+	return file_exonex_cortex_v1alpha1_common_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *LogEvent) GetTime() *timestamppb.Timestamp {
+	if x != nil {
+		return x.Time
+	}
+	return nil
+}
+
+func (x *LogEvent) GetAuthor() string {
+	if x != nil {
+		return x.Author
+	}
+	return ""
+}
+
+func (x *LogEvent) GetMessage() string {
+	if x != nil {
+		return x.Message
+	}
+	return ""
+}
+
+func (x *LogEvent) GetRetentionTime() *timestamppb.Timestamp {
+	if x != nil {
+		return x.RetentionTime
+	}
+	return nil
+}
+
+// A Lease is the signal that the Object is currently hold by another process for processing.
+type Lease struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	LeaseHolder   string                 `protobuf:"bytes,1,opt,name=lease_holder,json=leaseHolder,proto3" json:"lease_holder,omitempty"`
+	LeaseUntil    *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=lease_until,json=leaseUntil,proto3" json:"lease_until,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Lease) Reset() {
+	*x = Lease{}
+	mi := &file_exonex_cortex_v1alpha1_common_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Lease) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Lease) ProtoMessage() {}
+
+func (x *Lease) ProtoReflect() protoreflect.Message {
+	mi := &file_exonex_cortex_v1alpha1_common_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Lease.ProtoReflect.Descriptor instead.
+func (*Lease) Descriptor() ([]byte, []int) {
+	return file_exonex_cortex_v1alpha1_common_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *Lease) GetLeaseHolder() string {
+	if x != nil {
+		return x.LeaseHolder
+	}
+	return ""
+}
+
+func (x *Lease) GetLeaseUntil() *timestamppb.Timestamp {
+	if x != nil {
+		return x.LeaseUntil
+	}
+	return nil
+}
+
 var File_exonex_cortex_v1alpha1_common_proto protoreflect.FileDescriptor
 
 const file_exonex_cortex_v1alpha1_common_proto_rawDesc = "" +
 	"\n" +
-	"#exonex/cortex/v1alpha1/common.proto\x12\x16exonex.cortex.v1alpha1*a\n" +
+	"#exonex/cortex/v1alpha1/common.proto\x12\x16exonex.cortex.v1alpha1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1egoogle/protobuf/duration.proto\"\xbf\x02\n" +
+	"\n" +
+	"ObjectMeta\x12U\n" +
+	"\vannotations\x18\x01 \x03(\v23.exonex.cortex.v1alpha1.ObjectMeta.AnnotationsEntryR\vannotations\x12\x1e\n" +
+	"\n" +
+	"finalizers\x18\x02 \x03(\tR\n" +
+	"finalizers\x129\n" +
+	"\n" +
+	"created_at\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x12?\n" +
+	"\n" +
+	"log_events\x18\x04 \x03(\v2 .exonex.cortex.v1alpha1.LogEventR\tlogEvents\x1a>\n" +
+	"\x10AnnotationsEntry\x12\x10\n" +
+	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\xc7\x01\n" +
+	"\bLogEvent\x12.\n" +
+	"\x04time\x18\x01 \x01(\v2\x1a.google.protobuf.TimestampR\x04time\x12\x16\n" +
+	"\x06author\x18\x02 \x01(\tR\x06author\x12\x18\n" +
+	"\amessage\x18\x03 \x01(\tR\amessage\x12F\n" +
+	"\x0eretention_time\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampH\x00R\rretentionTime\x88\x01\x01B\x11\n" +
+	"\x0f_retention_time\"g\n" +
+	"\x05Lease\x12!\n" +
+	"\flease_holder\x18\x01 \x01(\tR\vleaseHolder\x12;\n" +
+	"\vlease_until\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\n" +
+	"leaseUntil*a\n" +
 	"\tListOrder\x12\x1a\n" +
 	"\x16LIST_ORDER_UNSPECIFIED\x10\x00\x12\x1b\n" +
 	"\x17LIST_ORDER_OLDEST_FIRST\x10\x01\x12\x1b\n" +
-	"\x17LIST_ORDER_NEWEST_FIRST\x10\x02*z\n" +
+	"\x17LIST_ORDER_NEWEST_FIRST\x10\x02*\x94\x01\n" +
 	"\vOrderStatus\x12\x1c\n" +
 	"\x18ORDER_STATUS_UNSPECIFIED\x10\x00\x12\x18\n" +
 	"\x14ORDER_STATUS_PLANNED\x10\x01\x12\x1a\n" +
 	"\x16ORDER_STATUS_SUCCEEDED\x10\x02\x12\x17\n" +
-	"\x13ORDER_STATUS_FAILED\x10\x03B\xf1\x01\n" +
+	"\x13ORDER_STATUS_FAILED\x10\x03\x12\x18\n" +
+	"\x14ORDER_STATUS_ABORTED\x10\x04B\xf1\x01\n" +
 	"\x1acom.exonex.cortex.v1alpha1B\vCommonProtoP\x01ZLgithub.com/alexzimmer96/exonex/pkg/api/exonex/cortex/v1alpha1;cortexv1alpha1\xa2\x02\x03ECX\xaa\x02\x16Exonex.Cortex.V1alpha1\xca\x02\x16Exonex\\Cortex\\V1alpha1\xe2\x02\"Exonex\\Cortex\\V1alpha1\\GPBMetadata\xea\x02\x18Exonex::Cortex::V1alpha1b\x06proto3"
 
 var (
@@ -151,16 +371,28 @@ func file_exonex_cortex_v1alpha1_common_proto_rawDescGZIP() []byte {
 }
 
 var file_exonex_cortex_v1alpha1_common_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
+var file_exonex_cortex_v1alpha1_common_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
 var file_exonex_cortex_v1alpha1_common_proto_goTypes = []any{
-	(ListOrder)(0),   // 0: exonex.cortex.v1alpha1.ListOrder
-	(OrderStatus)(0), // 1: exonex.cortex.v1alpha1.OrderStatus
+	(ListOrder)(0),                // 0: exonex.cortex.v1alpha1.ListOrder
+	(OrderStatus)(0),              // 1: exonex.cortex.v1alpha1.OrderStatus
+	(*ObjectMeta)(nil),            // 2: exonex.cortex.v1alpha1.ObjectMeta
+	(*LogEvent)(nil),              // 3: exonex.cortex.v1alpha1.LogEvent
+	(*Lease)(nil),                 // 4: exonex.cortex.v1alpha1.Lease
+	nil,                           // 5: exonex.cortex.v1alpha1.ObjectMeta.AnnotationsEntry
+	(*timestamppb.Timestamp)(nil), // 6: google.protobuf.Timestamp
 }
 var file_exonex_cortex_v1alpha1_common_proto_depIdxs = []int32{
-	0, // [0:0] is the sub-list for method output_type
-	0, // [0:0] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	5, // 0: exonex.cortex.v1alpha1.ObjectMeta.annotations:type_name -> exonex.cortex.v1alpha1.ObjectMeta.AnnotationsEntry
+	6, // 1: exonex.cortex.v1alpha1.ObjectMeta.created_at:type_name -> google.protobuf.Timestamp
+	3, // 2: exonex.cortex.v1alpha1.ObjectMeta.log_events:type_name -> exonex.cortex.v1alpha1.LogEvent
+	6, // 3: exonex.cortex.v1alpha1.LogEvent.time:type_name -> google.protobuf.Timestamp
+	6, // 4: exonex.cortex.v1alpha1.LogEvent.retention_time:type_name -> google.protobuf.Timestamp
+	6, // 5: exonex.cortex.v1alpha1.Lease.lease_until:type_name -> google.protobuf.Timestamp
+	6, // [6:6] is the sub-list for method output_type
+	6, // [6:6] is the sub-list for method input_type
+	6, // [6:6] is the sub-list for extension type_name
+	6, // [6:6] is the sub-list for extension extendee
+	0, // [0:6] is the sub-list for field type_name
 }
 
 func init() { file_exonex_cortex_v1alpha1_common_proto_init() }
@@ -168,19 +400,21 @@ func file_exonex_cortex_v1alpha1_common_proto_init() {
 	if File_exonex_cortex_v1alpha1_common_proto != nil {
 		return
 	}
+	file_exonex_cortex_v1alpha1_common_proto_msgTypes[1].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_exonex_cortex_v1alpha1_common_proto_rawDesc), len(file_exonex_cortex_v1alpha1_common_proto_rawDesc)),
 			NumEnums:      2,
-			NumMessages:   0,
+			NumMessages:   4,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
 		GoTypes:           file_exonex_cortex_v1alpha1_common_proto_goTypes,
 		DependencyIndexes: file_exonex_cortex_v1alpha1_common_proto_depIdxs,
 		EnumInfos:         file_exonex_cortex_v1alpha1_common_proto_enumTypes,
+		MessageInfos:      file_exonex_cortex_v1alpha1_common_proto_msgTypes,
 	}.Build()
 	File_exonex_cortex_v1alpha1_common_proto = out.File
 	file_exonex_cortex_v1alpha1_common_proto_goTypes = nil

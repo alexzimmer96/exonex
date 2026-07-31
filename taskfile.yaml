@@ -7,6 +7,6 @@ tasks:
       - go tool buf dep update
       - go tool buf generate
       - git add .
-  add-migration:
+  add-cortex-migration:
     cmds:
-      - GOOSE_MIGRATION_DIR="./database/migrations" go tool goose create {{.CLI_ARGS}}
+      - GOOSE_MIGRATION_DIR="./database/cortex/migrations" go tool goose create {{.CLI_ARGS}}

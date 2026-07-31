@@ -244,19 +244,20 @@ func (ExecutionStatus) EnumDescriptor() ([]byte, []int) {
 type Document struct {
 	state       protoimpl.MessageState `protogen:"open.v1"`
 	Id          string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	PublisherId string                 `protobuf:"bytes,2,opt,name=publisher_id,json=publisherId,proto3" json:"publisher_id,omitempty"`
+	Meta        *ObjectMeta            `protobuf:"bytes,2,opt,name=meta,proto3" json:"meta,omitempty"`
+	PublisherId string                 `protobuf:"bytes,3,opt,name=publisher_id,json=publisherId,proto3" json:"publisher_id,omitempty"`
 	// original_url is the URL that lead to the creation of this document.
-	OriginalUrl string `protobuf:"bytes,3,opt,name=original_url,json=originalUrl,proto3" json:"original_url,omitempty"`
+	OriginalUrl string `protobuf:"bytes,4,opt,name=original_url,json=originalUrl,proto3" json:"original_url,omitempty"`
 	// scrape_order_id is a reference to the ScrapeOrder that produced this document.
-	ScrapeOrderId      string                 `protobuf:"bytes,4,opt,name=scrape_order_id,json=scrapeOrderId,proto3" json:"scrape_order_id,omitempty"`
-	DocumentType       DocumentType           `protobuf:"varint,5,opt,name=document_type,json=documentType,proto3,enum=exonex.cortex.v1alpha1.DocumentType" json:"document_type,omitempty"`
-	Artifacts          []*DocumentArtifact    `protobuf:"bytes,6,rep,name=artifacts,proto3" json:"artifacts,omitempty"`
-	AnalysisExecutions []*AnalysisExecution   `protobuf:"bytes,7,rep,name=analysis_executions,json=analysisExecutions,proto3" json:"analysis_executions,omitempty"`
-	TdmStatus          DocumentTdmStatus      `protobuf:"varint,8,opt,name=tdm_status,json=tdmStatus,proto3,enum=exonex.cortex.v1alpha1.DocumentTdmStatus" json:"tdm_status,omitempty"`
-	PublishedAt        *timestamppb.Timestamp `protobuf:"bytes,9,opt,name=published_at,json=publishedAt,proto3,oneof" json:"published_at,omitempty"`
-	CreatedAt          *timestamppb.Timestamp `protobuf:"bytes,10,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	unknownFields      protoimpl.UnknownFields
-	sizeCache          protoimpl.SizeCache
+	ScrapeOrderId string                 `protobuf:"bytes,5,opt,name=scrape_order_id,json=scrapeOrderId,proto3" json:"scrape_order_id,omitempty"`
+	DocumentType  DocumentType           `protobuf:"varint,6,opt,name=document_type,json=documentType,proto3,enum=exonex.cortex.v1alpha1.DocumentType" json:"document_type,omitempty"`
+	Artifacts     []*DocumentArtifact    `protobuf:"bytes,7,rep,name=artifacts,proto3" json:"artifacts,omitempty"`
+	TdmStatus     DocumentTdmStatus      `protobuf:"varint,8,opt,name=tdm_status,json=tdmStatus,proto3,enum=exonex.cortex.v1alpha1.DocumentTdmStatus" json:"tdm_status,omitempty"`
+	PublishedAt   *timestamppb.Timestamp `protobuf:"bytes,9,opt,name=published_at,json=publishedAt,proto3,oneof" json:"published_at,omitempty"`
+	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,10,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	Events        []*LogEvent            `protobuf:"bytes,11,rep,name=events,proto3" json:"events,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *Document) Reset() {
@@ -296,6 +297,13 @@ func (x *Document) GetId() string {
 	return ""
 }
 
+func (x *Document) GetMeta() *ObjectMeta {
+	if x != nil {
+		return x.Meta
+	}
+	return nil
+}
+
 func (x *Document) GetPublisherId() string {
 	if x != nil {
 		return x.PublisherId
@@ -331,13 +339,6 @@ func (x *Document) GetArtifacts() []*DocumentArtifact {
 	return nil
 }
 
-func (x *Document) GetAnalysisExecutions() []*AnalysisExecution {
-	if x != nil {
-		return x.AnalysisExecutions
-	}
-	return nil
-}
-
 func (x *Document) GetTdmStatus() DocumentTdmStatus {
 	if x != nil {
 		return x.TdmStatus
@@ -359,18 +360,26 @@ func (x *Document) GetCreatedAt() *timestamppb.Timestamp {
 	return nil
 }
 
+func (x *Document) GetEvents() []*LogEvent {
+	if x != nil {
+		return x.Events
+	}
+	return nil
+}
+
 // An Artifact is a file that has been produced for a Document either from Scraping or from Analysis.
 type DocumentArtifact struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	Id    string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Meta  *ObjectMeta            `protobuf:"bytes,2,opt,name=meta,proto3" json:"meta,omitempty"`
 	// The analysis_execution_id is an optional reference if this artifact has been produced not by a scrape job
 	// but by a AnalysisExecution.
-	AnalysisExecutionId *string                `protobuf:"bytes,2,opt,name=analysis_execution_id,json=analysisExecutionId,proto3,oneof" json:"analysis_execution_id,omitempty"`
-	Format              ArtifactFormat         `protobuf:"varint,3,opt,name=format,proto3,enum=exonex.cortex.v1alpha1.ArtifactFormat" json:"format,omitempty"`
-	StorageUrl          string                 `protobuf:"bytes,4,opt,name=storage_url,json=storageUrl,proto3" json:"storage_url,omitempty"`
-	SizeBytes           int64                  `protobuf:"varint,5,opt,name=size_bytes,json=sizeBytes,proto3" json:"size_bytes,omitempty"`
-	MimeType            string                 `protobuf:"bytes,6,opt,name=mime_type,json=mimeType,proto3" json:"mime_type,omitempty"`
-	CreatedAt           *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	AnalysisExecutionId *string                `protobuf:"bytes,3,opt,name=analysis_execution_id,json=analysisExecutionId,proto3,oneof" json:"analysis_execution_id,omitempty"`
+	Format              ArtifactFormat         `protobuf:"varint,4,opt,name=format,proto3,enum=exonex.cortex.v1alpha1.ArtifactFormat" json:"format,omitempty"`
+	StorageUrl          string                 `protobuf:"bytes,5,opt,name=storage_url,json=storageUrl,proto3" json:"storage_url,omitempty"`
+	SizeBytes           int64                  `protobuf:"varint,6,opt,name=size_bytes,json=sizeBytes,proto3" json:"size_bytes,omitempty"`
+	MimeType            string                 `protobuf:"bytes,7,opt,name=mime_type,json=mimeType,proto3" json:"mime_type,omitempty"`
+	CreatedAt           *timestamppb.Timestamp `protobuf:"bytes,8,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	unknownFields       protoimpl.UnknownFields
 	sizeCache           protoimpl.SizeCache
 }
@@ -410,6 +419,13 @@ func (x *DocumentArtifact) GetId() string {
 		return x.Id
 	}
 	return ""
+}
+
+func (x *DocumentArtifact) GetMeta() *ObjectMeta {
+	if x != nil {
+		return x.Meta
+	}
+	return nil
 }
 
 func (x *DocumentArtifact) GetAnalysisExecutionId() string {
@@ -454,447 +470,40 @@ func (x *DocumentArtifact) GetCreatedAt() *timestamppb.Timestamp {
 	return nil
 }
 
-// One specific Result of a Analysis that has been performed for a Document.
-type DocumentAnalysis struct {
-	state                 protoimpl.MessageState   `protogen:"open.v1"`
-	PrimarySummary        *DocumentSummaryResult   `protobuf:"bytes,1,opt,name=primary_summary,json=primarySummary,proto3,oneof" json:"primary_summary,omitempty"`
-	SummaryResults        []*DocumentSummaryResult `protobuf:"bytes,2,rep,name=summary_results,json=summaryResults,proto3" json:"summary_results,omitempty"`
-	PrimaryEntityAnalysis *EntityAnalysis          `protobuf:"bytes,3,opt,name=primary_entity_analysis,json=primaryEntityAnalysis,proto3,oneof" json:"primary_entity_analysis,omitempty"`
-	EntityAnalyses        []*EntityAnalysis        `protobuf:"bytes,4,rep,name=entity_analyses,json=entityAnalyses,proto3" json:"entity_analyses,omitempty"`
-	unknownFields         protoimpl.UnknownFields
-	sizeCache             protoimpl.SizeCache
-}
-
-func (x *DocumentAnalysis) Reset() {
-	*x = DocumentAnalysis{}
-	mi := &file_exonex_cortex_v1alpha1_documents_proto_msgTypes[2]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *DocumentAnalysis) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*DocumentAnalysis) ProtoMessage() {}
-
-func (x *DocumentAnalysis) ProtoReflect() protoreflect.Message {
-	mi := &file_exonex_cortex_v1alpha1_documents_proto_msgTypes[2]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use DocumentAnalysis.ProtoReflect.Descriptor instead.
-func (*DocumentAnalysis) Descriptor() ([]byte, []int) {
-	return file_exonex_cortex_v1alpha1_documents_proto_rawDescGZIP(), []int{2}
-}
-
-func (x *DocumentAnalysis) GetPrimarySummary() *DocumentSummaryResult {
-	if x != nil {
-		return x.PrimarySummary
-	}
-	return nil
-}
-
-func (x *DocumentAnalysis) GetSummaryResults() []*DocumentSummaryResult {
-	if x != nil {
-		return x.SummaryResults
-	}
-	return nil
-}
-
-func (x *DocumentAnalysis) GetPrimaryEntityAnalysis() *EntityAnalysis {
-	if x != nil {
-		return x.PrimaryEntityAnalysis
-	}
-	return nil
-}
-
-func (x *DocumentAnalysis) GetEntityAnalyses() []*EntityAnalysis {
-	if x != nil {
-		return x.EntityAnalyses
-	}
-	return nil
-}
-
-// AnalysisExecution is a specific Analysis that should or have been executed for a Document.
-type AnalysisExecution struct {
-	state           protoimpl.MessageState `protogen:"open.v1"`
-	Id              string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	ExecutorId      string                 `protobuf:"bytes,2,opt,name=executor_id,json=executorId,proto3" json:"executor_id,omitempty"`
-	ExecutionStatus ExecutionStatus        `protobuf:"varint,3,opt,name=execution_status,json=executionStatus,proto3,enum=exonex.cortex.v1alpha1.ExecutionStatus" json:"execution_status,omitempty"`
-	// The status_reason field can be used to add additional context on why the AnalysisExecution is in the
-	// current ExecutionStatus.
-	StatusReason  *string                `protobuf:"bytes,4,opt,name=status_reason,json=statusReason,proto3,oneof" json:"status_reason,omitempty"`
-	LeaseHolder   *string                `protobuf:"bytes,5,opt,name=lease_holder,json=leaseHolder,proto3,oneof" json:"lease_holder,omitempty"`
-	LeaseUntil    *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=lease_until,json=leaseUntil,proto3,oneof" json:"lease_until,omitempty"`
-	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *AnalysisExecution) Reset() {
-	*x = AnalysisExecution{}
-	mi := &file_exonex_cortex_v1alpha1_documents_proto_msgTypes[3]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *AnalysisExecution) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*AnalysisExecution) ProtoMessage() {}
-
-func (x *AnalysisExecution) ProtoReflect() protoreflect.Message {
-	mi := &file_exonex_cortex_v1alpha1_documents_proto_msgTypes[3]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use AnalysisExecution.ProtoReflect.Descriptor instead.
-func (*AnalysisExecution) Descriptor() ([]byte, []int) {
-	return file_exonex_cortex_v1alpha1_documents_proto_rawDescGZIP(), []int{3}
-}
-
-func (x *AnalysisExecution) GetId() string {
-	if x != nil {
-		return x.Id
-	}
-	return ""
-}
-
-func (x *AnalysisExecution) GetExecutorId() string {
-	if x != nil {
-		return x.ExecutorId
-	}
-	return ""
-}
-
-func (x *AnalysisExecution) GetExecutionStatus() ExecutionStatus {
-	if x != nil {
-		return x.ExecutionStatus
-	}
-	return ExecutionStatus_EXECUTION_STATUS_UNSPECIFIED
-}
-
-func (x *AnalysisExecution) GetStatusReason() string {
-	if x != nil && x.StatusReason != nil {
-		return *x.StatusReason
-	}
-	return ""
-}
-
-func (x *AnalysisExecution) GetLeaseHolder() string {
-	if x != nil && x.LeaseHolder != nil {
-		return *x.LeaseHolder
-	}
-	return ""
-}
-
-func (x *AnalysisExecution) GetLeaseUntil() *timestamppb.Timestamp {
-	if x != nil {
-		return x.LeaseUntil
-	}
-	return nil
-}
-
-func (x *AnalysisExecution) GetCreatedAt() *timestamppb.Timestamp {
-	if x != nil {
-		return x.CreatedAt
-	}
-	return nil
-}
-
-// The DocumentSummaryResult contains basic data about an Document, like a title and short summary.
-type DocumentSummaryResult struct {
-	state               protoimpl.MessageState `protogen:"open.v1"`
-	AnalysisExecutionId string                 `protobuf:"bytes,1,opt,name=analysis_execution_id,json=analysisExecutionId,proto3" json:"analysis_execution_id,omitempty"`
-	ExecutorId          string                 `protobuf:"bytes,2,opt,name=executor_id,json=executorId,proto3" json:"executor_id,omitempty"`
-	Title               string                 `protobuf:"bytes,3,opt,name=title,proto3" json:"title,omitempty"`
-	ShortSummary        string                 `protobuf:"bytes,4,opt,name=short_summary,json=shortSummary,proto3" json:"short_summary,omitempty"`
-	ExecutiveSummary    string                 `protobuf:"bytes,5,opt,name=executive_summary,json=executiveSummary,proto3" json:"executive_summary,omitempty"`
-	KeyTakeaways        []string               `protobuf:"bytes,6,rep,name=key_takeaways,json=keyTakeaways,proto3" json:"key_takeaways,omitempty"`
-	unknownFields       protoimpl.UnknownFields
-	sizeCache           protoimpl.SizeCache
-}
-
-func (x *DocumentSummaryResult) Reset() {
-	*x = DocumentSummaryResult{}
-	mi := &file_exonex_cortex_v1alpha1_documents_proto_msgTypes[4]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *DocumentSummaryResult) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*DocumentSummaryResult) ProtoMessage() {}
-
-func (x *DocumentSummaryResult) ProtoReflect() protoreflect.Message {
-	mi := &file_exonex_cortex_v1alpha1_documents_proto_msgTypes[4]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use DocumentSummaryResult.ProtoReflect.Descriptor instead.
-func (*DocumentSummaryResult) Descriptor() ([]byte, []int) {
-	return file_exonex_cortex_v1alpha1_documents_proto_rawDescGZIP(), []int{4}
-}
-
-func (x *DocumentSummaryResult) GetAnalysisExecutionId() string {
-	if x != nil {
-		return x.AnalysisExecutionId
-	}
-	return ""
-}
-
-func (x *DocumentSummaryResult) GetExecutorId() string {
-	if x != nil {
-		return x.ExecutorId
-	}
-	return ""
-}
-
-func (x *DocumentSummaryResult) GetTitle() string {
-	if x != nil {
-		return x.Title
-	}
-	return ""
-}
-
-func (x *DocumentSummaryResult) GetShortSummary() string {
-	if x != nil {
-		return x.ShortSummary
-	}
-	return ""
-}
-
-func (x *DocumentSummaryResult) GetExecutiveSummary() string {
-	if x != nil {
-		return x.ExecutiveSummary
-	}
-	return ""
-}
-
-func (x *DocumentSummaryResult) GetKeyTakeaways() []string {
-	if x != nil {
-		return x.KeyTakeaways
-	}
-	return nil
-}
-
-// A single Entity that has been recognized as part of an Entity Analysis.
-type RecognizedEntity struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	Category      string                 `protobuf:"bytes,2,opt,name=category,proto3" json:"category,omitempty"`
-	Relevance     float32                `protobuf:"fixed32,3,opt,name=relevance,proto3" json:"relevance,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *RecognizedEntity) Reset() {
-	*x = RecognizedEntity{}
-	mi := &file_exonex_cortex_v1alpha1_documents_proto_msgTypes[5]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *RecognizedEntity) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*RecognizedEntity) ProtoMessage() {}
-
-func (x *RecognizedEntity) ProtoReflect() protoreflect.Message {
-	mi := &file_exonex_cortex_v1alpha1_documents_proto_msgTypes[5]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use RecognizedEntity.ProtoReflect.Descriptor instead.
-func (*RecognizedEntity) Descriptor() ([]byte, []int) {
-	return file_exonex_cortex_v1alpha1_documents_proto_rawDescGZIP(), []int{5}
-}
-
-func (x *RecognizedEntity) GetName() string {
-	if x != nil {
-		return x.Name
-	}
-	return ""
-}
-
-func (x *RecognizedEntity) GetCategory() string {
-	if x != nil {
-		return x.Category
-	}
-	return ""
-}
-
-func (x *RecognizedEntity) GetRelevance() float32 {
-	if x != nil {
-		return x.Relevance
-	}
-	return 0
-}
-
-// Contains important Entities that haven been extracted from the Document.
-type EntityAnalysis struct {
-	state               protoimpl.MessageState `protogen:"open.v1"`
-	AnalysisExecutionId string                 `protobuf:"bytes,1,opt,name=analysis_execution_id,json=analysisExecutionId,proto3" json:"analysis_execution_id,omitempty"`
-	ExecutorId          string                 `protobuf:"bytes,2,opt,name=executor_id,json=executorId,proto3" json:"executor_id,omitempty"`
-	Entities            []*RecognizedEntity    `protobuf:"bytes,3,rep,name=entities,proto3" json:"entities,omitempty"`
-	unknownFields       protoimpl.UnknownFields
-	sizeCache           protoimpl.SizeCache
-}
-
-func (x *EntityAnalysis) Reset() {
-	*x = EntityAnalysis{}
-	mi := &file_exonex_cortex_v1alpha1_documents_proto_msgTypes[6]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *EntityAnalysis) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*EntityAnalysis) ProtoMessage() {}
-
-func (x *EntityAnalysis) ProtoReflect() protoreflect.Message {
-	mi := &file_exonex_cortex_v1alpha1_documents_proto_msgTypes[6]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use EntityAnalysis.ProtoReflect.Descriptor instead.
-func (*EntityAnalysis) Descriptor() ([]byte, []int) {
-	return file_exonex_cortex_v1alpha1_documents_proto_rawDescGZIP(), []int{6}
-}
-
-func (x *EntityAnalysis) GetAnalysisExecutionId() string {
-	if x != nil {
-		return x.AnalysisExecutionId
-	}
-	return ""
-}
-
-func (x *EntityAnalysis) GetExecutorId() string {
-	if x != nil {
-		return x.ExecutorId
-	}
-	return ""
-}
-
-func (x *EntityAnalysis) GetEntities() []*RecognizedEntity {
-	if x != nil {
-		return x.Entities
-	}
-	return nil
-}
-
 var File_exonex_cortex_v1alpha1_documents_proto protoreflect.FileDescriptor
 
 const file_exonex_cortex_v1alpha1_documents_proto_rawDesc = "" +
 	"\n" +
-	"&exonex/cortex/v1alpha1/documents.proto\x12\x16exonex.cortex.v1alpha1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1cgoogle/protobuf/struct.proto\"\xd1\x04\n" +
+	"&exonex/cortex/v1alpha1/documents.proto\x12\x16exonex.cortex.v1alpha1\x1a#exonex/cortex/v1alpha1/common.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1cgoogle/protobuf/struct.proto\"\xe7\x04\n" +
 	"\bDocument\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\x12!\n" +
-	"\fpublisher_id\x18\x02 \x01(\tR\vpublisherId\x12!\n" +
-	"\foriginal_url\x18\x03 \x01(\tR\voriginalUrl\x12&\n" +
-	"\x0fscrape_order_id\x18\x04 \x01(\tR\rscrapeOrderId\x12I\n" +
-	"\rdocument_type\x18\x05 \x01(\x0e2$.exonex.cortex.v1alpha1.DocumentTypeR\fdocumentType\x12F\n" +
-	"\tartifacts\x18\x06 \x03(\v2(.exonex.cortex.v1alpha1.DocumentArtifactR\tartifacts\x12Z\n" +
-	"\x13analysis_executions\x18\a \x03(\v2).exonex.cortex.v1alpha1.AnalysisExecutionR\x12analysisExecutions\x12H\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x126\n" +
+	"\x04meta\x18\x02 \x01(\v2\".exonex.cortex.v1alpha1.ObjectMetaR\x04meta\x12!\n" +
+	"\fpublisher_id\x18\x03 \x01(\tR\vpublisherId\x12!\n" +
+	"\foriginal_url\x18\x04 \x01(\tR\voriginalUrl\x12&\n" +
+	"\x0fscrape_order_id\x18\x05 \x01(\tR\rscrapeOrderId\x12I\n" +
+	"\rdocument_type\x18\x06 \x01(\x0e2$.exonex.cortex.v1alpha1.DocumentTypeR\fdocumentType\x12F\n" +
+	"\tartifacts\x18\a \x03(\v2(.exonex.cortex.v1alpha1.DocumentArtifactR\tartifacts\x12H\n" +
 	"\n" +
 	"tdm_status\x18\b \x01(\x0e2).exonex.cortex.v1alpha1.DocumentTdmStatusR\ttdmStatus\x12B\n" +
 	"\fpublished_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampH\x00R\vpublishedAt\x88\x01\x01\x129\n" +
 	"\n" +
 	"created_at\x18\n" +
-	" \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAtB\x0f\n" +
-	"\r_published_at\"\xcd\x02\n" +
+	" \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x128\n" +
+	"\x06events\x18\v \x03(\v2 .exonex.cortex.v1alpha1.LogEventR\x06eventsB\x0f\n" +
+	"\r_published_at\"\x85\x03\n" +
 	"\x10DocumentArtifact\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\x127\n" +
-	"\x15analysis_execution_id\x18\x02 \x01(\tH\x00R\x13analysisExecutionId\x88\x01\x01\x12>\n" +
-	"\x06format\x18\x03 \x01(\x0e2&.exonex.cortex.v1alpha1.ArtifactFormatR\x06format\x12\x1f\n" +
-	"\vstorage_url\x18\x04 \x01(\tR\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x126\n" +
+	"\x04meta\x18\x02 \x01(\v2\".exonex.cortex.v1alpha1.ObjectMetaR\x04meta\x127\n" +
+	"\x15analysis_execution_id\x18\x03 \x01(\tH\x00R\x13analysisExecutionId\x88\x01\x01\x12>\n" +
+	"\x06format\x18\x04 \x01(\x0e2&.exonex.cortex.v1alpha1.ArtifactFormatR\x06format\x12\x1f\n" +
+	"\vstorage_url\x18\x05 \x01(\tR\n" +
 	"storageUrl\x12\x1d\n" +
 	"\n" +
-	"size_bytes\x18\x05 \x01(\x03R\tsizeBytes\x12\x1b\n" +
-	"\tmime_type\x18\x06 \x01(\tR\bmimeType\x129\n" +
+	"size_bytes\x18\x06 \x01(\x03R\tsizeBytes\x12\x1b\n" +
+	"\tmime_type\x18\a \x01(\tR\bmimeType\x129\n" +
 	"\n" +
-	"created_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAtB\x18\n" +
-	"\x16_analysis_execution_id\"\xad\x03\n" +
-	"\x10DocumentAnalysis\x12[\n" +
-	"\x0fprimary_summary\x18\x01 \x01(\v2-.exonex.cortex.v1alpha1.DocumentSummaryResultH\x00R\x0eprimarySummary\x88\x01\x01\x12V\n" +
-	"\x0fsummary_results\x18\x02 \x03(\v2-.exonex.cortex.v1alpha1.DocumentSummaryResultR\x0esummaryResults\x12c\n" +
-	"\x17primary_entity_analysis\x18\x03 \x01(\v2&.exonex.cortex.v1alpha1.EntityAnalysisH\x01R\x15primaryEntityAnalysis\x88\x01\x01\x12O\n" +
-	"\x0fentity_analyses\x18\x04 \x03(\v2&.exonex.cortex.v1alpha1.EntityAnalysisR\x0eentityAnalysesB\x12\n" +
-	"\x10_primary_summaryB\x1a\n" +
-	"\x18_primary_entity_analysis\"\x9a\x03\n" +
-	"\x11AnalysisExecution\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1f\n" +
-	"\vexecutor_id\x18\x02 \x01(\tR\n" +
-	"executorId\x12R\n" +
-	"\x10execution_status\x18\x03 \x01(\x0e2'.exonex.cortex.v1alpha1.ExecutionStatusR\x0fexecutionStatus\x12(\n" +
-	"\rstatus_reason\x18\x04 \x01(\tH\x00R\fstatusReason\x88\x01\x01\x12&\n" +
-	"\flease_holder\x18\x05 \x01(\tH\x01R\vleaseHolder\x88\x01\x01\x12@\n" +
-	"\vlease_until\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampH\x02R\n" +
-	"leaseUntil\x88\x01\x01\x129\n" +
-	"\n" +
-	"created_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAtB\x10\n" +
-	"\x0e_status_reasonB\x0f\n" +
-	"\r_lease_holderB\x0e\n" +
-	"\f_lease_until\"\xf9\x01\n" +
-	"\x15DocumentSummaryResult\x122\n" +
-	"\x15analysis_execution_id\x18\x01 \x01(\tR\x13analysisExecutionId\x12\x1f\n" +
-	"\vexecutor_id\x18\x02 \x01(\tR\n" +
-	"executorId\x12\x14\n" +
-	"\x05title\x18\x03 \x01(\tR\x05title\x12#\n" +
-	"\rshort_summary\x18\x04 \x01(\tR\fshortSummary\x12+\n" +
-	"\x11executive_summary\x18\x05 \x01(\tR\x10executiveSummary\x12#\n" +
-	"\rkey_takeaways\x18\x06 \x03(\tR\fkeyTakeaways\"`\n" +
-	"\x10RecognizedEntity\x12\x12\n" +
-	"\x04name\x18\x01 \x01(\tR\x04name\x12\x1a\n" +
-	"\bcategory\x18\x02 \x01(\tR\bcategory\x12\x1c\n" +
-	"\trelevance\x18\x03 \x01(\x02R\trelevance\"\xab\x01\n" +
-	"\x0eEntityAnalysis\x122\n" +
-	"\x15analysis_execution_id\x18\x01 \x01(\tR\x13analysisExecutionId\x12\x1f\n" +
-	"\vexecutor_id\x18\x02 \x01(\tR\n" +
-	"executorId\x12D\n" +
-	"\bentities\x18\x03 \x03(\v2(.exonex.cortex.v1alpha1.RecognizedEntityR\bentities*\xbf\x01\n" +
+	"created_at\x18\b \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAtB\x18\n" +
+	"\x16_analysis_execution_id*\xbf\x01\n" +
 	"\fDocumentType\x12\x1d\n" +
 	"\x19DOCUMENT_TYPE_UNSPECIFIED\x10\x00\x12\x1e\n" +
 	"\x1aDOCUMENT_TYPE_LEGAL_NOTICE\x10\x01\x12\x1c\n" +
@@ -933,7 +542,7 @@ func file_exonex_cortex_v1alpha1_documents_proto_rawDescGZIP() []byte {
 }
 
 var file_exonex_cortex_v1alpha1_documents_proto_enumTypes = make([]protoimpl.EnumInfo, 4)
-var file_exonex_cortex_v1alpha1_documents_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
+var file_exonex_cortex_v1alpha1_documents_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_exonex_cortex_v1alpha1_documents_proto_goTypes = []any{
 	(DocumentType)(0),             // 0: exonex.cortex.v1alpha1.DocumentType
 	(ArtifactFormat)(0),           // 1: exonex.cortex.v1alpha1.ArtifactFormat
@@ -941,35 +550,26 @@ var file_exonex_cortex_v1alpha1_documents_proto_goTypes = []any{
 	(ExecutionStatus)(0),          // 3: exonex.cortex.v1alpha1.ExecutionStatus
 	(*Document)(nil),              // 4: exonex.cortex.v1alpha1.Document
 	(*DocumentArtifact)(nil),      // 5: exonex.cortex.v1alpha1.DocumentArtifact
-	(*DocumentAnalysis)(nil),      // 6: exonex.cortex.v1alpha1.DocumentAnalysis
-	(*AnalysisExecution)(nil),     // 7: exonex.cortex.v1alpha1.AnalysisExecution
-	(*DocumentSummaryResult)(nil), // 8: exonex.cortex.v1alpha1.DocumentSummaryResult
-	(*RecognizedEntity)(nil),      // 9: exonex.cortex.v1alpha1.RecognizedEntity
-	(*EntityAnalysis)(nil),        // 10: exonex.cortex.v1alpha1.EntityAnalysis
-	(*timestamppb.Timestamp)(nil), // 11: google.protobuf.Timestamp
+	(*ObjectMeta)(nil),            // 6: exonex.cortex.v1alpha1.ObjectMeta
+	(*timestamppb.Timestamp)(nil), // 7: google.protobuf.Timestamp
+	(*LogEvent)(nil),              // 8: exonex.cortex.v1alpha1.LogEvent
 }
 var file_exonex_cortex_v1alpha1_documents_proto_depIdxs = []int32{
-	0,  // 0: exonex.cortex.v1alpha1.Document.document_type:type_name -> exonex.cortex.v1alpha1.DocumentType
-	5,  // 1: exonex.cortex.v1alpha1.Document.artifacts:type_name -> exonex.cortex.v1alpha1.DocumentArtifact
-	7,  // 2: exonex.cortex.v1alpha1.Document.analysis_executions:type_name -> exonex.cortex.v1alpha1.AnalysisExecution
+	6,  // 0: exonex.cortex.v1alpha1.Document.meta:type_name -> exonex.cortex.v1alpha1.ObjectMeta
+	0,  // 1: exonex.cortex.v1alpha1.Document.document_type:type_name -> exonex.cortex.v1alpha1.DocumentType
+	5,  // 2: exonex.cortex.v1alpha1.Document.artifacts:type_name -> exonex.cortex.v1alpha1.DocumentArtifact
 	2,  // 3: exonex.cortex.v1alpha1.Document.tdm_status:type_name -> exonex.cortex.v1alpha1.DocumentTdmStatus
-	11, // 4: exonex.cortex.v1alpha1.Document.published_at:type_name -> google.protobuf.Timestamp
-	11, // 5: exonex.cortex.v1alpha1.Document.created_at:type_name -> google.protobuf.Timestamp
-	1,  // 6: exonex.cortex.v1alpha1.DocumentArtifact.format:type_name -> exonex.cortex.v1alpha1.ArtifactFormat
-	11, // 7: exonex.cortex.v1alpha1.DocumentArtifact.created_at:type_name -> google.protobuf.Timestamp
-	8,  // 8: exonex.cortex.v1alpha1.DocumentAnalysis.primary_summary:type_name -> exonex.cortex.v1alpha1.DocumentSummaryResult
-	8,  // 9: exonex.cortex.v1alpha1.DocumentAnalysis.summary_results:type_name -> exonex.cortex.v1alpha1.DocumentSummaryResult
-	10, // 10: exonex.cortex.v1alpha1.DocumentAnalysis.primary_entity_analysis:type_name -> exonex.cortex.v1alpha1.EntityAnalysis
-	10, // 11: exonex.cortex.v1alpha1.DocumentAnalysis.entity_analyses:type_name -> exonex.cortex.v1alpha1.EntityAnalysis
-	3,  // 12: exonex.cortex.v1alpha1.AnalysisExecution.execution_status:type_name -> exonex.cortex.v1alpha1.ExecutionStatus
-	11, // 13: exonex.cortex.v1alpha1.AnalysisExecution.lease_until:type_name -> google.protobuf.Timestamp
-	11, // 14: exonex.cortex.v1alpha1.AnalysisExecution.created_at:type_name -> google.protobuf.Timestamp
-	9,  // 15: exonex.cortex.v1alpha1.EntityAnalysis.entities:type_name -> exonex.cortex.v1alpha1.RecognizedEntity
-	16, // [16:16] is the sub-list for method output_type
-	16, // [16:16] is the sub-list for method input_type
-	16, // [16:16] is the sub-list for extension type_name
-	16, // [16:16] is the sub-list for extension extendee
-	0,  // [0:16] is the sub-list for field type_name
+	7,  // 4: exonex.cortex.v1alpha1.Document.published_at:type_name -> google.protobuf.Timestamp
+	7,  // 5: exonex.cortex.v1alpha1.Document.created_at:type_name -> google.protobuf.Timestamp
+	8,  // 6: exonex.cortex.v1alpha1.Document.events:type_name -> exonex.cortex.v1alpha1.LogEvent
+	6,  // 7: exonex.cortex.v1alpha1.DocumentArtifact.meta:type_name -> exonex.cortex.v1alpha1.ObjectMeta
+	1,  // 8: exonex.cortex.v1alpha1.DocumentArtifact.format:type_name -> exonex.cortex.v1alpha1.ArtifactFormat
+	7,  // 9: exonex.cortex.v1alpha1.DocumentArtifact.created_at:type_name -> google.protobuf.Timestamp
+	10, // [10:10] is the sub-list for method output_type
+	10, // [10:10] is the sub-list for method input_type
+	10, // [10:10] is the sub-list for extension type_name
+	10, // [10:10] is the sub-list for extension extendee
+	0,  // [0:10] is the sub-list for field type_name
 }
 
 func init() { file_exonex_cortex_v1alpha1_documents_proto_init() }
@@ -977,17 +577,16 @@ func file_exonex_cortex_v1alpha1_documents_proto_init() {
 	if File_exonex_cortex_v1alpha1_documents_proto != nil {
 		return
 	}
+	file_exonex_cortex_v1alpha1_common_proto_init()
 	file_exonex_cortex_v1alpha1_documents_proto_msgTypes[0].OneofWrappers = []any{}
 	file_exonex_cortex_v1alpha1_documents_proto_msgTypes[1].OneofWrappers = []any{}
-	file_exonex_cortex_v1alpha1_documents_proto_msgTypes[2].OneofWrappers = []any{}
-	file_exonex_cortex_v1alpha1_documents_proto_msgTypes[3].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_exonex_cortex_v1alpha1_documents_proto_rawDesc), len(file_exonex_cortex_v1alpha1_documents_proto_rawDesc)),
 			NumEnums:      4,
-			NumMessages:   7,
+			NumMessages:   2,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

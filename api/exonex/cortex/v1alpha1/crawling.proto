@@ -2,24 +2,29 @@ syntax = "proto3";
 package exonex.cortex.v1alpha1;
 
 import "exonex/cortex/v1alpha1/common.proto";
-
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/struct.proto";
 
 // =====================================================================================================================
 
-
-// =====================================================================================================================
+enum CrawlOrderStatus {
+  CRAWL_ORDER_STATUS_UNSPECIFIED = 0;
+  CRAWL_ORDER_STATUS_PLANNED = 1;
+  CRAWL_ORDER_STATUS_SUCCEEDED = 2;
+  CRAWL_ORDER_STATUS_FAILED = 3;
+  CRAWL_ORDER_STATUS_ABORTED = 4;
+}
 
 // A CrawlOrder is a order to Crawl a Website to discover possible Documents that can then be scraped by a scrape order.
 message CrawlOrder {
   string id = 1;
-  string publisher_id = 2;
-  string entrypoint_url = 3;
-  optional string lease_holder = 4;
-  optional google.protobuf.Timestamp lease_until = 5;
+  ObjectMeta meta = 2;
+  string publisher_id = 3;
+  string entrypoint_url = 4;
+  optional Lease lease = 5;
   optional CrawlOrderResult crawl_result = 6;
   google.protobuf.Timestamp created_at = 7;
+  repeated LogEvent events = 8;
 }
 
 // A result tracks metadata to a Crawl- or ScrapeOrder.

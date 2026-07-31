@@ -23,16 +23,72 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+type CrawlOrderStatus int32
+
+const (
+	CrawlOrderStatus_CRAWL_ORDER_STATUS_UNSPECIFIED CrawlOrderStatus = 0
+	CrawlOrderStatus_CRAWL_ORDER_STATUS_PLANNED     CrawlOrderStatus = 1
+	CrawlOrderStatus_CRAWL_ORDER_STATUS_SUCCEEDED   CrawlOrderStatus = 2
+	CrawlOrderStatus_CRAWL_ORDER_STATUS_FAILED      CrawlOrderStatus = 3
+	CrawlOrderStatus_CRAWL_ORDER_STATUS_ABORTED     CrawlOrderStatus = 4
+)
+
+// Enum value maps for CrawlOrderStatus.
+var (
+	CrawlOrderStatus_name = map[int32]string{
+		0: "CRAWL_ORDER_STATUS_UNSPECIFIED",
+		1: "CRAWL_ORDER_STATUS_PLANNED",
+		2: "CRAWL_ORDER_STATUS_SUCCEEDED",
+		3: "CRAWL_ORDER_STATUS_FAILED",
+		4: "CRAWL_ORDER_STATUS_ABORTED",
+	}
+	CrawlOrderStatus_value = map[string]int32{
+		"CRAWL_ORDER_STATUS_UNSPECIFIED": 0,
+		"CRAWL_ORDER_STATUS_PLANNED":     1,
+		"CRAWL_ORDER_STATUS_SUCCEEDED":   2,
+		"CRAWL_ORDER_STATUS_FAILED":      3,
+		"CRAWL_ORDER_STATUS_ABORTED":     4,
+	}
+)
+
+func (x CrawlOrderStatus) Enum() *CrawlOrderStatus {
+	p := new(CrawlOrderStatus)
+	*p = x
+	return p
+}
+
+func (x CrawlOrderStatus) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (CrawlOrderStatus) Descriptor() protoreflect.EnumDescriptor {
+	return file_exonex_cortex_v1alpha1_crawling_proto_enumTypes[0].Descriptor()
+}
+
+func (CrawlOrderStatus) Type() protoreflect.EnumType {
+	return &file_exonex_cortex_v1alpha1_crawling_proto_enumTypes[0]
+}
+
+func (x CrawlOrderStatus) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use CrawlOrderStatus.Descriptor instead.
+func (CrawlOrderStatus) EnumDescriptor() ([]byte, []int) {
+	return file_exonex_cortex_v1alpha1_crawling_proto_rawDescGZIP(), []int{0}
+}
+
 // A CrawlOrder is a order to Crawl a Website to discover possible Documents that can then be scraped by a scrape order.
 type CrawlOrder struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	PublisherId   string                 `protobuf:"bytes,2,opt,name=publisher_id,json=publisherId,proto3" json:"publisher_id,omitempty"`
-	EntrypointUrl string                 `protobuf:"bytes,3,opt,name=entrypoint_url,json=entrypointUrl,proto3" json:"entrypoint_url,omitempty"`
-	LeaseHolder   *string                `protobuf:"bytes,4,opt,name=lease_holder,json=leaseHolder,proto3,oneof" json:"lease_holder,omitempty"`
-	LeaseUntil    *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=lease_until,json=leaseUntil,proto3,oneof" json:"lease_until,omitempty"`
+	Meta          *ObjectMeta            `protobuf:"bytes,2,opt,name=meta,proto3" json:"meta,omitempty"`
+	PublisherId   string                 `protobuf:"bytes,3,opt,name=publisher_id,json=publisherId,proto3" json:"publisher_id,omitempty"`
+	EntrypointUrl string                 `protobuf:"bytes,4,opt,name=entrypoint_url,json=entrypointUrl,proto3" json:"entrypoint_url,omitempty"`
+	Lease         *Lease                 `protobuf:"bytes,5,opt,name=lease,proto3,oneof" json:"lease,omitempty"`
 	CrawlResult   *CrawlOrderResult      `protobuf:"bytes,6,opt,name=crawl_result,json=crawlResult,proto3,oneof" json:"crawl_result,omitempty"`
 	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	Events        []*LogEvent            `protobuf:"bytes,8,rep,name=events,proto3" json:"events,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -74,6 +130,13 @@ func (x *CrawlOrder) GetId() string {
 	return ""
 }
 
+func (x *CrawlOrder) GetMeta() *ObjectMeta {
+	if x != nil {
+		return x.Meta
+	}
+	return nil
+}
+
 func (x *CrawlOrder) GetPublisherId() string {
 	if x != nil {
 		return x.PublisherId
@@ -88,16 +151,9 @@ func (x *CrawlOrder) GetEntrypointUrl() string {
 	return ""
 }
 
-func (x *CrawlOrder) GetLeaseHolder() string {
-	if x != nil && x.LeaseHolder != nil {
-		return *x.LeaseHolder
-	}
-	return ""
-}
-
-func (x *CrawlOrder) GetLeaseUntil() *timestamppb.Timestamp {
+func (x *CrawlOrder) GetLease() *Lease {
 	if x != nil {
-		return x.LeaseUntil
+		return x.Lease
 	}
 	return nil
 }
@@ -112,6 +168,13 @@ func (x *CrawlOrder) GetCrawlResult() *CrawlOrderResult {
 func (x *CrawlOrder) GetCreatedAt() *timestamppb.Timestamp {
 	if x != nil {
 		return x.CreatedAt
+	}
+	return nil
+}
+
+func (x *CrawlOrder) GetEvents() []*LogEvent {
+	if x != nil {
+		return x.Events
 	}
 	return nil
 }
@@ -192,20 +255,19 @@ var File_exonex_cortex_v1alpha1_crawling_proto protoreflect.FileDescriptor
 
 const file_exonex_cortex_v1alpha1_crawling_proto_rawDesc = "" +
 	"\n" +
-	"%exonex/cortex/v1alpha1/crawling.proto\x12\x16exonex.cortex.v1alpha1\x1a#exonex/cortex/v1alpha1/common.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1cgoogle/protobuf/struct.proto\"\x8f\x03\n" +
+	"%exonex/cortex/v1alpha1/crawling.proto\x12\x16exonex.cortex.v1alpha1\x1a#exonex/cortex/v1alpha1/common.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1cgoogle/protobuf/struct.proto\"\xba\x03\n" +
 	"\n" +
 	"CrawlOrder\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\x12!\n" +
-	"\fpublisher_id\x18\x02 \x01(\tR\vpublisherId\x12%\n" +
-	"\x0eentrypoint_url\x18\x03 \x01(\tR\rentrypointUrl\x12&\n" +
-	"\flease_holder\x18\x04 \x01(\tH\x00R\vleaseHolder\x88\x01\x01\x12@\n" +
-	"\vlease_until\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampH\x01R\n" +
-	"leaseUntil\x88\x01\x01\x12P\n" +
-	"\fcrawl_result\x18\x06 \x01(\v2(.exonex.cortex.v1alpha1.CrawlOrderResultH\x02R\vcrawlResult\x88\x01\x01\x129\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x126\n" +
+	"\x04meta\x18\x02 \x01(\v2\".exonex.cortex.v1alpha1.ObjectMetaR\x04meta\x12!\n" +
+	"\fpublisher_id\x18\x03 \x01(\tR\vpublisherId\x12%\n" +
+	"\x0eentrypoint_url\x18\x04 \x01(\tR\rentrypointUrl\x128\n" +
+	"\x05lease\x18\x05 \x01(\v2\x1d.exonex.cortex.v1alpha1.LeaseH\x00R\x05lease\x88\x01\x01\x12P\n" +
+	"\fcrawl_result\x18\x06 \x01(\v2(.exonex.cortex.v1alpha1.CrawlOrderResultH\x01R\vcrawlResult\x88\x01\x01\x129\n" +
 	"\n" +
-	"created_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAtB\x0f\n" +
-	"\r_lease_holderB\x0e\n" +
-	"\f_lease_untilB\x0f\n" +
+	"created_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x128\n" +
+	"\x06events\x18\b \x03(\v2 .exonex.cortex.v1alpha1.LogEventR\x06eventsB\b\n" +
+	"\x06_leaseB\x0f\n" +
 	"\r_crawl_result\"\xf2\x01\n" +
 	"\x10CrawlOrderResult\x12;\n" +
 	"\x06status\x18\x01 \x01(\x0e2#.exonex.cortex.v1alpha1.OrderStatusR\x06status\x12(\n" +
@@ -213,7 +275,13 @@ const file_exonex_cortex_v1alpha1_crawling_proto_rawDesc = "" +
 	"\x10scrape_order_ids\x18\x03 \x03(\tR\x0escrapeOrderIds\x12;\n" +
 	"\vfinished_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\n" +
 	"finishedAtB\x10\n" +
-	"\x0e_status_reasonB\xf3\x01\n" +
+	"\x0e_status_reason*\xb7\x01\n" +
+	"\x10CrawlOrderStatus\x12\"\n" +
+	"\x1eCRAWL_ORDER_STATUS_UNSPECIFIED\x10\x00\x12\x1e\n" +
+	"\x1aCRAWL_ORDER_STATUS_PLANNED\x10\x01\x12 \n" +
+	"\x1cCRAWL_ORDER_STATUS_SUCCEEDED\x10\x02\x12\x1d\n" +
+	"\x19CRAWL_ORDER_STATUS_FAILED\x10\x03\x12\x1e\n" +
+	"\x1aCRAWL_ORDER_STATUS_ABORTED\x10\x04B\xf3\x01\n" +
 	"\x1acom.exonex.cortex.v1alpha1B\rCrawlingProtoP\x01ZLgithub.com/alexzimmer96/exonex/pkg/api/exonex/cortex/v1alpha1;cortexv1alpha1\xa2\x02\x03ECX\xaa\x02\x16Exonex.Cortex.V1alpha1\xca\x02\x16Exonex\\Cortex\\V1alpha1\xe2\x02\"Exonex\\Cortex\\V1alpha1\\GPBMetadata\xea\x02\x18Exonex::Cortex::V1alpha1b\x06proto3"
 
 var (
@@ -228,24 +296,31 @@ func file_exonex_cortex_v1alpha1_crawling_proto_rawDescGZIP() []byte {
 	return file_exonex_cortex_v1alpha1_crawling_proto_rawDescData
 }
 
+var file_exonex_cortex_v1alpha1_crawling_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
 var file_exonex_cortex_v1alpha1_crawling_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_exonex_cortex_v1alpha1_crawling_proto_goTypes = []any{
-	(*CrawlOrder)(nil),            // 0: exonex.cortex.v1alpha1.CrawlOrder
-	(*CrawlOrderResult)(nil),      // 1: exonex.cortex.v1alpha1.CrawlOrderResult
-	(*timestamppb.Timestamp)(nil), // 2: google.protobuf.Timestamp
-	(OrderStatus)(0),              // 3: exonex.cortex.v1alpha1.OrderStatus
+	(CrawlOrderStatus)(0),         // 0: exonex.cortex.v1alpha1.CrawlOrderStatus
+	(*CrawlOrder)(nil),            // 1: exonex.cortex.v1alpha1.CrawlOrder
+	(*CrawlOrderResult)(nil),      // 2: exonex.cortex.v1alpha1.CrawlOrderResult
+	(*ObjectMeta)(nil),            // 3: exonex.cortex.v1alpha1.ObjectMeta
+	(*Lease)(nil),                 // 4: exonex.cortex.v1alpha1.Lease
+	(*timestamppb.Timestamp)(nil), // 5: google.protobuf.Timestamp
+	(*LogEvent)(nil),              // 6: exonex.cortex.v1alpha1.LogEvent
+	(OrderStatus)(0),              // 7: exonex.cortex.v1alpha1.OrderStatus
 }
 var file_exonex_cortex_v1alpha1_crawling_proto_depIdxs = []int32{
-	2, // 0: exonex.cortex.v1alpha1.CrawlOrder.lease_until:type_name -> google.protobuf.Timestamp
-	1, // 1: exonex.cortex.v1alpha1.CrawlOrder.crawl_result:type_name -> exonex.cortex.v1alpha1.CrawlOrderResult
-	2, // 2: exonex.cortex.v1alpha1.CrawlOrder.created_at:type_name -> google.protobuf.Timestamp
-	3, // 3: exonex.cortex.v1alpha1.CrawlOrderResult.status:type_name -> exonex.cortex.v1alpha1.OrderStatus
-	2, // 4: exonex.cortex.v1alpha1.CrawlOrderResult.finished_at:type_name -> google.protobuf.Timestamp
-	5, // [5:5] is the sub-list for method output_type
-	5, // [5:5] is the sub-list for method input_type
-	5, // [5:5] is the sub-list for extension type_name
-	5, // [5:5] is the sub-list for extension extendee
-	0, // [0:5] is the sub-list for field type_name
+	3, // 0: exonex.cortex.v1alpha1.CrawlOrder.meta:type_name -> exonex.cortex.v1alpha1.ObjectMeta
+	4, // 1: exonex.cortex.v1alpha1.CrawlOrder.lease:type_name -> exonex.cortex.v1alpha1.Lease
+	2, // 2: exonex.cortex.v1alpha1.CrawlOrder.crawl_result:type_name -> exonex.cortex.v1alpha1.CrawlOrderResult
+	5, // 3: exonex.cortex.v1alpha1.CrawlOrder.created_at:type_name -> google.protobuf.Timestamp
+	6, // 4: exonex.cortex.v1alpha1.CrawlOrder.events:type_name -> exonex.cortex.v1alpha1.LogEvent
+	7, // 5: exonex.cortex.v1alpha1.CrawlOrderResult.status:type_name -> exonex.cortex.v1alpha1.OrderStatus
+	5, // 6: exonex.cortex.v1alpha1.CrawlOrderResult.finished_at:type_name -> google.protobuf.Timestamp
+	7, // [7:7] is the sub-list for method output_type
+	7, // [7:7] is the sub-list for method input_type
+	7, // [7:7] is the sub-list for extension type_name
+	7, // [7:7] is the sub-list for extension extendee
+	0, // [0:7] is the sub-list for field type_name
 }
 
 func init() { file_exonex_cortex_v1alpha1_crawling_proto_init() }
@@ -261,13 +336,14 @@ func file_exonex_cortex_v1alpha1_crawling_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_exonex_cortex_v1alpha1_crawling_proto_rawDesc), len(file_exonex_cortex_v1alpha1_crawling_proto_rawDesc)),
-			NumEnums:      0,
+			NumEnums:      1,
 			NumMessages:   2,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
 		GoTypes:           file_exonex_cortex_v1alpha1_crawling_proto_goTypes,
 		DependencyIndexes: file_exonex_cortex_v1alpha1_crawling_proto_depIdxs,
+		EnumInfos:         file_exonex_cortex_v1alpha1_crawling_proto_enumTypes,
 		MessageInfos:      file_exonex_cortex_v1alpha1_crawling_proto_msgTypes,
 	}.Build()
 	File_exonex_cortex_v1alpha1_crawling_proto = out.File

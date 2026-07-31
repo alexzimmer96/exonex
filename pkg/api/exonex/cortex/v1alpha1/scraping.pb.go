@@ -78,12 +78,12 @@ func (ScrapeTrigger) EnumDescriptor() ([]byte, []int) {
 type ScrapeOrder struct {
 	state            protoimpl.MessageState `protogen:"open.v1"`
 	Id               string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	PublisherId      string                 `protobuf:"bytes,2,opt,name=publisher_id,json=publisherId,proto3" json:"publisher_id,omitempty"`
-	Url              string                 `protobuf:"bytes,3,opt,name=url,proto3" json:"url,omitempty"`
-	Trigger          ScrapeTrigger          `protobuf:"varint,4,opt,name=trigger,proto3,enum=exonex.cortex.v1alpha1.ScrapeTrigger" json:"trigger,omitempty"`
-	TriggerReference *string                `protobuf:"bytes,5,opt,name=trigger_reference,json=triggerReference,proto3,oneof" json:"trigger_reference,omitempty"`
-	LeaseHolder      *string                `protobuf:"bytes,6,opt,name=lease_holder,json=leaseHolder,proto3,oneof" json:"lease_holder,omitempty"`
-	LeaseUntil       *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=lease_until,json=leaseUntil,proto3,oneof" json:"lease_until,omitempty"`
+	Meta             *ObjectMeta            `protobuf:"bytes,2,opt,name=meta,proto3" json:"meta,omitempty"`
+	PublisherId      string                 `protobuf:"bytes,3,opt,name=publisher_id,json=publisherId,proto3" json:"publisher_id,omitempty"`
+	Url              string                 `protobuf:"bytes,4,opt,name=url,proto3" json:"url,omitempty"`
+	Trigger          ScrapeTrigger          `protobuf:"varint,5,opt,name=trigger,proto3,enum=exonex.cortex.v1alpha1.ScrapeTrigger" json:"trigger,omitempty"`
+	TriggerReference *string                `protobuf:"bytes,6,opt,name=trigger_reference,json=triggerReference,proto3,oneof" json:"trigger_reference,omitempty"`
+	Lease            *Lease                 `protobuf:"bytes,7,opt,name=lease,proto3,oneof" json:"lease,omitempty"`
 	ScrapeResult     *ScrapeOrderResult     `protobuf:"bytes,8,opt,name=scrape_result,json=scrapeResult,proto3,oneof" json:"scrape_result,omitempty"`
 	CreatedAt        *timestamppb.Timestamp `protobuf:"bytes,9,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	unknownFields    protoimpl.UnknownFields
@@ -127,6 +127,13 @@ func (x *ScrapeOrder) GetId() string {
 	return ""
 }
 
+func (x *ScrapeOrder) GetMeta() *ObjectMeta {
+	if x != nil {
+		return x.Meta
+	}
+	return nil
+}
+
 func (x *ScrapeOrder) GetPublisherId() string {
 	if x != nil {
 		return x.PublisherId
@@ -155,16 +162,9 @@ func (x *ScrapeOrder) GetTriggerReference() string {
 	return ""
 }
 
-func (x *ScrapeOrder) GetLeaseHolder() string {
-	if x != nil && x.LeaseHolder != nil {
-		return *x.LeaseHolder
-	}
-	return ""
-}
-
-func (x *ScrapeOrder) GetLeaseUntil() *timestamppb.Timestamp {
+func (x *ScrapeOrder) GetLease() *Lease {
 	if x != nil {
-		return x.LeaseUntil
+		return x.Lease
 	}
 	return nil
 }
@@ -259,22 +259,20 @@ var File_exonex_cortex_v1alpha1_scraping_proto protoreflect.FileDescriptor
 
 const file_exonex_cortex_v1alpha1_scraping_proto_rawDesc = "" +
 	"\n" +
-	"%exonex/cortex/v1alpha1/scraping.proto\x12\x16exonex.cortex.v1alpha1\x1a#exonex/cortex/v1alpha1/common.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\x88\x04\n" +
+	"%exonex/cortex/v1alpha1/scraping.proto\x12\x16exonex.cortex.v1alpha1\x1a#exonex/cortex/v1alpha1/common.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xf9\x03\n" +
 	"\vScrapeOrder\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\x12!\n" +
-	"\fpublisher_id\x18\x02 \x01(\tR\vpublisherId\x12\x10\n" +
-	"\x03url\x18\x03 \x01(\tR\x03url\x12?\n" +
-	"\atrigger\x18\x04 \x01(\x0e2%.exonex.cortex.v1alpha1.ScrapeTriggerR\atrigger\x120\n" +
-	"\x11trigger_reference\x18\x05 \x01(\tH\x00R\x10triggerReference\x88\x01\x01\x12&\n" +
-	"\flease_holder\x18\x06 \x01(\tH\x01R\vleaseHolder\x88\x01\x01\x12@\n" +
-	"\vlease_until\x18\a \x01(\v2\x1a.google.protobuf.TimestampH\x02R\n" +
-	"leaseUntil\x88\x01\x01\x12S\n" +
-	"\rscrape_result\x18\b \x01(\v2).exonex.cortex.v1alpha1.ScrapeOrderResultH\x03R\fscrapeResult\x88\x01\x01\x129\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x126\n" +
+	"\x04meta\x18\x02 \x01(\v2\".exonex.cortex.v1alpha1.ObjectMetaR\x04meta\x12!\n" +
+	"\fpublisher_id\x18\x03 \x01(\tR\vpublisherId\x12\x10\n" +
+	"\x03url\x18\x04 \x01(\tR\x03url\x12?\n" +
+	"\atrigger\x18\x05 \x01(\x0e2%.exonex.cortex.v1alpha1.ScrapeTriggerR\atrigger\x120\n" +
+	"\x11trigger_reference\x18\x06 \x01(\tH\x00R\x10triggerReference\x88\x01\x01\x128\n" +
+	"\x05lease\x18\a \x01(\v2\x1d.exonex.cortex.v1alpha1.LeaseH\x01R\x05lease\x88\x01\x01\x12S\n" +
+	"\rscrape_result\x18\b \x01(\v2).exonex.cortex.v1alpha1.ScrapeOrderResultH\x02R\fscrapeResult\x88\x01\x01\x129\n" +
 	"\n" +
 	"created_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAtB\x14\n" +
-	"\x12_trigger_referenceB\x0f\n" +
-	"\r_lease_holderB\x0e\n" +
-	"\f_lease_untilB\x10\n" +
+	"\x12_trigger_referenceB\b\n" +
+	"\x06_leaseB\x10\n" +
 	"\x0e_scrape_result\"\xea\x01\n" +
 	"\x11ScrapeOrderResult\x12;\n" +
 	"\x06status\x18\x01 \x01(\x0e2#.exonex.cortex.v1alpha1.OrderStatusR\x06status\x12(\n" +
@@ -309,21 +307,24 @@ var file_exonex_cortex_v1alpha1_scraping_proto_goTypes = []any{
 	(ScrapeTrigger)(0),            // 0: exonex.cortex.v1alpha1.ScrapeTrigger
 	(*ScrapeOrder)(nil),           // 1: exonex.cortex.v1alpha1.ScrapeOrder
 	(*ScrapeOrderResult)(nil),     // 2: exonex.cortex.v1alpha1.ScrapeOrderResult
-	(*timestamppb.Timestamp)(nil), // 3: google.protobuf.Timestamp
-	(OrderStatus)(0),              // 4: exonex.cortex.v1alpha1.OrderStatus
+	(*ObjectMeta)(nil),            // 3: exonex.cortex.v1alpha1.ObjectMeta
+	(*Lease)(nil),                 // 4: exonex.cortex.v1alpha1.Lease
+	(*timestamppb.Timestamp)(nil), // 5: google.protobuf.Timestamp
+	(OrderStatus)(0),              // 6: exonex.cortex.v1alpha1.OrderStatus
 }
 var file_exonex_cortex_v1alpha1_scraping_proto_depIdxs = []int32{
-	0, // 0: exonex.cortex.v1alpha1.ScrapeOrder.trigger:type_name -> exonex.cortex.v1alpha1.ScrapeTrigger
-	3, // 1: exonex.cortex.v1alpha1.ScrapeOrder.lease_until:type_name -> google.protobuf.Timestamp
-	2, // 2: exonex.cortex.v1alpha1.ScrapeOrder.scrape_result:type_name -> exonex.cortex.v1alpha1.ScrapeOrderResult
-	3, // 3: exonex.cortex.v1alpha1.ScrapeOrder.created_at:type_name -> google.protobuf.Timestamp
-	4, // 4: exonex.cortex.v1alpha1.ScrapeOrderResult.status:type_name -> exonex.cortex.v1alpha1.OrderStatus
-	3, // 5: exonex.cortex.v1alpha1.ScrapeOrderResult.finished_at:type_name -> google.protobuf.Timestamp
-	6, // [6:6] is the sub-list for method output_type
-	6, // [6:6] is the sub-list for method input_type
-	6, // [6:6] is the sub-list for extension type_name
-	6, // [6:6] is the sub-list for extension extendee
-	0, // [0:6] is the sub-list for field type_name
+	3, // 0: exonex.cortex.v1alpha1.ScrapeOrder.meta:type_name -> exonex.cortex.v1alpha1.ObjectMeta
+	0, // 1: exonex.cortex.v1alpha1.ScrapeOrder.trigger:type_name -> exonex.cortex.v1alpha1.ScrapeTrigger
+	4, // 2: exonex.cortex.v1alpha1.ScrapeOrder.lease:type_name -> exonex.cortex.v1alpha1.Lease
+	2, // 3: exonex.cortex.v1alpha1.ScrapeOrder.scrape_result:type_name -> exonex.cortex.v1alpha1.ScrapeOrderResult
+	5, // 4: exonex.cortex.v1alpha1.ScrapeOrder.created_at:type_name -> google.protobuf.Timestamp
+	6, // 5: exonex.cortex.v1alpha1.ScrapeOrderResult.status:type_name -> exonex.cortex.v1alpha1.OrderStatus
+	5, // 6: exonex.cortex.v1alpha1.ScrapeOrderResult.finished_at:type_name -> google.protobuf.Timestamp
+	7, // [7:7] is the sub-list for method output_type
+	7, // [7:7] is the sub-list for method input_type
+	7, // [7:7] is the sub-list for extension type_name
+	7, // [7:7] is the sub-list for extension extendee
+	0, // [0:7] is the sub-list for field type_name
 }
 
 func init() { file_exonex_cortex_v1alpha1_scraping_proto_init() }

@@ -1,2 +1,15 @@
 syntax = "proto3";
 package exonex.cortex.v1alpha1;
+
+import "exonex/cortex/v1alpha1/common.proto";
+import "buf/validate/validate.proto";
+import "google/protobuf/timestamp.proto";
+
+// AnalysisExecution is a specific Analysis that should or have been executed for a Document.
+message Analysis {
+  string id = 1;
+  ObjectMeta meta = 2;
+  string document_id = 3;
+  string executor_id = 4;
+  optional Lease lease = 5;
+}

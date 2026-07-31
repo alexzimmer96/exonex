@@ -2,9 +2,7 @@ syntax = "proto3";
 package exonex.cortex.v1alpha1;
 
 import "exonex/cortex/v1alpha1/common.proto";
-
 import "buf/validate/validate.proto";
-
 import "google/protobuf/field_mask.proto";
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/duration.proto";
@@ -30,14 +28,14 @@ enum FeedType {
 // A Publisher is a entity that is publishing content. This can be e.g. a News Agency.
 message Publisher {
   string id = 1;
-  string name = 2;
-  string description = 3;
-  string web_url = 4;
-  repeated Feed feeds = 5;
-  PublisherTdmPolicy tdm_policy = 6;
-  repeated TdmPolicyHistory tdm_status_history = 7;
-  optional string lease_holder = 8;
-  optional google.protobuf.Timestamp lease_until = 9;
+  ObjectMeta meta = 2;
+  string name = 3;
+  string description = 4;
+  string web_url = 5;
+  repeated Feed feeds = 6;
+  PublisherTdmPolicy tdm_policy = 7;
+  repeated TdmPolicyHistory tdm_status_history = 8;
+  optional Lease lease = 9;
   google.protobuf.Timestamp created_at = 10;
   google.protobuf.Timestamp updated_at = 11;
 }
@@ -61,7 +59,6 @@ message TdmPolicyHistory {
   PublisherTdmPolicy tdm_policy = 2;
   google.protobuf.Timestamp created_at = 3;
 }
-
 
 // =====================================================================================================================
 

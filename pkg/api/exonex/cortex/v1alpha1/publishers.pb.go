@@ -135,14 +135,14 @@ func (FeedType) EnumDescriptor() ([]byte, []int) {
 type Publisher struct {
 	state            protoimpl.MessageState `protogen:"open.v1"`
 	Id               string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	Name             string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
-	Description      string                 `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
-	WebUrl           string                 `protobuf:"bytes,4,opt,name=web_url,json=webUrl,proto3" json:"web_url,omitempty"`
-	Feeds            []*Feed                `protobuf:"bytes,5,rep,name=feeds,proto3" json:"feeds,omitempty"`
-	TdmPolicy        PublisherTdmPolicy     `protobuf:"varint,6,opt,name=tdm_policy,json=tdmPolicy,proto3,enum=exonex.cortex.v1alpha1.PublisherTdmPolicy" json:"tdm_policy,omitempty"`
-	TdmStatusHistory []*TdmPolicyHistory    `protobuf:"bytes,7,rep,name=tdm_status_history,json=tdmStatusHistory,proto3" json:"tdm_status_history,omitempty"`
-	LeaseHolder      *string                `protobuf:"bytes,8,opt,name=lease_holder,json=leaseHolder,proto3,oneof" json:"lease_holder,omitempty"`
-	LeaseUntil       *timestamppb.Timestamp `protobuf:"bytes,9,opt,name=lease_until,json=leaseUntil,proto3,oneof" json:"lease_until,omitempty"`
+	Meta             *ObjectMeta            `protobuf:"bytes,2,opt,name=meta,proto3" json:"meta,omitempty"`
+	Name             string                 `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
+	Description      string                 `protobuf:"bytes,4,opt,name=description,proto3" json:"description,omitempty"`
+	WebUrl           string                 `protobuf:"bytes,5,opt,name=web_url,json=webUrl,proto3" json:"web_url,omitempty"`
+	Feeds            []*Feed                `protobuf:"bytes,6,rep,name=feeds,proto3" json:"feeds,omitempty"`
+	TdmPolicy        PublisherTdmPolicy     `protobuf:"varint,7,opt,name=tdm_policy,json=tdmPolicy,proto3,enum=exonex.cortex.v1alpha1.PublisherTdmPolicy" json:"tdm_policy,omitempty"`
+	TdmStatusHistory []*TdmPolicyHistory    `protobuf:"bytes,8,rep,name=tdm_status_history,json=tdmStatusHistory,proto3" json:"tdm_status_history,omitempty"`
+	Lease            *Lease                 `protobuf:"bytes,9,opt,name=lease,proto3,oneof" json:"lease,omitempty"`
 	CreatedAt        *timestamppb.Timestamp `protobuf:"bytes,10,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	UpdatedAt        *timestamppb.Timestamp `protobuf:"bytes,11,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
 	unknownFields    protoimpl.UnknownFields
@@ -184,6 +184,13 @@ func (x *Publisher) GetId() string {
 		return x.Id
 	}
 	return ""
+}
+
+func (x *Publisher) GetMeta() *ObjectMeta {
+	if x != nil {
+		return x.Meta
+	}
+	return nil
 }
 
 func (x *Publisher) GetName() string {
@@ -228,16 +235,9 @@ func (x *Publisher) GetTdmStatusHistory() []*TdmPolicyHistory {
 	return nil
 }
 
-func (x *Publisher) GetLeaseHolder() string {
-	if x != nil && x.LeaseHolder != nil {
-		return *x.LeaseHolder
-	}
-	return ""
-}
-
-func (x *Publisher) GetLeaseUntil() *timestamppb.Timestamp {
+func (x *Publisher) GetLease() *Lease {
 	if x != nil {
-		return x.LeaseUntil
+		return x.Lease
 	}
 	return nil
 }
@@ -973,26 +973,24 @@ var File_exonex_cortex_v1alpha1_publishers_proto protoreflect.FileDescriptor
 
 const file_exonex_cortex_v1alpha1_publishers_proto_rawDesc = "" +
 	"\n" +
-	"'exonex/cortex/v1alpha1/publishers.proto\x12\x16exonex.cortex.v1alpha1\x1a#exonex/cortex/v1alpha1/common.proto\x1a\x1bbuf/validate/validate.proto\x1a google/protobuf/field_mask.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1egoogle/protobuf/duration.proto\"\xc2\x04\n" +
+	"'exonex/cortex/v1alpha1/publishers.proto\x12\x16exonex.cortex.v1alpha1\x1a#exonex/cortex/v1alpha1/common.proto\x1a\x1bbuf/validate/validate.proto\x1a google/protobuf/field_mask.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1egoogle/protobuf/duration.proto\"\xb3\x04\n" +
 	"\tPublisher\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
-	"\x04name\x18\x02 \x01(\tR\x04name\x12 \n" +
-	"\vdescription\x18\x03 \x01(\tR\vdescription\x12\x17\n" +
-	"\aweb_url\x18\x04 \x01(\tR\x06webUrl\x122\n" +
-	"\x05feeds\x18\x05 \x03(\v2\x1c.exonex.cortex.v1alpha1.FeedR\x05feeds\x12I\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x126\n" +
+	"\x04meta\x18\x02 \x01(\v2\".exonex.cortex.v1alpha1.ObjectMetaR\x04meta\x12\x12\n" +
+	"\x04name\x18\x03 \x01(\tR\x04name\x12 \n" +
+	"\vdescription\x18\x04 \x01(\tR\vdescription\x12\x17\n" +
+	"\aweb_url\x18\x05 \x01(\tR\x06webUrl\x122\n" +
+	"\x05feeds\x18\x06 \x03(\v2\x1c.exonex.cortex.v1alpha1.FeedR\x05feeds\x12I\n" +
 	"\n" +
-	"tdm_policy\x18\x06 \x01(\x0e2*.exonex.cortex.v1alpha1.PublisherTdmPolicyR\ttdmPolicy\x12V\n" +
-	"\x12tdm_status_history\x18\a \x03(\v2(.exonex.cortex.v1alpha1.TdmPolicyHistoryR\x10tdmStatusHistory\x12&\n" +
-	"\flease_holder\x18\b \x01(\tH\x00R\vleaseHolder\x88\x01\x01\x12@\n" +
-	"\vlease_until\x18\t \x01(\v2\x1a.google.protobuf.TimestampH\x01R\n" +
-	"leaseUntil\x88\x01\x01\x129\n" +
+	"tdm_policy\x18\a \x01(\x0e2*.exonex.cortex.v1alpha1.PublisherTdmPolicyR\ttdmPolicy\x12V\n" +
+	"\x12tdm_status_history\x18\b \x03(\v2(.exonex.cortex.v1alpha1.TdmPolicyHistoryR\x10tdmStatusHistory\x128\n" +
+	"\x05lease\x18\t \x01(\v2\x1d.exonex.cortex.v1alpha1.LeaseH\x00R\x05lease\x88\x01\x01\x129\n" +
 	"\n" +
 	"created_at\x18\n" +
 	" \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
 	"\n" +
-	"updated_at\x18\v \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAtB\x0f\n" +
-	"\r_lease_holderB\x0e\n" +
-	"\f_lease_until\"\xc2\x03\n" +
+	"updated_at\x18\v \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAtB\b\n" +
+	"\x06_lease\"\xc2\x03\n" +
 	"\x04Feed\x12=\n" +
 	"\tfeed_type\x18\x01 \x01(\x0e2 .exonex.cortex.v1alpha1.FeedTypeR\bfeedType\x12\x10\n" +
 	"\x03url\x18\x02 \x01(\tR\x03url\x127\n" +
@@ -1099,47 +1097,50 @@ var file_exonex_cortex_v1alpha1_publishers_proto_goTypes = []any{
 	(*GetPublishersOfLeaserHolderRequest)(nil),  // 13: exonex.cortex.v1alpha1.GetPublishersOfLeaserHolderRequest
 	(*GetPublishersOfLeaserHolderResponse)(nil), // 14: exonex.cortex.v1alpha1.GetPublishersOfLeaserHolderResponse
 	(*AddPublisherRequest_Feed)(nil),            // 15: exonex.cortex.v1alpha1.AddPublisherRequest.Feed
-	(*timestamppb.Timestamp)(nil),               // 16: google.protobuf.Timestamp
-	(*fieldmaskpb.FieldMask)(nil),               // 17: google.protobuf.FieldMask
-	(ListOrder)(0),                              // 18: exonex.cortex.v1alpha1.ListOrder
-	(*durationpb.Duration)(nil),                 // 19: google.protobuf.Duration
+	(*ObjectMeta)(nil),                          // 16: exonex.cortex.v1alpha1.ObjectMeta
+	(*Lease)(nil),                               // 17: exonex.cortex.v1alpha1.Lease
+	(*timestamppb.Timestamp)(nil),               // 18: google.protobuf.Timestamp
+	(*fieldmaskpb.FieldMask)(nil),               // 19: google.protobuf.FieldMask
+	(ListOrder)(0),                              // 20: exonex.cortex.v1alpha1.ListOrder
+	(*durationpb.Duration)(nil),                 // 21: google.protobuf.Duration
 }
 var file_exonex_cortex_v1alpha1_publishers_proto_depIdxs = []int32{
-	3,  // 0: exonex.cortex.v1alpha1.Publisher.feeds:type_name -> exonex.cortex.v1alpha1.Feed
-	0,  // 1: exonex.cortex.v1alpha1.Publisher.tdm_policy:type_name -> exonex.cortex.v1alpha1.PublisherTdmPolicy
-	4,  // 2: exonex.cortex.v1alpha1.Publisher.tdm_status_history:type_name -> exonex.cortex.v1alpha1.TdmPolicyHistory
-	16, // 3: exonex.cortex.v1alpha1.Publisher.lease_until:type_name -> google.protobuf.Timestamp
-	16, // 4: exonex.cortex.v1alpha1.Publisher.created_at:type_name -> google.protobuf.Timestamp
-	16, // 5: exonex.cortex.v1alpha1.Publisher.updated_at:type_name -> google.protobuf.Timestamp
-	1,  // 6: exonex.cortex.v1alpha1.Feed.feed_type:type_name -> exonex.cortex.v1alpha1.FeedType
-	16, // 7: exonex.cortex.v1alpha1.Feed.last_polled_at:type_name -> google.protobuf.Timestamp
-	16, // 8: exonex.cortex.v1alpha1.Feed.last_polled_last_modified:type_name -> google.protobuf.Timestamp
-	0,  // 9: exonex.cortex.v1alpha1.TdmPolicyHistory.tdm_policy:type_name -> exonex.cortex.v1alpha1.PublisherTdmPolicy
-	16, // 10: exonex.cortex.v1alpha1.TdmPolicyHistory.created_at:type_name -> google.protobuf.Timestamp
-	17, // 11: exonex.cortex.v1alpha1.ListPublishersRequest.field_mask:type_name -> google.protobuf.FieldMask
-	18, // 12: exonex.cortex.v1alpha1.ListPublishersRequest.list_order:type_name -> exonex.cortex.v1alpha1.ListOrder
-	2,  // 13: exonex.cortex.v1alpha1.ListPublishersResponse.items:type_name -> exonex.cortex.v1alpha1.Publisher
-	2,  // 14: exonex.cortex.v1alpha1.GetPublisherResponse.item:type_name -> exonex.cortex.v1alpha1.Publisher
-	2,  // 15: exonex.cortex.v1alpha1.AddPublisherResponse.item:type_name -> exonex.cortex.v1alpha1.Publisher
-	19, // 16: exonex.cortex.v1alpha1.GetPublishersForProcessionRequest.lease_duration:type_name -> google.protobuf.Duration
-	2,  // 17: exonex.cortex.v1alpha1.GetPublishersForProcessionResponse.items:type_name -> exonex.cortex.v1alpha1.Publisher
-	2,  // 18: exonex.cortex.v1alpha1.GetPublishersOfLeaserHolderResponse.items:type_name -> exonex.cortex.v1alpha1.Publisher
-	1,  // 19: exonex.cortex.v1alpha1.AddPublisherRequest.Feed.feed_type:type_name -> exonex.cortex.v1alpha1.FeedType
-	5,  // 20: exonex.cortex.v1alpha1.PublisherService.ListPublishers:input_type -> exonex.cortex.v1alpha1.ListPublishersRequest
-	7,  // 21: exonex.cortex.v1alpha1.PublisherService.GetPublisher:input_type -> exonex.cortex.v1alpha1.GetPublisherRequest
-	9,  // 22: exonex.cortex.v1alpha1.PublisherService.AddPublisher:input_type -> exonex.cortex.v1alpha1.AddPublisherRequest
-	11, // 23: exonex.cortex.v1alpha1.PublisherService.GetPublishersForProcession:input_type -> exonex.cortex.v1alpha1.GetPublishersForProcessionRequest
-	13, // 24: exonex.cortex.v1alpha1.PublisherService.GetPublishersOfLeaserHolder:input_type -> exonex.cortex.v1alpha1.GetPublishersOfLeaserHolderRequest
-	6,  // 25: exonex.cortex.v1alpha1.PublisherService.ListPublishers:output_type -> exonex.cortex.v1alpha1.ListPublishersResponse
-	8,  // 26: exonex.cortex.v1alpha1.PublisherService.GetPublisher:output_type -> exonex.cortex.v1alpha1.GetPublisherResponse
-	10, // 27: exonex.cortex.v1alpha1.PublisherService.AddPublisher:output_type -> exonex.cortex.v1alpha1.AddPublisherResponse
-	12, // 28: exonex.cortex.v1alpha1.PublisherService.GetPublishersForProcession:output_type -> exonex.cortex.v1alpha1.GetPublishersForProcessionResponse
-	14, // 29: exonex.cortex.v1alpha1.PublisherService.GetPublishersOfLeaserHolder:output_type -> exonex.cortex.v1alpha1.GetPublishersOfLeaserHolderResponse
-	25, // [25:30] is the sub-list for method output_type
-	20, // [20:25] is the sub-list for method input_type
-	20, // [20:20] is the sub-list for extension type_name
-	20, // [20:20] is the sub-list for extension extendee
-	0,  // [0:20] is the sub-list for field type_name
+	16, // 0: exonex.cortex.v1alpha1.Publisher.meta:type_name -> exonex.cortex.v1alpha1.ObjectMeta
+	3,  // 1: exonex.cortex.v1alpha1.Publisher.feeds:type_name -> exonex.cortex.v1alpha1.Feed
+	0,  // 2: exonex.cortex.v1alpha1.Publisher.tdm_policy:type_name -> exonex.cortex.v1alpha1.PublisherTdmPolicy
+	4,  // 3: exonex.cortex.v1alpha1.Publisher.tdm_status_history:type_name -> exonex.cortex.v1alpha1.TdmPolicyHistory
+	17, // 4: exonex.cortex.v1alpha1.Publisher.lease:type_name -> exonex.cortex.v1alpha1.Lease
+	18, // 5: exonex.cortex.v1alpha1.Publisher.created_at:type_name -> google.protobuf.Timestamp
+	18, // 6: exonex.cortex.v1alpha1.Publisher.updated_at:type_name -> google.protobuf.Timestamp
+	1,  // 7: exonex.cortex.v1alpha1.Feed.feed_type:type_name -> exonex.cortex.v1alpha1.FeedType
+	18, // 8: exonex.cortex.v1alpha1.Feed.last_polled_at:type_name -> google.protobuf.Timestamp
+	18, // 9: exonex.cortex.v1alpha1.Feed.last_polled_last_modified:type_name -> google.protobuf.Timestamp
+	0,  // 10: exonex.cortex.v1alpha1.TdmPolicyHistory.tdm_policy:type_name -> exonex.cortex.v1alpha1.PublisherTdmPolicy
+	18, // 11: exonex.cortex.v1alpha1.TdmPolicyHistory.created_at:type_name -> google.protobuf.Timestamp
+	19, // 12: exonex.cortex.v1alpha1.ListPublishersRequest.field_mask:type_name -> google.protobuf.FieldMask
+	20, // 13: exonex.cortex.v1alpha1.ListPublishersRequest.list_order:type_name -> exonex.cortex.v1alpha1.ListOrder
+	2,  // 14: exonex.cortex.v1alpha1.ListPublishersResponse.items:type_name -> exonex.cortex.v1alpha1.Publisher
+	2,  // 15: exonex.cortex.v1alpha1.GetPublisherResponse.item:type_name -> exonex.cortex.v1alpha1.Publisher
+	2,  // 16: exonex.cortex.v1alpha1.AddPublisherResponse.item:type_name -> exonex.cortex.v1alpha1.Publisher
+	21, // 17: exonex.cortex.v1alpha1.GetPublishersForProcessionRequest.lease_duration:type_name -> google.protobuf.Duration
+	2,  // 18: exonex.cortex.v1alpha1.GetPublishersForProcessionResponse.items:type_name -> exonex.cortex.v1alpha1.Publisher
+	2,  // 19: exonex.cortex.v1alpha1.GetPublishersOfLeaserHolderResponse.items:type_name -> exonex.cortex.v1alpha1.Publisher
+	1,  // 20: exonex.cortex.v1alpha1.AddPublisherRequest.Feed.feed_type:type_name -> exonex.cortex.v1alpha1.FeedType
+	5,  // 21: exonex.cortex.v1alpha1.PublisherService.ListPublishers:input_type -> exonex.cortex.v1alpha1.ListPublishersRequest
+	7,  // 22: exonex.cortex.v1alpha1.PublisherService.GetPublisher:input_type -> exonex.cortex.v1alpha1.GetPublisherRequest
+	9,  // 23: exonex.cortex.v1alpha1.PublisherService.AddPublisher:input_type -> exonex.cortex.v1alpha1.AddPublisherRequest
+	11, // 24: exonex.cortex.v1alpha1.PublisherService.GetPublishersForProcession:input_type -> exonex.cortex.v1alpha1.GetPublishersForProcessionRequest
+	13, // 25: exonex.cortex.v1alpha1.PublisherService.GetPublishersOfLeaserHolder:input_type -> exonex.cortex.v1alpha1.GetPublishersOfLeaserHolderRequest
+	6,  // 26: exonex.cortex.v1alpha1.PublisherService.ListPublishers:output_type -> exonex.cortex.v1alpha1.ListPublishersResponse
+	8,  // 27: exonex.cortex.v1alpha1.PublisherService.GetPublisher:output_type -> exonex.cortex.v1alpha1.GetPublisherResponse
+	10, // 28: exonex.cortex.v1alpha1.PublisherService.AddPublisher:output_type -> exonex.cortex.v1alpha1.AddPublisherResponse
+	12, // 29: exonex.cortex.v1alpha1.PublisherService.GetPublishersForProcession:output_type -> exonex.cortex.v1alpha1.GetPublishersForProcessionResponse
+	14, // 30: exonex.cortex.v1alpha1.PublisherService.GetPublishersOfLeaserHolder:output_type -> exonex.cortex.v1alpha1.GetPublishersOfLeaserHolderResponse
+	26, // [26:31] is the sub-list for method output_type
+	21, // [21:26] is the sub-list for method input_type
+	21, // [21:21] is the sub-list for extension type_name
+	21, // [21:21] is the sub-list for extension extendee
+	0,  // [0:21] is the sub-list for field type_name
 }
 
 func init() { file_exonex_cortex_v1alpha1_publishers_proto_init() }

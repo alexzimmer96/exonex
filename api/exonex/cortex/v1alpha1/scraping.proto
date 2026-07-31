@@ -2,7 +2,6 @@ syntax = "proto3";
 package exonex.cortex.v1alpha1;
 
 import "exonex/cortex/v1alpha1/common.proto";
-
 import "google/protobuf/timestamp.proto";
 
 // =====================================================================================================================
@@ -17,12 +16,12 @@ enum ScrapeTrigger {
 // A ScrapeOrder is a concrete order to scrape one web resource and save it as a Document.
 message ScrapeOrder {
   string id = 1;
-  string publisher_id = 2;
-  string url = 3;
-  ScrapeTrigger trigger = 4;
-  optional string trigger_reference = 5;
-  optional string lease_holder = 6;
-  optional google.protobuf.Timestamp lease_until = 7;
+  ObjectMeta meta = 2;
+  string publisher_id = 3;
+  string url = 4;
+  ScrapeTrigger trigger = 5;
+  optional string trigger_reference = 6;
+  optional Lease lease = 7;
   optional ScrapeOrderResult scrape_result = 8;
   google.protobuf.Timestamp created_at = 9;
 }
