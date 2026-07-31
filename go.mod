@@ -1,4 +1,4 @@
-module github.com/alexzimmer96/scraping
+module github.com/alexzimmer96/exonex
 
 go 1.26
 

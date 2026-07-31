@@ -1,0 +1,15 @@
+syntax = "proto3";
+package exonex.cortex.v1alpha1;
+
+enum ListOrder {
+  LIST_ORDER_UNSPECIFIED = 0;
+  LIST_ORDER_OLDEST_FIRST = 1;
+  LIST_ORDER_NEWEST_FIRST = 2;
+}
+
+enum OrderStatus {
+  ORDER_STATUS_UNSPECIFIED = 0;
+  ORDER_STATUS_PLANNED = 1;
+  ORDER_STATUS_SUCCEEDED = 2;
+  ORDER_STATUS_FAILED = 3;
+}

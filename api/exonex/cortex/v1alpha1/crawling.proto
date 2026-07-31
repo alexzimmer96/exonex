@@ -1,0 +1,34 @@
+syntax = "proto3";
+package exonex.cortex.v1alpha1;
+
+import "exonex/cortex/v1alpha1/common.proto";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/struct.proto";
+
+// =====================================================================================================================
+
+
+// =====================================================================================================================
+
+// A CrawlOrder is a order to Crawl a Website to discover possible Documents that can then be scraped by a scrape order.
+message CrawlOrder {
+  string id = 1;
+  string publisher_id = 2;
+  string entrypoint_url = 3;
+  optional string lease_holder = 4;
+  optional google.protobuf.Timestamp lease_until = 5;
+  optional CrawlOrderResult crawl_result = 6;
+  google.protobuf.Timestamp created_at = 7;
+}
+
+// A result tracks metadata to a Crawl- or ScrapeOrder.
+// It is typically present after the Order has been executed.
+message CrawlOrderResult {
+  // The status_reason field can be used to add additional context on why the CrawlOrderResult is in the
+  // current OrderStatus.
+  OrderStatus status = 1;
+  optional string status_reason = 2;
+  repeated string scrape_order_ids = 3;
+  google.protobuf.Timestamp finished_at = 4;
+}

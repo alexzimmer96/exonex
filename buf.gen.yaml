@@ -8,7 +8,7 @@ managed:
       module: buf.build/bufbuild/protovalidate
   override:
     - file_option: go_package_prefix
-      value: github.com/alexzimmer96/scraping/pkg/api
+      value: github.com/alexzimmer96/exonex/pkg/api
 plugins:
   - remote: buf.build/connectrpc/go:v1.20.0
     out: pkg/api

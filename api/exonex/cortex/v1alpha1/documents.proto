@@ -1,0 +1,115 @@
+syntax = "proto3";
+package exonex.cortex.v1alpha1;
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/struct.proto";
+
+// =====================================================================================================================
+
+enum DocumentType {
+  DOCUMENT_TYPE_UNSPECIFIED = 0;
+  DOCUMENT_TYPE_LEGAL_NOTICE = 1;
+  DOCUMENT_TYPE_ROBOTS_TXT = 2;
+  DOCUMENT_TYPE_ARTICLE = 3;
+  DOCUMENT_TYPE_SOCIAL = 4;
+  DOCUMENT_TYPE_JOB_POSTING = 5;
+}
+
+enum ArtifactFormat {
+  ARTIFACT_FORMAT_UNSPECIFIED = 0;
+  ARTIFACT_FORMAT_HTML = 1;
+  ARTIFACT_FORMAT_PDF = 2;
+  ARTIFACT_FORMAT_IMAGE = 3;
+  ARTIFACT_FORMAT_MARKDOWN = 4;
+  ARTIFACT_FORMAT_CLEAN_MARKDOWN = 5;
+}
+
+enum DocumentTdmStatus {
+  DOCUMENT_TDM_STATUS_UNSPECIFIED = 0;
+  DOCUMENT_TDM_STATUS_ALLOWED = 1;
+  DOCUMENT_TDM_STATUS_OPT_OUT_DETECTED = 2;
+}
+
+enum ExecutionStatus {
+  EXECUTION_STATUS_UNSPECIFIED = 0;
+  EXECUTION_STATUS_IN_PROGRESS = 1;
+  EXECUTION_STATUS_SUCCEEDED = 2;
+  EXECUTION_STATUS_FAILED = 3;
+}
+
+// A Document is one discovered Document like a News Article.
+message Document {
+  string id = 1;
+  string publisher_id = 2;
+  // original_url is the URL that lead to the creation of this document.
+  string original_url = 3;
+  // scrape_order_id is a reference to the ScrapeOrder that produced this document.
+  string scrape_order_id = 4;
+  DocumentType document_type = 5;
+  repeated DocumentArtifact artifacts = 6;
+  repeated AnalysisExecution analysis_executions = 7;
+  DocumentTdmStatus tdm_status = 8;
+  optional google.protobuf.Timestamp published_at = 9;
+  google.protobuf.Timestamp created_at = 10;
+}
+
+// An Artifact is a file that has been produced for a Document either from Scraping or from Analysis.
+message DocumentArtifact {
+  string id = 1;
+  // The analysis_execution_id is an optional reference if this artifact has been produced not by a scrape job
+  // but by a AnalysisExecution.
+  optional string analysis_execution_id = 2;
+  ArtifactFormat format = 3;
+  string storage_url = 4;
+  int64 size_bytes = 5;
+  string mime_type = 6;
+  google.protobuf.Timestamp created_at = 7;
+}
+
+// One specific Result of a Analysis that has been performed for a Document.
+message DocumentAnalysis {
+  optional DocumentSummaryResult primary_summary = 1;
+  repeated DocumentSummaryResult summary_results = 2;
+  optional EntityAnalysis primary_entity_analysis = 3;
+  repeated EntityAnalysis entity_analyses = 4;
+}
+
+// AnalysisExecution is a specific Analysis that should or have been executed for a Document.
+message AnalysisExecution {
+  string id = 1;
+  string executor_id = 2;
+  ExecutionStatus execution_status = 3;
+  // The status_reason field can be used to add additional context on why the AnalysisExecution is in the
+  // current ExecutionStatus.
+  optional string status_reason = 4;
+  optional string lease_holder = 5;
+  optional google.protobuf.Timestamp lease_until = 6;
+  google.protobuf.Timestamp created_at = 7;
+}
+
+// The DocumentSummaryResult contains basic data about an Document, like a title and short summary.
+message DocumentSummaryResult {
+  string analysis_execution_id = 1;
+  string executor_id = 2;
+  string title = 3;
+  string short_summary = 4;
+  string executive_summary = 5;
+  repeated string key_takeaways = 6;
+}
+
+// =====================================================================================================================
+
+// A single Entity that has been recognized as part of an Entity Analysis.
+message RecognizedEntity {
+  string name = 1;
+  string category = 2;
+  float relevance = 3;
+}
+
+// Contains important Entities that haven been extracted from the Document.
+message EntityAnalysis {
+  string analysis_execution_id = 1;
+  string executor_id = 2;
+  repeated RecognizedEntity entities = 3;
+}
+
