@@ -134,6 +134,7 @@ type ObjectMeta struct {
 	Finalizers    []string               `protobuf:"bytes,2,rep,name=finalizers,proto3" json:"finalizers,omitempty"`
 	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	LogEvents     []*LogEvent            `protobuf:"bytes,4,rep,name=log_events,json=logEvents,proto3" json:"log_events,omitempty"`
+	Lease         *Lease                 `protobuf:"bytes,5,opt,name=lease,proto3,oneof" json:"lease,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -192,6 +193,13 @@ func (x *ObjectMeta) GetCreatedAt() *timestamppb.Timestamp {
 func (x *ObjectMeta) GetLogEvents() []*LogEvent {
 	if x != nil {
 		return x.LogEvents
+	}
+	return nil
+}
+
+func (x *ObjectMeta) GetLease() *Lease {
+	if x != nil {
+		return x.Lease
 	}
 	return nil
 }
@@ -268,8 +276,10 @@ func (x *LogEvent) GetRetentionTime() *timestamppb.Timestamp {
 // A Lease is the signal that the Object is currently hold by another process for processing.
 type Lease struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	LeaseHolder   string                 `protobuf:"bytes,1,opt,name=lease_holder,json=leaseHolder,proto3" json:"lease_holder,omitempty"`
-	LeaseUntil    *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=lease_until,json=leaseUntil,proto3" json:"lease_until,omitempty"`
+	Holder        string                 `protobuf:"bytes,1,opt,name=holder,proto3" json:"holder,omitempty"`
+	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	RenewedAt     *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=renewed_at,json=renewedAt,proto3" json:"renewed_at,omitempty"`
+	ExpiresAt     *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=expires_at,json=expiresAt,proto3" json:"expires_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -304,16 +314,30 @@ func (*Lease) Descriptor() ([]byte, []int) {
 	return file_exonex_cortex_v1alpha1_common_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *Lease) GetLeaseHolder() string {
+func (x *Lease) GetHolder() string {
 	if x != nil {
-		return x.LeaseHolder
+		return x.Holder
 	}
 	return ""
 }
 
-func (x *Lease) GetLeaseUntil() *timestamppb.Timestamp {
+func (x *Lease) GetCreatedAt() *timestamppb.Timestamp {
 	if x != nil {
-		return x.LeaseUntil
+		return x.CreatedAt
+	}
+	return nil
+}
+
+func (x *Lease) GetRenewedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.RenewedAt
+	}
+	return nil
+}
+
+func (x *Lease) GetExpiresAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.ExpiresAt
 	}
 	return nil
 }
@@ -322,7 +346,7 @@ var File_exonex_cortex_v1alpha1_common_proto protoreflect.FileDescriptor
 
 const file_exonex_cortex_v1alpha1_common_proto_rawDesc = "" +
 	"\n" +
-	"#exonex/cortex/v1alpha1/common.proto\x12\x16exonex.cortex.v1alpha1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1egoogle/protobuf/duration.proto\"\xbf\x02\n" +
+	"#exonex/cortex/v1alpha1/common.proto\x12\x16exonex.cortex.v1alpha1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1egoogle/protobuf/duration.proto\"\x83\x03\n" +
 	"\n" +
 	"ObjectMeta\x12U\n" +
 	"\vannotations\x18\x01 \x03(\v23.exonex.cortex.v1alpha1.ObjectMeta.AnnotationsEntryR\vannotations\x12\x1e\n" +
@@ -332,20 +356,26 @@ const file_exonex_cortex_v1alpha1_common_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x12?\n" +
 	"\n" +
-	"log_events\x18\x04 \x03(\v2 .exonex.cortex.v1alpha1.LogEventR\tlogEvents\x1a>\n" +
+	"log_events\x18\x04 \x03(\v2 .exonex.cortex.v1alpha1.LogEventR\tlogEvents\x128\n" +
+	"\x05lease\x18\x05 \x01(\v2\x1d.exonex.cortex.v1alpha1.LeaseH\x00R\x05lease\x88\x01\x01\x1a>\n" +
 	"\x10AnnotationsEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\xc7\x01\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01B\b\n" +
+	"\x06_lease\"\xc7\x01\n" +
 	"\bLogEvent\x12.\n" +
 	"\x04time\x18\x01 \x01(\v2\x1a.google.protobuf.TimestampR\x04time\x12\x16\n" +
 	"\x06author\x18\x02 \x01(\tR\x06author\x12\x18\n" +
 	"\amessage\x18\x03 \x01(\tR\amessage\x12F\n" +
 	"\x0eretention_time\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampH\x00R\rretentionTime\x88\x01\x01B\x11\n" +
-	"\x0f_retention_time\"g\n" +
-	"\x05Lease\x12!\n" +
-	"\flease_holder\x18\x01 \x01(\tR\vleaseHolder\x12;\n" +
-	"\vlease_until\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\n" +
-	"leaseUntil*a\n" +
+	"\x0f_retention_time\"\xd0\x01\n" +
+	"\x05Lease\x12\x16\n" +
+	"\x06holder\x18\x01 \x01(\tR\x06holder\x129\n" +
+	"\n" +
+	"created_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
+	"\n" +
+	"renewed_at\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\trenewedAt\x129\n" +
+	"\n" +
+	"expires_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\texpiresAt*a\n" +
 	"\tListOrder\x12\x1a\n" +
 	"\x16LIST_ORDER_UNSPECIFIED\x10\x00\x12\x1b\n" +
 	"\x17LIST_ORDER_OLDEST_FIRST\x10\x01\x12\x1b\n" +
@@ -385,14 +415,17 @@ var file_exonex_cortex_v1alpha1_common_proto_depIdxs = []int32{
 	5, // 0: exonex.cortex.v1alpha1.ObjectMeta.annotations:type_name -> exonex.cortex.v1alpha1.ObjectMeta.AnnotationsEntry
 	6, // 1: exonex.cortex.v1alpha1.ObjectMeta.created_at:type_name -> google.protobuf.Timestamp
 	3, // 2: exonex.cortex.v1alpha1.ObjectMeta.log_events:type_name -> exonex.cortex.v1alpha1.LogEvent
-	6, // 3: exonex.cortex.v1alpha1.LogEvent.time:type_name -> google.protobuf.Timestamp
-	6, // 4: exonex.cortex.v1alpha1.LogEvent.retention_time:type_name -> google.protobuf.Timestamp
-	6, // 5: exonex.cortex.v1alpha1.Lease.lease_until:type_name -> google.protobuf.Timestamp
-	6, // [6:6] is the sub-list for method output_type
-	6, // [6:6] is the sub-list for method input_type
-	6, // [6:6] is the sub-list for extension type_name
-	6, // [6:6] is the sub-list for extension extendee
-	0, // [0:6] is the sub-list for field type_name
+	4, // 3: exonex.cortex.v1alpha1.ObjectMeta.lease:type_name -> exonex.cortex.v1alpha1.Lease
+	6, // 4: exonex.cortex.v1alpha1.LogEvent.time:type_name -> google.protobuf.Timestamp
+	6, // 5: exonex.cortex.v1alpha1.LogEvent.retention_time:type_name -> google.protobuf.Timestamp
+	6, // 6: exonex.cortex.v1alpha1.Lease.created_at:type_name -> google.protobuf.Timestamp
+	6, // 7: exonex.cortex.v1alpha1.Lease.renewed_at:type_name -> google.protobuf.Timestamp
+	6, // 8: exonex.cortex.v1alpha1.Lease.expires_at:type_name -> google.protobuf.Timestamp
+	9, // [9:9] is the sub-list for method output_type
+	9, // [9:9] is the sub-list for method input_type
+	9, // [9:9] is the sub-list for extension type_name
+	9, // [9:9] is the sub-list for extension extendee
+	0, // [0:9] is the sub-list for field type_name
 }
 
 func init() { file_exonex_cortex_v1alpha1_common_proto_init() }
@@ -400,6 +433,7 @@ func file_exonex_cortex_v1alpha1_common_proto_init() {
 	if File_exonex_cortex_v1alpha1_common_proto != nil {
 		return
 	}
+	file_exonex_cortex_v1alpha1_common_proto_msgTypes[0].OneofWrappers = []any{}
 	file_exonex_cortex_v1alpha1_common_proto_msgTypes[1].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
