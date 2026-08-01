@@ -3,7 +3,6 @@ package exonex.cortex.v1alpha1;
 
 import "exonex/cortex/v1alpha1/common.proto";
 import "google/protobuf/timestamp.proto";
-import "google/protobuf/struct.proto";
 
 // =====================================================================================================================
 
@@ -38,21 +37,21 @@ message Document {
   string publisher_id = 3;
   // original_url is the URL that lead to the creation of this document.
   string original_url = 4;
-  DocumentType document_type = 5;
-  repeated DocumentArtifact artifacts = 6;
-  DocumentTdmStatus tdm_status = 7;
-  optional google.protobuf.Timestamp published_at = 8;
+  // original_tile is the title that is extracted from the document (if it had any).
+  optional string original_title = 5;
+  DocumentType document_type = 6;
+  repeated DocumentArtifact artifacts = 7;
+  // tdm_status tracks if the Document that has been scraped had a machine-readable TDM opt-out.
+  DocumentTdmStatus tdm_status = 8;
+  optional google.protobuf.Timestamp published_at = 9;
 }
 
 // An Artifact is a file that has been produced for a Document either from Scraping or from Analysis.
 message DocumentArtifact {
   string id = 1;
   ObjectMeta meta = 2;
-  // The analysis_execution_id is an optional reference if this artifact has been produced not by a scrape job
-  // but by a AnalysisExecution.
-  optional string analysis_execution_id = 3;
-  ArtifactFormat format = 4;
-  string storage_url = 5;
-  int64 size_bytes = 6;
-  string mime_type = 7;
+  ArtifactFormat format = 3;
+  string storage_url = 4;
+  int64 size_bytes = 5;
+  string mime_type = 6;
 }

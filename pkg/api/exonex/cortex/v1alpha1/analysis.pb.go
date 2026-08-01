@@ -10,7 +10,8 @@ import (
 	_ "buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go/buf/validate"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
-	_ "google.golang.org/protobuf/types/known/timestamppb"
+	structpb "google.golang.org/protobuf/types/known/structpb"
+	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
@@ -23,14 +24,65 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+type AnalysisType int32
+
+const (
+	AnalysisType_ANALYSIS_TYPE_UNSPECIFIED AnalysisType = 0
+	AnalysisType_ANALYSIS_TYPE_TDM         AnalysisType = 1 // Analyses a document of a human-readable TDM policy.
+	AnalysisType_ANALYSIS_TYPE_SUMMARY     AnalysisType = 2 // Summarizes the document.
+)
+
+// Enum value maps for AnalysisType.
+var (
+	AnalysisType_name = map[int32]string{
+		0: "ANALYSIS_TYPE_UNSPECIFIED",
+		1: "ANALYSIS_TYPE_TDM",
+		2: "ANALYSIS_TYPE_SUMMARY",
+	}
+	AnalysisType_value = map[string]int32{
+		"ANALYSIS_TYPE_UNSPECIFIED": 0,
+		"ANALYSIS_TYPE_TDM":         1,
+		"ANALYSIS_TYPE_SUMMARY":     2,
+	}
+)
+
+func (x AnalysisType) Enum() *AnalysisType {
+	p := new(AnalysisType)
+	*p = x
+	return p
+}
+
+func (x AnalysisType) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (AnalysisType) Descriptor() protoreflect.EnumDescriptor {
+	return file_exonex_cortex_v1alpha1_analysis_proto_enumTypes[0].Descriptor()
+}
+
+func (AnalysisType) Type() protoreflect.EnumType {
+	return &file_exonex_cortex_v1alpha1_analysis_proto_enumTypes[0]
+}
+
+func (x AnalysisType) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use AnalysisType.Descriptor instead.
+func (AnalysisType) EnumDescriptor() ([]byte, []int) {
+	return file_exonex_cortex_v1alpha1_analysis_proto_rawDescGZIP(), []int{0}
+}
+
 // AnalysisExecution is a specific Analysis that should or have been executed for a Document.
 type Analysis struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	Meta          *ObjectMeta            `protobuf:"bytes,2,opt,name=meta,proto3" json:"meta,omitempty"`
-	DocumentId    string                 `protobuf:"bytes,3,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
-	ExecutorId    string                 `protobuf:"bytes,4,opt,name=executor_id,json=executorId,proto3" json:"executor_id,omitempty"`
-	Lease         *Lease                 `protobuf:"bytes,5,opt,name=lease,proto3,oneof" json:"lease,omitempty"`
+	AnalysisType  AnalysisType           `protobuf:"varint,3,opt,name=analysis_type,json=analysisType,proto3,enum=exonex.cortex.v1alpha1.AnalysisType" json:"analysis_type,omitempty"`
+	DocumentId    string                 `protobuf:"bytes,4,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
+	ExecutorId    string                 `protobuf:"bytes,5,opt,name=executor_id,json=executorId,proto3" json:"executor_id,omitempty"`
+	Result        *AnalysisResult        `protobuf:"bytes,6,opt,name=result,proto3,oneof" json:"result,omitempty"`
+	FinishedAt    *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=finished_at,json=finishedAt,proto3" json:"finished_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -79,6 +131,13 @@ func (x *Analysis) GetMeta() *ObjectMeta {
 	return nil
 }
 
+func (x *Analysis) GetAnalysisType() AnalysisType {
+	if x != nil {
+		return x.AnalysisType
+	}
+	return AnalysisType_ANALYSIS_TYPE_UNSPECIFIED
+}
+
 func (x *Analysis) GetDocumentId() string {
 	if x != nil {
 		return x.DocumentId
@@ -93,27 +152,267 @@ func (x *Analysis) GetExecutorId() string {
 	return ""
 }
 
-func (x *Analysis) GetLease() *Lease {
+func (x *Analysis) GetResult() *AnalysisResult {
 	if x != nil {
-		return x.Lease
+		return x.Result
 	}
 	return nil
+}
+
+func (x *Analysis) GetFinishedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.FinishedAt
+	}
+	return nil
+}
+
+type AnalysisResult struct {
+	state      protoimpl.MessageState `protogen:"open.v1"`
+	RawPayload *structpb.Struct       `protobuf:"bytes,1,opt,name=raw_payload,json=rawPayload,proto3" json:"raw_payload,omitempty"`
+	// Types that are valid to be assigned to Payload:
+	//
+	//	*AnalysisResult_Summary
+	//	*AnalysisResult_Tdm
+	Payload       isAnalysisResult_Payload `protobuf_oneof:"payload"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AnalysisResult) Reset() {
+	*x = AnalysisResult{}
+	mi := &file_exonex_cortex_v1alpha1_analysis_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AnalysisResult) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AnalysisResult) ProtoMessage() {}
+
+func (x *AnalysisResult) ProtoReflect() protoreflect.Message {
+	mi := &file_exonex_cortex_v1alpha1_analysis_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AnalysisResult.ProtoReflect.Descriptor instead.
+func (*AnalysisResult) Descriptor() ([]byte, []int) {
+	return file_exonex_cortex_v1alpha1_analysis_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *AnalysisResult) GetRawPayload() *structpb.Struct {
+	if x != nil {
+		return x.RawPayload
+	}
+	return nil
+}
+
+func (x *AnalysisResult) GetPayload() isAnalysisResult_Payload {
+	if x != nil {
+		return x.Payload
+	}
+	return nil
+}
+
+func (x *AnalysisResult) GetSummary() *SummaryAnalysisPayload {
+	if x != nil {
+		if x, ok := x.Payload.(*AnalysisResult_Summary); ok {
+			return x.Summary
+		}
+	}
+	return nil
+}
+
+func (x *AnalysisResult) GetTdm() *TdmAnalysisPayload {
+	if x != nil {
+		if x, ok := x.Payload.(*AnalysisResult_Tdm); ok {
+			return x.Tdm
+		}
+	}
+	return nil
+}
+
+type isAnalysisResult_Payload interface {
+	isAnalysisResult_Payload()
+}
+
+type AnalysisResult_Summary struct {
+	Summary *SummaryAnalysisPayload `protobuf:"bytes,10,opt,name=summary,proto3,oneof"`
+}
+
+type AnalysisResult_Tdm struct {
+	Tdm *TdmAnalysisPayload `protobuf:"bytes,11,opt,name=tdm,proto3,oneof"`
+}
+
+func (*AnalysisResult_Summary) isAnalysisResult_Payload() {}
+
+func (*AnalysisResult_Tdm) isAnalysisResult_Payload() {}
+
+type SummaryAnalysisPayload struct {
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	Title          string                 `protobuf:"bytes,1,opt,name=title,proto3" json:"title,omitempty"`
+	Summary        string                 `protobuf:"bytes,2,opt,name=summary,proto3" json:"summary,omitempty"`
+	ExecuteSummary string                 `protobuf:"bytes,3,opt,name=execute_summary,json=executeSummary,proto3" json:"execute_summary,omitempty"`
+	KeyTakeaways   []string               `protobuf:"bytes,4,rep,name=key_takeaways,json=keyTakeaways,proto3" json:"key_takeaways,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *SummaryAnalysisPayload) Reset() {
+	*x = SummaryAnalysisPayload{}
+	mi := &file_exonex_cortex_v1alpha1_analysis_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SummaryAnalysisPayload) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SummaryAnalysisPayload) ProtoMessage() {}
+
+func (x *SummaryAnalysisPayload) ProtoReflect() protoreflect.Message {
+	mi := &file_exonex_cortex_v1alpha1_analysis_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SummaryAnalysisPayload.ProtoReflect.Descriptor instead.
+func (*SummaryAnalysisPayload) Descriptor() ([]byte, []int) {
+	return file_exonex_cortex_v1alpha1_analysis_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *SummaryAnalysisPayload) GetTitle() string {
+	if x != nil {
+		return x.Title
+	}
+	return ""
+}
+
+func (x *SummaryAnalysisPayload) GetSummary() string {
+	if x != nil {
+		return x.Summary
+	}
+	return ""
+}
+
+func (x *SummaryAnalysisPayload) GetExecuteSummary() string {
+	if x != nil {
+		return x.ExecuteSummary
+	}
+	return ""
+}
+
+func (x *SummaryAnalysisPayload) GetKeyTakeaways() []string {
+	if x != nil {
+		return x.KeyTakeaways
+	}
+	return nil
+}
+
+type TdmAnalysisPayload struct {
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	OptOutDetected bool                   `protobuf:"varint,1,opt,name=opt_out_detected,json=optOutDetected,proto3" json:"opt_out_detected,omitempty"`
+	RawNotice      string                 `protobuf:"bytes,2,opt,name=raw_notice,json=rawNotice,proto3" json:"raw_notice,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *TdmAnalysisPayload) Reset() {
+	*x = TdmAnalysisPayload{}
+	mi := &file_exonex_cortex_v1alpha1_analysis_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *TdmAnalysisPayload) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*TdmAnalysisPayload) ProtoMessage() {}
+
+func (x *TdmAnalysisPayload) ProtoReflect() protoreflect.Message {
+	mi := &file_exonex_cortex_v1alpha1_analysis_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use TdmAnalysisPayload.ProtoReflect.Descriptor instead.
+func (*TdmAnalysisPayload) Descriptor() ([]byte, []int) {
+	return file_exonex_cortex_v1alpha1_analysis_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *TdmAnalysisPayload) GetOptOutDetected() bool {
+	if x != nil {
+		return x.OptOutDetected
+	}
+	return false
+}
+
+func (x *TdmAnalysisPayload) GetRawNotice() string {
+	if x != nil {
+		return x.RawNotice
+	}
+	return ""
 }
 
 var File_exonex_cortex_v1alpha1_analysis_proto protoreflect.FileDescriptor
 
 const file_exonex_cortex_v1alpha1_analysis_proto_rawDesc = "" +
 	"\n" +
-	"%exonex/cortex/v1alpha1/analysis.proto\x12\x16exonex.cortex.v1alpha1\x1a#exonex/cortex/v1alpha1/common.proto\x1a\x1bbuf/validate/validate.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xd8\x01\n" +
+	"%exonex/cortex/v1alpha1/analysis.proto\x12\x16exonex.cortex.v1alpha1\x1a#exonex/cortex/v1alpha1/common.proto\x1a\x1bbuf/validate/validate.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1cgoogle/protobuf/struct.proto\"\xec\x02\n" +
 	"\bAnalysis\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x126\n" +
-	"\x04meta\x18\x02 \x01(\v2\".exonex.cortex.v1alpha1.ObjectMetaR\x04meta\x12\x1f\n" +
-	"\vdocument_id\x18\x03 \x01(\tR\n" +
+	"\x04meta\x18\x02 \x01(\v2\".exonex.cortex.v1alpha1.ObjectMetaR\x04meta\x12I\n" +
+	"\ranalysis_type\x18\x03 \x01(\x0e2$.exonex.cortex.v1alpha1.AnalysisTypeR\fanalysisType\x12\x1f\n" +
+	"\vdocument_id\x18\x04 \x01(\tR\n" +
 	"documentId\x12\x1f\n" +
-	"\vexecutor_id\x18\x04 \x01(\tR\n" +
-	"executorId\x128\n" +
-	"\x05lease\x18\x05 \x01(\v2\x1d.exonex.cortex.v1alpha1.LeaseH\x00R\x05lease\x88\x01\x01B\b\n" +
-	"\x06_leaseB\xf3\x01\n" +
+	"\vexecutor_id\x18\x05 \x01(\tR\n" +
+	"executorId\x12C\n" +
+	"\x06result\x18\x06 \x01(\v2&.exonex.cortex.v1alpha1.AnalysisResultH\x00R\x06result\x88\x01\x01\x12;\n" +
+	"\vfinished_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\n" +
+	"finishedAtB\t\n" +
+	"\a_result\"\xe1\x01\n" +
+	"\x0eAnalysisResult\x128\n" +
+	"\vraw_payload\x18\x01 \x01(\v2\x17.google.protobuf.StructR\n" +
+	"rawPayload\x12J\n" +
+	"\asummary\x18\n" +
+	" \x01(\v2..exonex.cortex.v1alpha1.SummaryAnalysisPayloadH\x00R\asummary\x12>\n" +
+	"\x03tdm\x18\v \x01(\v2*.exonex.cortex.v1alpha1.TdmAnalysisPayloadH\x00R\x03tdmB\t\n" +
+	"\apayload\"\x96\x01\n" +
+	"\x16SummaryAnalysisPayload\x12\x14\n" +
+	"\x05title\x18\x01 \x01(\tR\x05title\x12\x18\n" +
+	"\asummary\x18\x02 \x01(\tR\asummary\x12'\n" +
+	"\x0fexecute_summary\x18\x03 \x01(\tR\x0eexecuteSummary\x12#\n" +
+	"\rkey_takeaways\x18\x04 \x03(\tR\fkeyTakeaways\"]\n" +
+	"\x12TdmAnalysisPayload\x12(\n" +
+	"\x10opt_out_detected\x18\x01 \x01(\bR\x0eoptOutDetected\x12\x1d\n" +
+	"\n" +
+	"raw_notice\x18\x02 \x01(\tR\trawNotice*_\n" +
+	"\fAnalysisType\x12\x1d\n" +
+	"\x19ANALYSIS_TYPE_UNSPECIFIED\x10\x00\x12\x15\n" +
+	"\x11ANALYSIS_TYPE_TDM\x10\x01\x12\x19\n" +
+	"\x15ANALYSIS_TYPE_SUMMARY\x10\x02B\xf3\x01\n" +
 	"\x1acom.exonex.cortex.v1alpha1B\rAnalysisProtoP\x01ZLgithub.com/alexzimmer96/exonex/pkg/api/exonex/cortex/v1alpha1;cortexv1alpha1\xa2\x02\x03ECX\xaa\x02\x16Exonex.Cortex.V1alpha1\xca\x02\x16Exonex\\Cortex\\V1alpha1\xe2\x02\"Exonex\\Cortex\\V1alpha1\\GPBMetadata\xea\x02\x18Exonex::Cortex::V1alpha1b\x06proto3"
 
 var (
@@ -128,20 +427,31 @@ func file_exonex_cortex_v1alpha1_analysis_proto_rawDescGZIP() []byte {
 	return file_exonex_cortex_v1alpha1_analysis_proto_rawDescData
 }
 
-var file_exonex_cortex_v1alpha1_analysis_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
+var file_exonex_cortex_v1alpha1_analysis_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
+var file_exonex_cortex_v1alpha1_analysis_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
 var file_exonex_cortex_v1alpha1_analysis_proto_goTypes = []any{
-	(*Analysis)(nil),   // 0: exonex.cortex.v1alpha1.Analysis
-	(*ObjectMeta)(nil), // 1: exonex.cortex.v1alpha1.ObjectMeta
-	(*Lease)(nil),      // 2: exonex.cortex.v1alpha1.Lease
+	(AnalysisType)(0),              // 0: exonex.cortex.v1alpha1.AnalysisType
+	(*Analysis)(nil),               // 1: exonex.cortex.v1alpha1.Analysis
+	(*AnalysisResult)(nil),         // 2: exonex.cortex.v1alpha1.AnalysisResult
+	(*SummaryAnalysisPayload)(nil), // 3: exonex.cortex.v1alpha1.SummaryAnalysisPayload
+	(*TdmAnalysisPayload)(nil),     // 4: exonex.cortex.v1alpha1.TdmAnalysisPayload
+	(*ObjectMeta)(nil),             // 5: exonex.cortex.v1alpha1.ObjectMeta
+	(*timestamppb.Timestamp)(nil),  // 6: google.protobuf.Timestamp
+	(*structpb.Struct)(nil),        // 7: google.protobuf.Struct
 }
 var file_exonex_cortex_v1alpha1_analysis_proto_depIdxs = []int32{
-	1, // 0: exonex.cortex.v1alpha1.Analysis.meta:type_name -> exonex.cortex.v1alpha1.ObjectMeta
-	2, // 1: exonex.cortex.v1alpha1.Analysis.lease:type_name -> exonex.cortex.v1alpha1.Lease
-	2, // [2:2] is the sub-list for method output_type
-	2, // [2:2] is the sub-list for method input_type
-	2, // [2:2] is the sub-list for extension type_name
-	2, // [2:2] is the sub-list for extension extendee
-	0, // [0:2] is the sub-list for field type_name
+	5, // 0: exonex.cortex.v1alpha1.Analysis.meta:type_name -> exonex.cortex.v1alpha1.ObjectMeta
+	0, // 1: exonex.cortex.v1alpha1.Analysis.analysis_type:type_name -> exonex.cortex.v1alpha1.AnalysisType
+	2, // 2: exonex.cortex.v1alpha1.Analysis.result:type_name -> exonex.cortex.v1alpha1.AnalysisResult
+	6, // 3: exonex.cortex.v1alpha1.Analysis.finished_at:type_name -> google.protobuf.Timestamp
+	7, // 4: exonex.cortex.v1alpha1.AnalysisResult.raw_payload:type_name -> google.protobuf.Struct
+	3, // 5: exonex.cortex.v1alpha1.AnalysisResult.summary:type_name -> exonex.cortex.v1alpha1.SummaryAnalysisPayload
+	4, // 6: exonex.cortex.v1alpha1.AnalysisResult.tdm:type_name -> exonex.cortex.v1alpha1.TdmAnalysisPayload
+	7, // [7:7] is the sub-list for method output_type
+	7, // [7:7] is the sub-list for method input_type
+	7, // [7:7] is the sub-list for extension type_name
+	7, // [7:7] is the sub-list for extension extendee
+	0, // [0:7] is the sub-list for field type_name
 }
 
 func init() { file_exonex_cortex_v1alpha1_analysis_proto_init() }
@@ -151,18 +461,23 @@ func file_exonex_cortex_v1alpha1_analysis_proto_init() {
 	}
 	file_exonex_cortex_v1alpha1_common_proto_init()
 	file_exonex_cortex_v1alpha1_analysis_proto_msgTypes[0].OneofWrappers = []any{}
+	file_exonex_cortex_v1alpha1_analysis_proto_msgTypes[1].OneofWrappers = []any{
+		(*AnalysisResult_Summary)(nil),
+		(*AnalysisResult_Tdm)(nil),
+	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_exonex_cortex_v1alpha1_analysis_proto_rawDesc), len(file_exonex_cortex_v1alpha1_analysis_proto_rawDesc)),
-			NumEnums:      0,
-			NumMessages:   1,
+			NumEnums:      1,
+			NumMessages:   4,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
 		GoTypes:           file_exonex_cortex_v1alpha1_analysis_proto_goTypes,
 		DependencyIndexes: file_exonex_cortex_v1alpha1_analysis_proto_depIdxs,
+		EnumInfos:         file_exonex_cortex_v1alpha1_analysis_proto_enumTypes,
 		MessageInfos:      file_exonex_cortex_v1alpha1_analysis_proto_msgTypes,
 	}.Build()
 	File_exonex_cortex_v1alpha1_analysis_proto = out.File

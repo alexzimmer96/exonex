@@ -3,7 +3,6 @@ package exonex.cortex.v1alpha1;
 
 import "exonex/cortex/v1alpha1/common.proto";
 import "google/protobuf/timestamp.proto";
-import "google/protobuf/struct.proto";
 
 // =====================================================================================================================
 

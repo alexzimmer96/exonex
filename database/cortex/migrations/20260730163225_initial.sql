@@ -3,7 +3,7 @@ CREATE TYPE system_entity_type AS ENUM (
     'analysis', 'crawl_order', 'document', 'publisher', 'scrape_order'
 );
 
-CREATE TABLE leases (
+CREATE TABLE meta_leases (
     entity_id UUID,
     entity_type system_entity_type,
     holder TEXT NOT NULL,
@@ -12,7 +12,7 @@ CREATE TABLE leases (
     PRIMARY KEY (entity_id, entity_type)
 );
 
-CREATE TABLE log_events (
+CREATE TABLE meta_log_events (
     entity_id UUID,
     entity_type system_entity_type,
     time TIMESTAMP NOT NULL,

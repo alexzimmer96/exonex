@@ -4,12 +4,45 @@ package exonex.cortex.v1alpha1;
 import "exonex/cortex/v1alpha1/common.proto";
 import "buf/validate/validate.proto";
 import "google/protobuf/timestamp.proto";
+import "google/protobuf/struct.proto";
+
+// =====================================================================================================================
+
+enum AnalysisType {
+  ANALYSIS_TYPE_UNSPECIFIED = 0;
+  ANALYSIS_TYPE_MARKDOWN = 1;       // Transforms the Document into Markdown.
+  ANALYSIS_TYPE_CLEAN_MARKDOWN = 2; // Cleans the Markdown to remove noise.
+  ANALYSIS_TYPE_TDM = 3;            // Analyses a document of a human-readable TDM policy.
+  ANALYSIS_TYPE_SUMMARY = 4;        // Summarizes the document.
+}
 
 // AnalysisExecution is a specific Analysis that should or have been executed for a Document.
 message Analysis {
   string id = 1;
   ObjectMeta meta = 2;
-  string document_id = 3;
-  string executor_id = 4;
-  optional Lease lease = 5;
+  AnalysisType analysis_type = 3;
+  string document_id = 4;
+  string executor_id = 5;
+  optional AnalysisResult result = 6;
+  google.protobuf.Timestamp finished_at = 7;
+}
+
+message AnalysisResult {
+  google.protobuf.Struct raw_payload = 1;
+  oneof payload {
+      SummaryAnalysisPayload summary = 10;
+      TdmAnalysisPayload tdm = 11;
+  }
+}
+
+message SummaryAnalysisPayload {
+  string title = 1;
+  string summary = 2;
+  string execute_summary = 3;
+  repeated string key_takeaways = 4;
+}
+
+message TdmAnalysisPayload {
+  bool opt_out_detected = 1;
+  string raw_notice = 2;
 }

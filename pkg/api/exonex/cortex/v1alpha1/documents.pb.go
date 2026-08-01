@@ -195,11 +195,14 @@ type Document struct {
 	Meta        *ObjectMeta            `protobuf:"bytes,2,opt,name=meta,proto3" json:"meta,omitempty"`
 	PublisherId string                 `protobuf:"bytes,3,opt,name=publisher_id,json=publisherId,proto3" json:"publisher_id,omitempty"`
 	// original_url is the URL that lead to the creation of this document.
-	OriginalUrl   string                 `protobuf:"bytes,4,opt,name=original_url,json=originalUrl,proto3" json:"original_url,omitempty"`
-	DocumentType  DocumentType           `protobuf:"varint,5,opt,name=document_type,json=documentType,proto3,enum=exonex.cortex.v1alpha1.DocumentType" json:"document_type,omitempty"`
-	Artifacts     []*DocumentArtifact    `protobuf:"bytes,6,rep,name=artifacts,proto3" json:"artifacts,omitempty"`
-	TdmStatus     DocumentTdmStatus      `protobuf:"varint,7,opt,name=tdm_status,json=tdmStatus,proto3,enum=exonex.cortex.v1alpha1.DocumentTdmStatus" json:"tdm_status,omitempty"`
-	PublishedAt   *timestamppb.Timestamp `protobuf:"bytes,8,opt,name=published_at,json=publishedAt,proto3,oneof" json:"published_at,omitempty"`
+	OriginalUrl string `protobuf:"bytes,4,opt,name=original_url,json=originalUrl,proto3" json:"original_url,omitempty"`
+	// original_tile is the title that is extracted from the document (if it had any).
+	OriginalTitle *string             `protobuf:"bytes,5,opt,name=original_title,json=originalTitle,proto3,oneof" json:"original_title,omitempty"`
+	DocumentType  DocumentType        `protobuf:"varint,6,opt,name=document_type,json=documentType,proto3,enum=exonex.cortex.v1alpha1.DocumentType" json:"document_type,omitempty"`
+	Artifacts     []*DocumentArtifact `protobuf:"bytes,7,rep,name=artifacts,proto3" json:"artifacts,omitempty"`
+	// tdm_status tracks if the Document that has been scraped had a machine-readable TDM opt-out.
+	TdmStatus     DocumentTdmStatus      `protobuf:"varint,8,opt,name=tdm_status,json=tdmStatus,proto3,enum=exonex.cortex.v1alpha1.DocumentTdmStatus" json:"tdm_status,omitempty"`
+	PublishedAt   *timestamppb.Timestamp `protobuf:"bytes,9,opt,name=published_at,json=publishedAt,proto3,oneof" json:"published_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -262,6 +265,13 @@ func (x *Document) GetOriginalUrl() string {
 	return ""
 }
 
+func (x *Document) GetOriginalTitle() string {
+	if x != nil && x.OriginalTitle != nil {
+		return *x.OriginalTitle
+	}
+	return ""
+}
+
 func (x *Document) GetDocumentType() DocumentType {
 	if x != nil {
 		return x.DocumentType
@@ -292,18 +302,15 @@ func (x *Document) GetPublishedAt() *timestamppb.Timestamp {
 
 // An Artifact is a file that has been produced for a Document either from Scraping or from Analysis.
 type DocumentArtifact struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	Id    string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	Meta  *ObjectMeta            `protobuf:"bytes,2,opt,name=meta,proto3" json:"meta,omitempty"`
-	// The analysis_execution_id is an optional reference if this artifact has been produced not by a scrape job
-	// but by a AnalysisExecution.
-	AnalysisExecutionId *string        `protobuf:"bytes,3,opt,name=analysis_execution_id,json=analysisExecutionId,proto3,oneof" json:"analysis_execution_id,omitempty"`
-	Format              ArtifactFormat `protobuf:"varint,4,opt,name=format,proto3,enum=exonex.cortex.v1alpha1.ArtifactFormat" json:"format,omitempty"`
-	StorageUrl          string         `protobuf:"bytes,5,opt,name=storage_url,json=storageUrl,proto3" json:"storage_url,omitempty"`
-	SizeBytes           int64          `protobuf:"varint,6,opt,name=size_bytes,json=sizeBytes,proto3" json:"size_bytes,omitempty"`
-	MimeType            string         `protobuf:"bytes,7,opt,name=mime_type,json=mimeType,proto3" json:"mime_type,omitempty"`
-	unknownFields       protoimpl.UnknownFields
-	sizeCache           protoimpl.SizeCache
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Meta          *ObjectMeta            `protobuf:"bytes,2,opt,name=meta,proto3" json:"meta,omitempty"`
+	Format        ArtifactFormat         `protobuf:"varint,3,opt,name=format,proto3,enum=exonex.cortex.v1alpha1.ArtifactFormat" json:"format,omitempty"`
+	StorageUrl    string                 `protobuf:"bytes,4,opt,name=storage_url,json=storageUrl,proto3" json:"storage_url,omitempty"`
+	SizeBytes     int64                  `protobuf:"varint,5,opt,name=size_bytes,json=sizeBytes,proto3" json:"size_bytes,omitempty"`
+	MimeType      string                 `protobuf:"bytes,6,opt,name=mime_type,json=mimeType,proto3" json:"mime_type,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *DocumentArtifact) Reset() {
@@ -350,13 +357,6 @@ func (x *DocumentArtifact) GetMeta() *ObjectMeta {
 	return nil
 }
 
-func (x *DocumentArtifact) GetAnalysisExecutionId() string {
-	if x != nil && x.AnalysisExecutionId != nil {
-		return *x.AnalysisExecutionId
-	}
-	return ""
-}
-
 func (x *DocumentArtifact) GetFormat() ArtifactFormat {
 	if x != nil {
 		return x.Format
@@ -389,29 +389,29 @@ var File_exonex_cortex_v1alpha1_documents_proto protoreflect.FileDescriptor
 
 const file_exonex_cortex_v1alpha1_documents_proto_rawDesc = "" +
 	"\n" +
-	"&exonex/cortex/v1alpha1/documents.proto\x12\x16exonex.cortex.v1alpha1\x1a#exonex/cortex/v1alpha1/common.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1cgoogle/protobuf/struct.proto\"\xca\x03\n" +
+	"&exonex/cortex/v1alpha1/documents.proto\x12\x16exonex.cortex.v1alpha1\x1a#exonex/cortex/v1alpha1/common.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1cgoogle/protobuf/struct.proto\"\x89\x04\n" +
 	"\bDocument\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x126\n" +
 	"\x04meta\x18\x02 \x01(\v2\".exonex.cortex.v1alpha1.ObjectMetaR\x04meta\x12!\n" +
 	"\fpublisher_id\x18\x03 \x01(\tR\vpublisherId\x12!\n" +
-	"\foriginal_url\x18\x04 \x01(\tR\voriginalUrl\x12I\n" +
-	"\rdocument_type\x18\x05 \x01(\x0e2$.exonex.cortex.v1alpha1.DocumentTypeR\fdocumentType\x12F\n" +
-	"\tartifacts\x18\x06 \x03(\v2(.exonex.cortex.v1alpha1.DocumentArtifactR\tartifacts\x12H\n" +
+	"\foriginal_url\x18\x04 \x01(\tR\voriginalUrl\x12*\n" +
+	"\x0eoriginal_title\x18\x05 \x01(\tH\x00R\roriginalTitle\x88\x01\x01\x12I\n" +
+	"\rdocument_type\x18\x06 \x01(\x0e2$.exonex.cortex.v1alpha1.DocumentTypeR\fdocumentType\x12F\n" +
+	"\tartifacts\x18\a \x03(\v2(.exonex.cortex.v1alpha1.DocumentArtifactR\tartifacts\x12H\n" +
 	"\n" +
-	"tdm_status\x18\a \x01(\x0e2).exonex.cortex.v1alpha1.DocumentTdmStatusR\ttdmStatus\x12B\n" +
-	"\fpublished_at\x18\b \x01(\v2\x1a.google.protobuf.TimestampH\x00R\vpublishedAt\x88\x01\x01B\x0f\n" +
-	"\r_published_at\"\xca\x02\n" +
+	"tdm_status\x18\b \x01(\x0e2).exonex.cortex.v1alpha1.DocumentTdmStatusR\ttdmStatus\x12B\n" +
+	"\fpublished_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampH\x01R\vpublishedAt\x88\x01\x01B\x11\n" +
+	"\x0f_original_titleB\x0f\n" +
+	"\r_published_at\"\xf7\x01\n" +
 	"\x10DocumentArtifact\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x126\n" +
-	"\x04meta\x18\x02 \x01(\v2\".exonex.cortex.v1alpha1.ObjectMetaR\x04meta\x127\n" +
-	"\x15analysis_execution_id\x18\x03 \x01(\tH\x00R\x13analysisExecutionId\x88\x01\x01\x12>\n" +
-	"\x06format\x18\x04 \x01(\x0e2&.exonex.cortex.v1alpha1.ArtifactFormatR\x06format\x12\x1f\n" +
-	"\vstorage_url\x18\x05 \x01(\tR\n" +
+	"\x04meta\x18\x02 \x01(\v2\".exonex.cortex.v1alpha1.ObjectMetaR\x04meta\x12>\n" +
+	"\x06format\x18\x03 \x01(\x0e2&.exonex.cortex.v1alpha1.ArtifactFormatR\x06format\x12\x1f\n" +
+	"\vstorage_url\x18\x04 \x01(\tR\n" +
 	"storageUrl\x12\x1d\n" +
 	"\n" +
-	"size_bytes\x18\x06 \x01(\x03R\tsizeBytes\x12\x1b\n" +
-	"\tmime_type\x18\a \x01(\tR\bmimeTypeB\x18\n" +
-	"\x16_analysis_execution_id*\xb8\x01\n" +
+	"size_bytes\x18\x05 \x01(\x03R\tsizeBytes\x12\x1b\n" +
+	"\tmime_type\x18\x06 \x01(\tR\bmimeType*\xb8\x01\n" +
 	"\fDocumentType\x12\x1d\n" +
 	"\x19DOCUMENT_TYPE_UNSPECIFIED\x10\x00\x12\x17\n" +
 	"\x13DOCUMENT_TYPE_LEGAL\x10\x01\x12\x1c\n" +
@@ -477,7 +477,6 @@ func file_exonex_cortex_v1alpha1_documents_proto_init() {
 	}
 	file_exonex_cortex_v1alpha1_common_proto_init()
 	file_exonex_cortex_v1alpha1_documents_proto_msgTypes[0].OneofWrappers = []any{}
-	file_exonex_cortex_v1alpha1_documents_proto_msgTypes[1].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
