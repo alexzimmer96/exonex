@@ -76,10 +76,9 @@ message Feed {
 
 // A single Poll of a Feed.
 message FeedPoll {
-  optional google.protobuf.Timestamp last_polled_at = 4;
-  optional google.protobuf.Timestamp next_poll = 5;
-  optional google.protobuf.Timestamp last_polled_last_modified = 6;
-  optional string last_polled_etag = 7;
+  optional google.protobuf.Timestamp created_at = 4;
+  optional google.protobuf.Timestamp result_last_modified = 6;
+  optional string result_etag = 7;
 }
 
 // =====================================================================================================================

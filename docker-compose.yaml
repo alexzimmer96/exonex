@@ -1,4 +1,18 @@
 services:
+  postgres:
+    restart: unless-stopped
+    build:
+      context: dist/images
+      dockerfile: postgres.Dockerfile
+    environment:
+      POSTGRES_USER: "cortex"
+      POSTGRES_PASSWORD: "cortex"
+      POSTGRES_DATABASE: "cortex"
+      PGDATA: "/var/lib/postgresql/data"
+    volumes:
+      - "cortex-data:/var/lib/postgresql/data"
+    ports:
+      - "5432:5432"
   rustfs:
     image: rustfs/rustfs:latest
     restart: unless-stopped
@@ -9,3 +23,4 @@ services:
       - "rustfs-data:/data"
 volumes:
   rustfs-data:
+  cortex-data:

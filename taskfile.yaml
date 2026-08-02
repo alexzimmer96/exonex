@@ -9,4 +9,13 @@ tasks:
       - git add .
   add-cortex-migration:
     cmds:
-      - GOOSE_MIGRATION_DIR="./database/cortex/migrations" go tool goose create {{.CLI_ARGS}}
+      - go tool goose create {{.CLI_ARGS}}
+    env:
+      GOOSE_MIGRATION_DIR: "./database/cortex/migrations"
+  migrate-cortex-up:
+    cmds:
+      - go tool goose up
+    env:
+      GOOSE_DRIVER: "postgres"
+      GOOSE_DBSTRING: "postgres://cortex:cortex@localhost:5432/cortex"
+      GOOSE_MIGRATION_DIR: "./database/cortex/migrations"

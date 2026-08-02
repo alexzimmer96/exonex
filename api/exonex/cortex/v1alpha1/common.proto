@@ -2,7 +2,6 @@ syntax = "proto3";
 package exonex.cortex.v1alpha1;
 
 import "google/protobuf/timestamp.proto";
-import "google/protobuf/duration.proto";
 
 enum ListOrder {
   LIST_ORDER_UNSPECIFIED = 0;
@@ -28,7 +27,7 @@ enum PollInterval {
 
 // ObjectMeta defines typical metadata that is available for most objects.
 message ObjectMeta {
-  map<string, string> annotations = 1;
+  map<string, string> tags = 1;
   repeated string finalizers = 2;
   google.protobuf.Timestamp created_at = 3;
   repeated LogEvent log_events = 4;
@@ -46,9 +45,7 @@ message LogEvent {
 // A Lease is the signal that the Object is currently hold by another process for processing.
 message Lease {
   string holder = 1;
-  google.protobuf.Timestamp created_at = 2;
-  google.protobuf.Timestamp renewed_at = 3;
-  google.protobuf.Timestamp expires_at = 4;
+  google.protobuf.Timestamp expires_at = 2;
 }
 
 message File {

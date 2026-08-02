@@ -6,33 +6,13 @@ import "google/protobuf/timestamp.proto";
 
 // =====================================================================================================================
 
-enum ScrapeTrigger {
-  SCRAPE_TRIGGER_UNSPECIFIED = 0;
-  SCRAPE_TRIGGER_FEED = 1;
-  SCRAPE_TRIGGER_CRAWL = 2;
-  SCRAPE_TRIGGER_MANUAL = 3;
-}
-
 // A ScrapeOrder is a concrete order to scrape one web resource and save it as a Document.
 message ScrapeOrder {
   string id = 1;
   ObjectMeta meta = 2;
   string publisher_id = 3;
   string url = 4;
-  ScrapeTrigger trigger = 5;
-  optional string trigger_reference = 6;
-  optional Lease lease = 7;
-  optional ScrapeOrderResult scrape_result = 8;
-  google.protobuf.Timestamp created_at = 9;
-}
-
-// A ScrapeOrderResult tracks metadata to a ScrapeOrder.
-// It is typically present after the Order has been executed.
-message ScrapeOrderResult {
-  OrderStatus status = 1;
-  // The status_reason field can be used to add additional context on why the ScrapeOrderResult is in the
-  // current OrderStatus.
-  optional string status_reason = 2;
-  string document_id = 3;
-  google.protobuf.Timestamp finished_at = 4;
+  OrderStatus status = 5;
+  google.protobuf.Timestamp created_at = 6;
+  google.protobuf.Timestamp finished_at = 7;
 }

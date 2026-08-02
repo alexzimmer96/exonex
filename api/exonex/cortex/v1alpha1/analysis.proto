@@ -20,11 +20,12 @@ enum AnalysisType {
 message Analysis {
   string id = 1;
   ObjectMeta meta = 2;
-  AnalysisType analysis_type = 3;
-  string document_id = 4;
-  string executor_id = 5;
-  optional AnalysisResult result = 6;
-  google.protobuf.Timestamp finished_at = 7;
+  bool is_experiment = 3;
+  AnalysisType analysis_type = 4;
+  string document_id = 5;
+  string executor_id = 6;
+  optional AnalysisResult result = 7;
+  google.protobuf.Timestamp finished_at = 8;
 }
 
 message AnalysisResult {
