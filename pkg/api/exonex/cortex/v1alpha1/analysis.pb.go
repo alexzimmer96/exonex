@@ -27,22 +27,28 @@ const (
 type AnalysisType int32
 
 const (
-	AnalysisType_ANALYSIS_TYPE_UNSPECIFIED AnalysisType = 0
-	AnalysisType_ANALYSIS_TYPE_TDM         AnalysisType = 1 // Analyses a document of a human-readable TDM policy.
-	AnalysisType_ANALYSIS_TYPE_SUMMARY     AnalysisType = 2 // Summarizes the document.
+	AnalysisType_ANALYSIS_TYPE_UNSPECIFIED    AnalysisType = 0
+	AnalysisType_ANALYSIS_TYPE_MARKDOWN       AnalysisType = 1 // Transforms the Document into Markdown.
+	AnalysisType_ANALYSIS_TYPE_CLEAN_MARKDOWN AnalysisType = 2 // Cleans the Markdown to remove noise.
+	AnalysisType_ANALYSIS_TYPE_TDM            AnalysisType = 3 // Analyses a document of a human-readable TDM policy.
+	AnalysisType_ANALYSIS_TYPE_SUMMARY        AnalysisType = 4 // Summarizes the document.
 )
 
 // Enum value maps for AnalysisType.
 var (
 	AnalysisType_name = map[int32]string{
 		0: "ANALYSIS_TYPE_UNSPECIFIED",
-		1: "ANALYSIS_TYPE_TDM",
-		2: "ANALYSIS_TYPE_SUMMARY",
+		1: "ANALYSIS_TYPE_MARKDOWN",
+		2: "ANALYSIS_TYPE_CLEAN_MARKDOWN",
+		3: "ANALYSIS_TYPE_TDM",
+		4: "ANALYSIS_TYPE_SUMMARY",
 	}
 	AnalysisType_value = map[string]int32{
-		"ANALYSIS_TYPE_UNSPECIFIED": 0,
-		"ANALYSIS_TYPE_TDM":         1,
-		"ANALYSIS_TYPE_SUMMARY":     2,
+		"ANALYSIS_TYPE_UNSPECIFIED":    0,
+		"ANALYSIS_TYPE_MARKDOWN":       1,
+		"ANALYSIS_TYPE_CLEAN_MARKDOWN": 2,
+		"ANALYSIS_TYPE_TDM":            3,
+		"ANALYSIS_TYPE_SUMMARY":        4,
 	}
 )
 
@@ -408,11 +414,13 @@ const file_exonex_cortex_v1alpha1_analysis_proto_rawDesc = "" +
 	"\x12TdmAnalysisPayload\x12(\n" +
 	"\x10opt_out_detected\x18\x01 \x01(\bR\x0eoptOutDetected\x12\x1d\n" +
 	"\n" +
-	"raw_notice\x18\x02 \x01(\tR\trawNotice*_\n" +
+	"raw_notice\x18\x02 \x01(\tR\trawNotice*\x9d\x01\n" +
 	"\fAnalysisType\x12\x1d\n" +
-	"\x19ANALYSIS_TYPE_UNSPECIFIED\x10\x00\x12\x15\n" +
-	"\x11ANALYSIS_TYPE_TDM\x10\x01\x12\x19\n" +
-	"\x15ANALYSIS_TYPE_SUMMARY\x10\x02B\xf3\x01\n" +
+	"\x19ANALYSIS_TYPE_UNSPECIFIED\x10\x00\x12\x1a\n" +
+	"\x16ANALYSIS_TYPE_MARKDOWN\x10\x01\x12 \n" +
+	"\x1cANALYSIS_TYPE_CLEAN_MARKDOWN\x10\x02\x12\x15\n" +
+	"\x11ANALYSIS_TYPE_TDM\x10\x03\x12\x19\n" +
+	"\x15ANALYSIS_TYPE_SUMMARY\x10\x04B\xf3\x01\n" +
 	"\x1acom.exonex.cortex.v1alpha1B\rAnalysisProtoP\x01ZLgithub.com/alexzimmer96/exonex/pkg/api/exonex/cortex/v1alpha1;cortexv1alpha1\xa2\x02\x03ECX\xaa\x02\x16Exonex.Cortex.V1alpha1\xca\x02\x16Exonex\\Cortex\\V1alpha1\xe2\x02\"Exonex\\Cortex\\V1alpha1\\GPBMetadata\xea\x02\x18Exonex::Cortex::V1alpha1b\x06proto3"
 
 var (

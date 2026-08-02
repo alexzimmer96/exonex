@@ -1,6 +1,6 @@
 -- +goose Up
 CREATE TYPE system_entity_type AS ENUM (
-    'analysis', 'crawl_order', 'document', 'publisher', 'scrape_order'
+    'analysis', 'crawl_order', 'document', 'feed', 'publisher', 'scrape_order'
 );
 
 CREATE TABLE meta_leases (

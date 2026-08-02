@@ -8,11 +8,14 @@ import "google/protobuf/timestamp.proto";
 
 enum DocumentType {
   DOCUMENT_TYPE_UNSPECIFIED = 0;
-  DOCUMENT_TYPE_LEGAL = 1;
-  DOCUMENT_TYPE_ROBOTS_TXT = 2;
-  DOCUMENT_TYPE_ARTICLE = 3;
-  DOCUMENT_TYPE_SOCIAL = 4;
-  DOCUMENT_TYPE_JOB_POSTING = 5;
+  DOCUMENT_TYPE_ATTACHMENT = 1;            // An attachment that adds context to another document.
+  DOCUMENT_TYPE_LEGAL = 2;                 // A legal document, like the Terms of Service of website.
+  DOCUMENT_TYPE_ROBOTS_TXT = 3;            // A robots.txt File.
+  DOCUMENT_TYPE_ARTICLE = 4;               // An article that is e.g. published by news portal or a blog.
+  DOCUMENT_TYPE_SOCIAL = 5;                // A social media posting.
+  DOCUMENT_TYPE_JOB_POSTING = 6;           // A job offering.
+  DOCUMENT_TYPE_RESOLUTION_PROPOSAL = 7;   // A resolution proposal for a formal resolution, e.g. used in politics.
+  DOCUMENT_TYPE_RESOLUTION = 8;            // A resolution (formal decision), e.g. used in politics.
 }
 
 enum ArtifactFormat {
@@ -35,15 +38,16 @@ message Document {
   string id = 1;
   ObjectMeta meta = 2;
   string publisher_id = 3;
+  optional string parent_document_id = 4;
   // original_url is the URL that lead to the creation of this document.
-  string original_url = 4;
+  string original_url = 5;
   // original_tile is the title that is extracted from the document (if it had any).
-  optional string original_title = 5;
-  DocumentType document_type = 6;
-  repeated DocumentArtifact artifacts = 7;
+  optional string original_title = 6;
+  DocumentType document_type = 7;
+  repeated DocumentArtifact artifacts = 8;
   // tdm_status tracks if the Document that has been scraped had a machine-readable TDM opt-out.
-  DocumentTdmStatus tdm_status = 8;
-  optional google.protobuf.Timestamp published_at = 9;
+  DocumentTdmStatus tdm_status = 9;
+  optional google.protobuf.Timestamp published_at = 10;
 }
 
 // An Artifact is a file that has been produced for a Document either from Scraping or from Analysis.
@@ -51,7 +55,5 @@ message DocumentArtifact {
   string id = 1;
   ObjectMeta meta = 2;
   ArtifactFormat format = 3;
-  string storage_url = 4;
-  int64 size_bytes = 5;
-  string mime_type = 6;
+  File file = 4;
 }

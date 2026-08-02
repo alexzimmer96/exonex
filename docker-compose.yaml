@@ -1,0 +1,11 @@
+services:
+  rustfs:
+    image: rustfs/rustfs:latest
+    restart: unless-stopped
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - "rustfs-data:/data"
+volumes:
+  rustfs-data:

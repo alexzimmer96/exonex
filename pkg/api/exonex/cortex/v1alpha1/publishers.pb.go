@@ -25,6 +25,67 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+type PublisherType int32
+
+const (
+	PublisherType_PUBLISHER_TYPE_UNSPECIFIED      PublisherType = 0
+	PublisherType_PUBLISHER_TYPE_PUBLIC_AUTHORITY PublisherType = 1
+	PublisherType_PUBLISHER_TYPE_CORPORATE        PublisherType = 2
+	PublisherType_PUBLISHER_TYPE_MEDIA            PublisherType = 3
+	PublisherType_PUBLISHER_TYPE_ORGANIZATION     PublisherType = 4
+	PublisherType_PUBLISHER_TYPE_INDIVIDUAL       PublisherType = 5
+	PublisherType_PUBLISHER_TYPE_ACADEMIC         PublisherType = 6
+)
+
+// Enum value maps for PublisherType.
+var (
+	PublisherType_name = map[int32]string{
+		0: "PUBLISHER_TYPE_UNSPECIFIED",
+		1: "PUBLISHER_TYPE_PUBLIC_AUTHORITY",
+		2: "PUBLISHER_TYPE_CORPORATE",
+		3: "PUBLISHER_TYPE_MEDIA",
+		4: "PUBLISHER_TYPE_ORGANIZATION",
+		5: "PUBLISHER_TYPE_INDIVIDUAL",
+		6: "PUBLISHER_TYPE_ACADEMIC",
+	}
+	PublisherType_value = map[string]int32{
+		"PUBLISHER_TYPE_UNSPECIFIED":      0,
+		"PUBLISHER_TYPE_PUBLIC_AUTHORITY": 1,
+		"PUBLISHER_TYPE_CORPORATE":        2,
+		"PUBLISHER_TYPE_MEDIA":            3,
+		"PUBLISHER_TYPE_ORGANIZATION":     4,
+		"PUBLISHER_TYPE_INDIVIDUAL":       5,
+		"PUBLISHER_TYPE_ACADEMIC":         6,
+	}
+)
+
+func (x PublisherType) Enum() *PublisherType {
+	p := new(PublisherType)
+	*p = x
+	return p
+}
+
+func (x PublisherType) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (PublisherType) Descriptor() protoreflect.EnumDescriptor {
+	return file_exonex_cortex_v1alpha1_publishers_proto_enumTypes[0].Descriptor()
+}
+
+func (PublisherType) Type() protoreflect.EnumType {
+	return &file_exonex_cortex_v1alpha1_publishers_proto_enumTypes[0]
+}
+
+func (x PublisherType) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use PublisherType.Descriptor instead.
+func (PublisherType) EnumDescriptor() ([]byte, []int) {
+	return file_exonex_cortex_v1alpha1_publishers_proto_rawDescGZIP(), []int{0}
+}
+
 // The PublisherTdmPolicy defines a TDM Policy that applies to all resources of a publisher.
 type PublisherTdmPolicy int32
 
@@ -59,11 +120,11 @@ func (x PublisherTdmPolicy) String() string {
 }
 
 func (PublisherTdmPolicy) Descriptor() protoreflect.EnumDescriptor {
-	return file_exonex_cortex_v1alpha1_publishers_proto_enumTypes[0].Descriptor()
+	return file_exonex_cortex_v1alpha1_publishers_proto_enumTypes[1].Descriptor()
 }
 
 func (PublisherTdmPolicy) Type() protoreflect.EnumType {
-	return &file_exonex_cortex_v1alpha1_publishers_proto_enumTypes[0]
+	return &file_exonex_cortex_v1alpha1_publishers_proto_enumTypes[1]
 }
 
 func (x PublisherTdmPolicy) Number() protoreflect.EnumNumber {
@@ -72,18 +133,19 @@ func (x PublisherTdmPolicy) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use PublisherTdmPolicy.Descriptor instead.
 func (PublisherTdmPolicy) EnumDescriptor() ([]byte, []int) {
-	return file_exonex_cortex_v1alpha1_publishers_proto_rawDescGZIP(), []int{0}
+	return file_exonex_cortex_v1alpha1_publishers_proto_rawDescGZIP(), []int{1}
 }
 
 // The FeedType defines the
 type FeedType int32
 
 const (
-	FeedType_FEED_TYPE_UNSPECIFIED FeedType = 0 // This should not be used.
-	FeedType_FEED_TYPE_HTML_SINGLE FeedType = 1 // A HTML page that will be used as target for a ScrapeOrder when the feed is polled.
-	FeedType_FEED_TYPE_HTML_CRAWL  FeedType = 2 // A HTML page that will be used as entrypoint for a CrawlOrder when the feed is polled.
-	FeedType_FEED_TYPE_RSS         FeedType = 3 // An RSS-Feed that will generate ScrapeOrders for all entries when the feed is polled.
-	FeedType_FEED_TYPE_ATOM        FeedType = 4 // An Atom-Feed that will generate ScrapeOrders for all entries when the feed is polled.
+	FeedType_FEED_TYPE_UNSPECIFIED FeedType = 0 // This should not be used and marks a missing information.
+	FeedType_FEED_TYPE_HTML_SINGLE FeedType = 1 // HTML page that will be used as target for a ScrapeOrder when the feed is polled.
+	FeedType_FEED_TYPE_HTML_CRAWL  FeedType = 2 // HTML page that will be used as entrypoint for a CrawlOrder when the feed is polled.
+	FeedType_FEED_TYPE_RSS         FeedType = 3 // RSS-Feed that will generate ScrapeOrders for all entries when the feed is polled.
+	FeedType_FEED_TYPE_ATOM        FeedType = 4 // Atom-Feed that will generate ScrapeOrders for all entries when the feed is polled.
+	FeedType_FEED_TYPE_OPARL       FeedType = 5 // OPARL is a
 )
 
 // Enum value maps for FeedType.
@@ -94,6 +156,7 @@ var (
 		2: "FEED_TYPE_HTML_CRAWL",
 		3: "FEED_TYPE_RSS",
 		4: "FEED_TYPE_ATOM",
+		5: "FEED_TYPE_OPARL",
 	}
 	FeedType_value = map[string]int32{
 		"FEED_TYPE_UNSPECIFIED": 0,
@@ -101,6 +164,7 @@ var (
 		"FEED_TYPE_HTML_CRAWL":  2,
 		"FEED_TYPE_RSS":         3,
 		"FEED_TYPE_ATOM":        4,
+		"FEED_TYPE_OPARL":       5,
 	}
 )
 
@@ -115,11 +179,11 @@ func (x FeedType) String() string {
 }
 
 func (FeedType) Descriptor() protoreflect.EnumDescriptor {
-	return file_exonex_cortex_v1alpha1_publishers_proto_enumTypes[1].Descriptor()
+	return file_exonex_cortex_v1alpha1_publishers_proto_enumTypes[2].Descriptor()
 }
 
 func (FeedType) Type() protoreflect.EnumType {
-	return &file_exonex_cortex_v1alpha1_publishers_proto_enumTypes[1]
+	return &file_exonex_cortex_v1alpha1_publishers_proto_enumTypes[2]
 }
 
 func (x FeedType) Number() protoreflect.EnumNumber {
@@ -128,7 +192,7 @@ func (x FeedType) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use FeedType.Descriptor instead.
 func (FeedType) EnumDescriptor() ([]byte, []int) {
-	return file_exonex_cortex_v1alpha1_publishers_proto_rawDescGZIP(), []int{1}
+	return file_exonex_cortex_v1alpha1_publishers_proto_rawDescGZIP(), []int{2}
 }
 
 // A Publisher is a entity that is publishing content. This can be e.g. a News Agency.
@@ -136,15 +200,16 @@ type Publisher struct {
 	state            protoimpl.MessageState `protogen:"open.v1"`
 	Id               string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	Meta             *ObjectMeta            `protobuf:"bytes,2,opt,name=meta,proto3" json:"meta,omitempty"`
-	Name             string                 `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
-	Description      string                 `protobuf:"bytes,4,opt,name=description,proto3" json:"description,omitempty"`
-	WebUrl           string                 `protobuf:"bytes,5,opt,name=web_url,json=webUrl,proto3" json:"web_url,omitempty"`
-	Feeds            []*Feed                `protobuf:"bytes,6,rep,name=feeds,proto3" json:"feeds,omitempty"`
-	TdmPolicy        PublisherTdmPolicy     `protobuf:"varint,7,opt,name=tdm_policy,json=tdmPolicy,proto3,enum=exonex.cortex.v1alpha1.PublisherTdmPolicy" json:"tdm_policy,omitempty"`
-	TdmStatusHistory []*TdmPolicyHistory    `protobuf:"bytes,8,rep,name=tdm_status_history,json=tdmStatusHistory,proto3" json:"tdm_status_history,omitempty"`
-	Lease            *Lease                 `protobuf:"bytes,9,opt,name=lease,proto3,oneof" json:"lease,omitempty"`
-	CreatedAt        *timestamppb.Timestamp `protobuf:"bytes,10,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	UpdatedAt        *timestamppb.Timestamp `protobuf:"bytes,11,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	PublisherType    PublisherType          `protobuf:"varint,3,opt,name=publisher_type,json=publisherType,proto3,enum=exonex.cortex.v1alpha1.PublisherType" json:"publisher_type,omitempty"`
+	Name             string                 `protobuf:"bytes,4,opt,name=name,proto3" json:"name,omitempty"`
+	Description      string                 `protobuf:"bytes,5,opt,name=description,proto3" json:"description,omitempty"`
+	WebUrl           string                 `protobuf:"bytes,6,opt,name=web_url,json=webUrl,proto3" json:"web_url,omitempty"`
+	Feeds            []*Feed                `protobuf:"bytes,7,rep,name=feeds,proto3" json:"feeds,omitempty"`
+	TdmPolicy        PublisherTdmPolicy     `protobuf:"varint,8,opt,name=tdm_policy,json=tdmPolicy,proto3,enum=exonex.cortex.v1alpha1.PublisherTdmPolicy" json:"tdm_policy,omitempty"`
+	TdmStatusHistory []*TdmPolicyHistory    `protobuf:"bytes,9,rep,name=tdm_status_history,json=tdmStatusHistory,proto3" json:"tdm_status_history,omitempty"`
+	Lease            *Lease                 `protobuf:"bytes,10,opt,name=lease,proto3,oneof" json:"lease,omitempty"`
+	CreatedAt        *timestamppb.Timestamp `protobuf:"bytes,11,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt        *timestamppb.Timestamp `protobuf:"bytes,12,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
 }
@@ -191,6 +256,13 @@ func (x *Publisher) GetMeta() *ObjectMeta {
 		return x.Meta
 	}
 	return nil
+}
+
+func (x *Publisher) GetPublisherType() PublisherType {
+	if x != nil {
+		return x.PublisherType
+	}
+	return PublisherType_PUBLISHER_TYPE_UNSPECIFIED
 }
 
 func (x *Publisher) GetName() string {
@@ -256,92 +328,6 @@ func (x *Publisher) GetUpdatedAt() *timestamppb.Timestamp {
 	return nil
 }
 
-// A Feed is a URL that is used to create Scrape- or Crawl-Orders.
-// It always belongs to one publisher.
-type Feed struct {
-	state                  protoimpl.MessageState `protogen:"open.v1"`
-	FeedType               FeedType               `protobuf:"varint,1,opt,name=feed_type,json=feedType,proto3,enum=exonex.cortex.v1alpha1.FeedType" json:"feed_type,omitempty"`
-	Url                    string                 `protobuf:"bytes,2,opt,name=url,proto3" json:"url,omitempty"`
-	PollIntervalSeconds    *int32                 `protobuf:"varint,3,opt,name=poll_interval_seconds,json=pollIntervalSeconds,proto3,oneof" json:"poll_interval_seconds,omitempty"`
-	LastPolledAt           *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=last_polled_at,json=lastPolledAt,proto3,oneof" json:"last_polled_at,omitempty"`
-	LastPolledLastModified *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=last_polled_last_modified,json=lastPolledLastModified,proto3,oneof" json:"last_polled_last_modified,omitempty"`
-	LastPolledEtag         *string                `protobuf:"bytes,6,opt,name=last_polled_etag,json=lastPolledEtag,proto3,oneof" json:"last_polled_etag,omitempty"`
-	unknownFields          protoimpl.UnknownFields
-	sizeCache              protoimpl.SizeCache
-}
-
-func (x *Feed) Reset() {
-	*x = Feed{}
-	mi := &file_exonex_cortex_v1alpha1_publishers_proto_msgTypes[1]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *Feed) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*Feed) ProtoMessage() {}
-
-func (x *Feed) ProtoReflect() protoreflect.Message {
-	mi := &file_exonex_cortex_v1alpha1_publishers_proto_msgTypes[1]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use Feed.ProtoReflect.Descriptor instead.
-func (*Feed) Descriptor() ([]byte, []int) {
-	return file_exonex_cortex_v1alpha1_publishers_proto_rawDescGZIP(), []int{1}
-}
-
-func (x *Feed) GetFeedType() FeedType {
-	if x != nil {
-		return x.FeedType
-	}
-	return FeedType_FEED_TYPE_UNSPECIFIED
-}
-
-func (x *Feed) GetUrl() string {
-	if x != nil {
-		return x.Url
-	}
-	return ""
-}
-
-func (x *Feed) GetPollIntervalSeconds() int32 {
-	if x != nil && x.PollIntervalSeconds != nil {
-		return *x.PollIntervalSeconds
-	}
-	return 0
-}
-
-func (x *Feed) GetLastPolledAt() *timestamppb.Timestamp {
-	if x != nil {
-		return x.LastPolledAt
-	}
-	return nil
-}
-
-func (x *Feed) GetLastPolledLastModified() *timestamppb.Timestamp {
-	if x != nil {
-		return x.LastPolledLastModified
-	}
-	return nil
-}
-
-func (x *Feed) GetLastPolledEtag() string {
-	if x != nil && x.LastPolledEtag != nil {
-		return *x.LastPolledEtag
-	}
-	return ""
-}
-
 // The TdmStatusHistory tracks the history of the TDM Status for a Publisher.
 // A new history item is added when the Analysis of a Document produces a different TdmStatus then
 // currently stored for the Publisher.
@@ -356,7 +342,7 @@ type TdmPolicyHistory struct {
 
 func (x *TdmPolicyHistory) Reset() {
 	*x = TdmPolicyHistory{}
-	mi := &file_exonex_cortex_v1alpha1_publishers_proto_msgTypes[2]
+	mi := &file_exonex_cortex_v1alpha1_publishers_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -368,7 +354,7 @@ func (x *TdmPolicyHistory) String() string {
 func (*TdmPolicyHistory) ProtoMessage() {}
 
 func (x *TdmPolicyHistory) ProtoReflect() protoreflect.Message {
-	mi := &file_exonex_cortex_v1alpha1_publishers_proto_msgTypes[2]
+	mi := &file_exonex_cortex_v1alpha1_publishers_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -381,7 +367,7 @@ func (x *TdmPolicyHistory) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TdmPolicyHistory.ProtoReflect.Descriptor instead.
 func (*TdmPolicyHistory) Descriptor() ([]byte, []int) {
-	return file_exonex_cortex_v1alpha1_publishers_proto_rawDescGZIP(), []int{2}
+	return file_exonex_cortex_v1alpha1_publishers_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *TdmPolicyHistory) GetDocumentId() string {
@@ -405,6 +391,169 @@ func (x *TdmPolicyHistory) GetCreatedAt() *timestamppb.Timestamp {
 	return nil
 }
 
+// A Feed is a URL that is used to create Scrape- or Crawl-Orders.
+// It always belongs to one publisher.
+type Feed struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Meta          *ObjectMeta            `protobuf:"bytes,2,opt,name=meta,proto3" json:"meta,omitempty"`
+	PublisherId   string                 `protobuf:"bytes,3,opt,name=publisher_id,json=publisherId,proto3" json:"publisher_id,omitempty"`
+	FeedType      FeedType               `protobuf:"varint,4,opt,name=feed_type,json=feedType,proto3,enum=exonex.cortex.v1alpha1.FeedType" json:"feed_type,omitempty"`
+	Url           string                 `protobuf:"bytes,5,opt,name=url,proto3" json:"url,omitempty"`
+	PollInterval  PollInterval           `protobuf:"varint,6,opt,name=poll_interval,json=pollInterval,proto3,enum=exonex.cortex.v1alpha1.PollInterval" json:"poll_interval,omitempty"`
+	LastPoll      *FeedPoll              `protobuf:"bytes,7,opt,name=last_poll,json=lastPoll,proto3,oneof" json:"last_poll,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Feed) Reset() {
+	*x = Feed{}
+	mi := &file_exonex_cortex_v1alpha1_publishers_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Feed) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Feed) ProtoMessage() {}
+
+func (x *Feed) ProtoReflect() protoreflect.Message {
+	mi := &file_exonex_cortex_v1alpha1_publishers_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Feed.ProtoReflect.Descriptor instead.
+func (*Feed) Descriptor() ([]byte, []int) {
+	return file_exonex_cortex_v1alpha1_publishers_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *Feed) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *Feed) GetMeta() *ObjectMeta {
+	if x != nil {
+		return x.Meta
+	}
+	return nil
+}
+
+func (x *Feed) GetPublisherId() string {
+	if x != nil {
+		return x.PublisherId
+	}
+	return ""
+}
+
+func (x *Feed) GetFeedType() FeedType {
+	if x != nil {
+		return x.FeedType
+	}
+	return FeedType_FEED_TYPE_UNSPECIFIED
+}
+
+func (x *Feed) GetUrl() string {
+	if x != nil {
+		return x.Url
+	}
+	return ""
+}
+
+func (x *Feed) GetPollInterval() PollInterval {
+	if x != nil {
+		return x.PollInterval
+	}
+	return PollInterval_POLL_INTERVAL_UNSPECIFIED
+}
+
+func (x *Feed) GetLastPoll() *FeedPoll {
+	if x != nil {
+		return x.LastPoll
+	}
+	return nil
+}
+
+// A single Poll of a Feed.
+type FeedPoll struct {
+	state                  protoimpl.MessageState `protogen:"open.v1"`
+	LastPolledAt           *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=last_polled_at,json=lastPolledAt,proto3,oneof" json:"last_polled_at,omitempty"`
+	NextPoll               *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=next_poll,json=nextPoll,proto3,oneof" json:"next_poll,omitempty"`
+	LastPolledLastModified *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=last_polled_last_modified,json=lastPolledLastModified,proto3,oneof" json:"last_polled_last_modified,omitempty"`
+	LastPolledEtag         *string                `protobuf:"bytes,7,opt,name=last_polled_etag,json=lastPolledEtag,proto3,oneof" json:"last_polled_etag,omitempty"`
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
+}
+
+func (x *FeedPoll) Reset() {
+	*x = FeedPoll{}
+	mi := &file_exonex_cortex_v1alpha1_publishers_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *FeedPoll) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*FeedPoll) ProtoMessage() {}
+
+func (x *FeedPoll) ProtoReflect() protoreflect.Message {
+	mi := &file_exonex_cortex_v1alpha1_publishers_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use FeedPoll.ProtoReflect.Descriptor instead.
+func (*FeedPoll) Descriptor() ([]byte, []int) {
+	return file_exonex_cortex_v1alpha1_publishers_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *FeedPoll) GetLastPolledAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.LastPolledAt
+	}
+	return nil
+}
+
+func (x *FeedPoll) GetNextPoll() *timestamppb.Timestamp {
+	if x != nil {
+		return x.NextPoll
+	}
+	return nil
+}
+
+func (x *FeedPoll) GetLastPolledLastModified() *timestamppb.Timestamp {
+	if x != nil {
+		return x.LastPolledLastModified
+	}
+	return nil
+}
+
+func (x *FeedPoll) GetLastPolledEtag() string {
+	if x != nil && x.LastPolledEtag != nil {
+		return *x.LastPolledEtag
+	}
+	return ""
+}
+
 type ListPublishersRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	FieldMask     *fieldmaskpb.FieldMask `protobuf:"bytes,1,opt,name=field_mask,json=fieldMask,proto3" json:"field_mask,omitempty"`
@@ -417,7 +566,7 @@ type ListPublishersRequest struct {
 
 func (x *ListPublishersRequest) Reset() {
 	*x = ListPublishersRequest{}
-	mi := &file_exonex_cortex_v1alpha1_publishers_proto_msgTypes[3]
+	mi := &file_exonex_cortex_v1alpha1_publishers_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -429,7 +578,7 @@ func (x *ListPublishersRequest) String() string {
 func (*ListPublishersRequest) ProtoMessage() {}
 
 func (x *ListPublishersRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_exonex_cortex_v1alpha1_publishers_proto_msgTypes[3]
+	mi := &file_exonex_cortex_v1alpha1_publishers_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -442,7 +591,7 @@ func (x *ListPublishersRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListPublishersRequest.ProtoReflect.Descriptor instead.
 func (*ListPublishersRequest) Descriptor() ([]byte, []int) {
-	return file_exonex_cortex_v1alpha1_publishers_proto_rawDescGZIP(), []int{3}
+	return file_exonex_cortex_v1alpha1_publishers_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *ListPublishersRequest) GetFieldMask() *fieldmaskpb.FieldMask {
@@ -483,7 +632,7 @@ type ListPublishersResponse struct {
 
 func (x *ListPublishersResponse) Reset() {
 	*x = ListPublishersResponse{}
-	mi := &file_exonex_cortex_v1alpha1_publishers_proto_msgTypes[4]
+	mi := &file_exonex_cortex_v1alpha1_publishers_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -495,7 +644,7 @@ func (x *ListPublishersResponse) String() string {
 func (*ListPublishersResponse) ProtoMessage() {}
 
 func (x *ListPublishersResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_exonex_cortex_v1alpha1_publishers_proto_msgTypes[4]
+	mi := &file_exonex_cortex_v1alpha1_publishers_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -508,7 +657,7 @@ func (x *ListPublishersResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListPublishersResponse.ProtoReflect.Descriptor instead.
 func (*ListPublishersResponse) Descriptor() ([]byte, []int) {
-	return file_exonex_cortex_v1alpha1_publishers_proto_rawDescGZIP(), []int{4}
+	return file_exonex_cortex_v1alpha1_publishers_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *ListPublishersResponse) GetTotalCount() uint64 {
@@ -534,7 +683,7 @@ type GetPublisherRequest struct {
 
 func (x *GetPublisherRequest) Reset() {
 	*x = GetPublisherRequest{}
-	mi := &file_exonex_cortex_v1alpha1_publishers_proto_msgTypes[5]
+	mi := &file_exonex_cortex_v1alpha1_publishers_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -546,7 +695,7 @@ func (x *GetPublisherRequest) String() string {
 func (*GetPublisherRequest) ProtoMessage() {}
 
 func (x *GetPublisherRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_exonex_cortex_v1alpha1_publishers_proto_msgTypes[5]
+	mi := &file_exonex_cortex_v1alpha1_publishers_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -559,7 +708,7 @@ func (x *GetPublisherRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetPublisherRequest.ProtoReflect.Descriptor instead.
 func (*GetPublisherRequest) Descriptor() ([]byte, []int) {
-	return file_exonex_cortex_v1alpha1_publishers_proto_rawDescGZIP(), []int{5}
+	return file_exonex_cortex_v1alpha1_publishers_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *GetPublisherRequest) GetId() string {
@@ -578,7 +727,7 @@ type GetPublisherResponse struct {
 
 func (x *GetPublisherResponse) Reset() {
 	*x = GetPublisherResponse{}
-	mi := &file_exonex_cortex_v1alpha1_publishers_proto_msgTypes[6]
+	mi := &file_exonex_cortex_v1alpha1_publishers_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -590,7 +739,7 @@ func (x *GetPublisherResponse) String() string {
 func (*GetPublisherResponse) ProtoMessage() {}
 
 func (x *GetPublisherResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_exonex_cortex_v1alpha1_publishers_proto_msgTypes[6]
+	mi := &file_exonex_cortex_v1alpha1_publishers_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -603,7 +752,7 @@ func (x *GetPublisherResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetPublisherResponse.ProtoReflect.Descriptor instead.
 func (*GetPublisherResponse) Descriptor() ([]byte, []int) {
-	return file_exonex_cortex_v1alpha1_publishers_proto_rawDescGZIP(), []int{6}
+	return file_exonex_cortex_v1alpha1_publishers_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *GetPublisherResponse) GetItem() *Publisher {
@@ -624,7 +773,7 @@ type AddPublisherRequest struct {
 
 func (x *AddPublisherRequest) Reset() {
 	*x = AddPublisherRequest{}
-	mi := &file_exonex_cortex_v1alpha1_publishers_proto_msgTypes[7]
+	mi := &file_exonex_cortex_v1alpha1_publishers_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -636,7 +785,7 @@ func (x *AddPublisherRequest) String() string {
 func (*AddPublisherRequest) ProtoMessage() {}
 
 func (x *AddPublisherRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_exonex_cortex_v1alpha1_publishers_proto_msgTypes[7]
+	mi := &file_exonex_cortex_v1alpha1_publishers_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -649,7 +798,7 @@ func (x *AddPublisherRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AddPublisherRequest.ProtoReflect.Descriptor instead.
 func (*AddPublisherRequest) Descriptor() ([]byte, []int) {
-	return file_exonex_cortex_v1alpha1_publishers_proto_rawDescGZIP(), []int{7}
+	return file_exonex_cortex_v1alpha1_publishers_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *AddPublisherRequest) GetName() string {
@@ -682,7 +831,7 @@ type AddPublisherResponse struct {
 
 func (x *AddPublisherResponse) Reset() {
 	*x = AddPublisherResponse{}
-	mi := &file_exonex_cortex_v1alpha1_publishers_proto_msgTypes[8]
+	mi := &file_exonex_cortex_v1alpha1_publishers_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -694,7 +843,7 @@ func (x *AddPublisherResponse) String() string {
 func (*AddPublisherResponse) ProtoMessage() {}
 
 func (x *AddPublisherResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_exonex_cortex_v1alpha1_publishers_proto_msgTypes[8]
+	mi := &file_exonex_cortex_v1alpha1_publishers_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -707,7 +856,7 @@ func (x *AddPublisherResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AddPublisherResponse.ProtoReflect.Descriptor instead.
 func (*AddPublisherResponse) Descriptor() ([]byte, []int) {
-	return file_exonex_cortex_v1alpha1_publishers_proto_rawDescGZIP(), []int{8}
+	return file_exonex_cortex_v1alpha1_publishers_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *AddPublisherResponse) GetItem() *Publisher {
@@ -728,7 +877,7 @@ type GetPublishersForProcessionRequest struct {
 
 func (x *GetPublishersForProcessionRequest) Reset() {
 	*x = GetPublishersForProcessionRequest{}
-	mi := &file_exonex_cortex_v1alpha1_publishers_proto_msgTypes[9]
+	mi := &file_exonex_cortex_v1alpha1_publishers_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -740,7 +889,7 @@ func (x *GetPublishersForProcessionRequest) String() string {
 func (*GetPublishersForProcessionRequest) ProtoMessage() {}
 
 func (x *GetPublishersForProcessionRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_exonex_cortex_v1alpha1_publishers_proto_msgTypes[9]
+	mi := &file_exonex_cortex_v1alpha1_publishers_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -753,7 +902,7 @@ func (x *GetPublishersForProcessionRequest) ProtoReflect() protoreflect.Message 
 
 // Deprecated: Use GetPublishersForProcessionRequest.ProtoReflect.Descriptor instead.
 func (*GetPublishersForProcessionRequest) Descriptor() ([]byte, []int) {
-	return file_exonex_cortex_v1alpha1_publishers_proto_rawDescGZIP(), []int{9}
+	return file_exonex_cortex_v1alpha1_publishers_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *GetPublishersForProcessionRequest) GetLeaseHolder() string {
@@ -786,7 +935,7 @@ type GetPublishersForProcessionResponse struct {
 
 func (x *GetPublishersForProcessionResponse) Reset() {
 	*x = GetPublishersForProcessionResponse{}
-	mi := &file_exonex_cortex_v1alpha1_publishers_proto_msgTypes[10]
+	mi := &file_exonex_cortex_v1alpha1_publishers_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -798,7 +947,7 @@ func (x *GetPublishersForProcessionResponse) String() string {
 func (*GetPublishersForProcessionResponse) ProtoMessage() {}
 
 func (x *GetPublishersForProcessionResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_exonex_cortex_v1alpha1_publishers_proto_msgTypes[10]
+	mi := &file_exonex_cortex_v1alpha1_publishers_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -811,7 +960,7 @@ func (x *GetPublishersForProcessionResponse) ProtoReflect() protoreflect.Message
 
 // Deprecated: Use GetPublishersForProcessionResponse.ProtoReflect.Descriptor instead.
 func (*GetPublishersForProcessionResponse) Descriptor() ([]byte, []int) {
-	return file_exonex_cortex_v1alpha1_publishers_proto_rawDescGZIP(), []int{10}
+	return file_exonex_cortex_v1alpha1_publishers_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *GetPublishersForProcessionResponse) GetItems() []*Publisher {
@@ -830,7 +979,7 @@ type GetPublishersOfLeaserHolderRequest struct {
 
 func (x *GetPublishersOfLeaserHolderRequest) Reset() {
 	*x = GetPublishersOfLeaserHolderRequest{}
-	mi := &file_exonex_cortex_v1alpha1_publishers_proto_msgTypes[11]
+	mi := &file_exonex_cortex_v1alpha1_publishers_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -842,7 +991,7 @@ func (x *GetPublishersOfLeaserHolderRequest) String() string {
 func (*GetPublishersOfLeaserHolderRequest) ProtoMessage() {}
 
 func (x *GetPublishersOfLeaserHolderRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_exonex_cortex_v1alpha1_publishers_proto_msgTypes[11]
+	mi := &file_exonex_cortex_v1alpha1_publishers_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -855,7 +1004,7 @@ func (x *GetPublishersOfLeaserHolderRequest) ProtoReflect() protoreflect.Message
 
 // Deprecated: Use GetPublishersOfLeaserHolderRequest.ProtoReflect.Descriptor instead.
 func (*GetPublishersOfLeaserHolderRequest) Descriptor() ([]byte, []int) {
-	return file_exonex_cortex_v1alpha1_publishers_proto_rawDescGZIP(), []int{11}
+	return file_exonex_cortex_v1alpha1_publishers_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *GetPublishersOfLeaserHolderRequest) GetLeaseHolder() string {
@@ -874,7 +1023,7 @@ type GetPublishersOfLeaserHolderResponse struct {
 
 func (x *GetPublishersOfLeaserHolderResponse) Reset() {
 	*x = GetPublishersOfLeaserHolderResponse{}
-	mi := &file_exonex_cortex_v1alpha1_publishers_proto_msgTypes[12]
+	mi := &file_exonex_cortex_v1alpha1_publishers_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -886,7 +1035,7 @@ func (x *GetPublishersOfLeaserHolderResponse) String() string {
 func (*GetPublishersOfLeaserHolderResponse) ProtoMessage() {}
 
 func (x *GetPublishersOfLeaserHolderResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_exonex_cortex_v1alpha1_publishers_proto_msgTypes[12]
+	mi := &file_exonex_cortex_v1alpha1_publishers_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -899,7 +1048,7 @@ func (x *GetPublishersOfLeaserHolderResponse) ProtoReflect() protoreflect.Messag
 
 // Deprecated: Use GetPublishersOfLeaserHolderResponse.ProtoReflect.Descriptor instead.
 func (*GetPublishersOfLeaserHolderResponse) Descriptor() ([]byte, []int) {
-	return file_exonex_cortex_v1alpha1_publishers_proto_rawDescGZIP(), []int{12}
+	return file_exonex_cortex_v1alpha1_publishers_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *GetPublishersOfLeaserHolderResponse) GetItems() []*Publisher {
@@ -920,7 +1069,7 @@ type AddPublisherRequest_Feed struct {
 
 func (x *AddPublisherRequest_Feed) Reset() {
 	*x = AddPublisherRequest_Feed{}
-	mi := &file_exonex_cortex_v1alpha1_publishers_proto_msgTypes[13]
+	mi := &file_exonex_cortex_v1alpha1_publishers_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -932,7 +1081,7 @@ func (x *AddPublisherRequest_Feed) String() string {
 func (*AddPublisherRequest_Feed) ProtoMessage() {}
 
 func (x *AddPublisherRequest_Feed) ProtoReflect() protoreflect.Message {
-	mi := &file_exonex_cortex_v1alpha1_publishers_proto_msgTypes[13]
+	mi := &file_exonex_cortex_v1alpha1_publishers_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -945,7 +1094,7 @@ func (x *AddPublisherRequest_Feed) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AddPublisherRequest_Feed.ProtoReflect.Descriptor instead.
 func (*AddPublisherRequest_Feed) Descriptor() ([]byte, []int) {
-	return file_exonex_cortex_v1alpha1_publishers_proto_rawDescGZIP(), []int{7, 0}
+	return file_exonex_cortex_v1alpha1_publishers_proto_rawDescGZIP(), []int{8, 0}
 }
 
 func (x *AddPublisherRequest_Feed) GetFeedType() FeedType {
@@ -973,42 +1122,52 @@ var File_exonex_cortex_v1alpha1_publishers_proto protoreflect.FileDescriptor
 
 const file_exonex_cortex_v1alpha1_publishers_proto_rawDesc = "" +
 	"\n" +
-	"'exonex/cortex/v1alpha1/publishers.proto\x12\x16exonex.cortex.v1alpha1\x1a#exonex/cortex/v1alpha1/common.proto\x1a\x1bbuf/validate/validate.proto\x1a google/protobuf/field_mask.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1egoogle/protobuf/duration.proto\"\xb3\x04\n" +
+	"'exonex/cortex/v1alpha1/publishers.proto\x12\x16exonex.cortex.v1alpha1\x1a#exonex/cortex/v1alpha1/common.proto\x1a\x1bbuf/validate/validate.proto\x1a google/protobuf/field_mask.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1egoogle/protobuf/duration.proto\"\x81\x05\n" +
 	"\tPublisher\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x126\n" +
-	"\x04meta\x18\x02 \x01(\v2\".exonex.cortex.v1alpha1.ObjectMetaR\x04meta\x12\x12\n" +
-	"\x04name\x18\x03 \x01(\tR\x04name\x12 \n" +
-	"\vdescription\x18\x04 \x01(\tR\vdescription\x12\x17\n" +
-	"\aweb_url\x18\x05 \x01(\tR\x06webUrl\x122\n" +
-	"\x05feeds\x18\x06 \x03(\v2\x1c.exonex.cortex.v1alpha1.FeedR\x05feeds\x12I\n" +
+	"\x04meta\x18\x02 \x01(\v2\".exonex.cortex.v1alpha1.ObjectMetaR\x04meta\x12L\n" +
+	"\x0epublisher_type\x18\x03 \x01(\x0e2%.exonex.cortex.v1alpha1.PublisherTypeR\rpublisherType\x12\x12\n" +
+	"\x04name\x18\x04 \x01(\tR\x04name\x12 \n" +
+	"\vdescription\x18\x05 \x01(\tR\vdescription\x12\x17\n" +
+	"\aweb_url\x18\x06 \x01(\tR\x06webUrl\x122\n" +
+	"\x05feeds\x18\a \x03(\v2\x1c.exonex.cortex.v1alpha1.FeedR\x05feeds\x12I\n" +
 	"\n" +
-	"tdm_policy\x18\a \x01(\x0e2*.exonex.cortex.v1alpha1.PublisherTdmPolicyR\ttdmPolicy\x12V\n" +
-	"\x12tdm_status_history\x18\b \x03(\v2(.exonex.cortex.v1alpha1.TdmPolicyHistoryR\x10tdmStatusHistory\x128\n" +
-	"\x05lease\x18\t \x01(\v2\x1d.exonex.cortex.v1alpha1.LeaseH\x00R\x05lease\x88\x01\x01\x129\n" +
+	"tdm_policy\x18\b \x01(\x0e2*.exonex.cortex.v1alpha1.PublisherTdmPolicyR\ttdmPolicy\x12V\n" +
+	"\x12tdm_status_history\x18\t \x03(\v2(.exonex.cortex.v1alpha1.TdmPolicyHistoryR\x10tdmStatusHistory\x128\n" +
+	"\x05lease\x18\n" +
+	" \x01(\v2\x1d.exonex.cortex.v1alpha1.LeaseH\x00R\x05lease\x88\x01\x01\x129\n" +
 	"\n" +
-	"created_at\x18\n" +
-	" \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
+	"created_at\x18\v \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
 	"\n" +
-	"updated_at\x18\v \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAtB\b\n" +
-	"\x06_lease\"\xc2\x03\n" +
-	"\x04Feed\x12=\n" +
-	"\tfeed_type\x18\x01 \x01(\x0e2 .exonex.cortex.v1alpha1.FeedTypeR\bfeedType\x12\x10\n" +
-	"\x03url\x18\x02 \x01(\tR\x03url\x127\n" +
-	"\x15poll_interval_seconds\x18\x03 \x01(\x05H\x00R\x13pollIntervalSeconds\x88\x01\x01\x12E\n" +
-	"\x0elast_polled_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampH\x01R\flastPolledAt\x88\x01\x01\x12Z\n" +
-	"\x19last_polled_last_modified\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampH\x02R\x16lastPolledLastModified\x88\x01\x01\x12-\n" +
-	"\x10last_polled_etag\x18\x06 \x01(\tH\x03R\x0elastPolledEtag\x88\x01\x01B\x18\n" +
-	"\x16_poll_interval_secondsB\x11\n" +
-	"\x0f_last_polled_atB\x1c\n" +
-	"\x1a_last_polled_last_modifiedB\x13\n" +
-	"\x11_last_polled_etag\"\xb9\x01\n" +
+	"updated_at\x18\f \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAtB\b\n" +
+	"\x06_lease\"\xb9\x01\n" +
 	"\x10TdmPolicyHistory\x12\x1f\n" +
 	"\vdocument_id\x18\x01 \x01(\tR\n" +
 	"documentId\x12I\n" +
 	"\n" +
 	"tdm_policy\x18\x02 \x01(\x0e2*.exonex.cortex.v1alpha1.PublisherTdmPolicyR\ttdmPolicy\x129\n" +
 	"\n" +
-	"created_at\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\"\xf6\x01\n" +
+	"created_at\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\"\xdf\x02\n" +
+	"\x04Feed\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x126\n" +
+	"\x04meta\x18\x02 \x01(\v2\".exonex.cortex.v1alpha1.ObjectMetaR\x04meta\x12!\n" +
+	"\fpublisher_id\x18\x03 \x01(\tR\vpublisherId\x12=\n" +
+	"\tfeed_type\x18\x04 \x01(\x0e2 .exonex.cortex.v1alpha1.FeedTypeR\bfeedType\x12\x10\n" +
+	"\x03url\x18\x05 \x01(\tR\x03url\x12I\n" +
+	"\rpoll_interval\x18\x06 \x01(\x0e2$.exonex.cortex.v1alpha1.PollIntervalR\fpollInterval\x12B\n" +
+	"\tlast_poll\x18\a \x01(\v2 .exonex.cortex.v1alpha1.FeedPollH\x00R\blastPoll\x88\x01\x01B\f\n" +
+	"\n" +
+	"_last_poll\"\xee\x02\n" +
+	"\bFeedPoll\x12E\n" +
+	"\x0elast_polled_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampH\x00R\flastPolledAt\x88\x01\x01\x12<\n" +
+	"\tnext_poll\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampH\x01R\bnextPoll\x88\x01\x01\x12Z\n" +
+	"\x19last_polled_last_modified\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampH\x02R\x16lastPolledLastModified\x88\x01\x01\x12-\n" +
+	"\x10last_polled_etag\x18\a \x01(\tH\x03R\x0elastPolledEtag\x88\x01\x01B\x11\n" +
+	"\x0f_last_polled_atB\f\n" +
+	"\n" +
+	"_next_pollB\x1c\n" +
+	"\x1a_last_polled_last_modifiedB\x13\n" +
+	"\x11_last_polled_etag\"\xf6\x01\n" +
 	"\x15ListPublishersRequest\x129\n" +
 	"\n" +
 	"field_mask\x18\x01 \x01(\v2\x1a.google.protobuf.FieldMaskR\tfieldMask\x12@\n" +
@@ -1047,17 +1206,26 @@ const file_exonex_cortex_v1alpha1_publishers_proto_rawDesc = "" +
 	"\"GetPublishersOfLeaserHolderRequest\x12!\n" +
 	"\flease_holder\x18\x01 \x01(\tR\vleaseHolder\"^\n" +
 	"#GetPublishersOfLeaserHolderResponse\x127\n" +
-	"\x05items\x18\x02 \x03(\v2!.exonex.cortex.v1alpha1.PublisherR\x05items*~\n" +
+	"\x05items\x18\x02 \x03(\v2!.exonex.cortex.v1alpha1.PublisherR\x05items*\xe9\x01\n" +
+	"\rPublisherType\x12\x1e\n" +
+	"\x1aPUBLISHER_TYPE_UNSPECIFIED\x10\x00\x12#\n" +
+	"\x1fPUBLISHER_TYPE_PUBLIC_AUTHORITY\x10\x01\x12\x1c\n" +
+	"\x18PUBLISHER_TYPE_CORPORATE\x10\x02\x12\x18\n" +
+	"\x14PUBLISHER_TYPE_MEDIA\x10\x03\x12\x1f\n" +
+	"\x1bPUBLISHER_TYPE_ORGANIZATION\x10\x04\x12\x1d\n" +
+	"\x19PUBLISHER_TYPE_INDIVIDUAL\x10\x05\x12\x1b\n" +
+	"\x17PUBLISHER_TYPE_ACADEMIC\x10\x06*~\n" +
 	"\x12PublisherTdmPolicy\x12$\n" +
 	" PUBLISHER_TDM_POLICY_UNSPECIFIED\x10\x00\x12 \n" +
 	"\x1cPUBLISHER_TDM_POLICY_ALLOWED\x10\x01\x12 \n" +
-	"\x1cPUBLISHER_TDM_POLICY_OPT_OUT\x10\x02*\x81\x01\n" +
+	"\x1cPUBLISHER_TDM_POLICY_OPT_OUT\x10\x02*\x96\x01\n" +
 	"\bFeedType\x12\x19\n" +
 	"\x15FEED_TYPE_UNSPECIFIED\x10\x00\x12\x19\n" +
 	"\x15FEED_TYPE_HTML_SINGLE\x10\x01\x12\x18\n" +
 	"\x14FEED_TYPE_HTML_CRAWL\x10\x02\x12\x11\n" +
 	"\rFEED_TYPE_RSS\x10\x03\x12\x12\n" +
-	"\x0eFEED_TYPE_ATOM\x10\x042\x92\x05\n" +
+	"\x0eFEED_TYPE_ATOM\x10\x04\x12\x13\n" +
+	"\x0fFEED_TYPE_OPARL\x10\x052\x92\x05\n" +
 	"\x10PublisherService\x12q\n" +
 	"\x0eListPublishers\x12-.exonex.cortex.v1alpha1.ListPublishersRequest\x1a..exonex.cortex.v1alpha1.ListPublishersResponse\"\x00\x12k\n" +
 	"\fGetPublisher\x12+.exonex.cortex.v1alpha1.GetPublisherRequest\x1a,.exonex.cortex.v1alpha1.GetPublisherResponse\"\x00\x12k\n" +
@@ -1078,69 +1246,77 @@ func file_exonex_cortex_v1alpha1_publishers_proto_rawDescGZIP() []byte {
 	return file_exonex_cortex_v1alpha1_publishers_proto_rawDescData
 }
 
-var file_exonex_cortex_v1alpha1_publishers_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_exonex_cortex_v1alpha1_publishers_proto_msgTypes = make([]protoimpl.MessageInfo, 14)
+var file_exonex_cortex_v1alpha1_publishers_proto_enumTypes = make([]protoimpl.EnumInfo, 3)
+var file_exonex_cortex_v1alpha1_publishers_proto_msgTypes = make([]protoimpl.MessageInfo, 15)
 var file_exonex_cortex_v1alpha1_publishers_proto_goTypes = []any{
-	(PublisherTdmPolicy)(0),                     // 0: exonex.cortex.v1alpha1.PublisherTdmPolicy
-	(FeedType)(0),                               // 1: exonex.cortex.v1alpha1.FeedType
-	(*Publisher)(nil),                           // 2: exonex.cortex.v1alpha1.Publisher
-	(*Feed)(nil),                                // 3: exonex.cortex.v1alpha1.Feed
+	(PublisherType)(0),                          // 0: exonex.cortex.v1alpha1.PublisherType
+	(PublisherTdmPolicy)(0),                     // 1: exonex.cortex.v1alpha1.PublisherTdmPolicy
+	(FeedType)(0),                               // 2: exonex.cortex.v1alpha1.FeedType
+	(*Publisher)(nil),                           // 3: exonex.cortex.v1alpha1.Publisher
 	(*TdmPolicyHistory)(nil),                    // 4: exonex.cortex.v1alpha1.TdmPolicyHistory
-	(*ListPublishersRequest)(nil),               // 5: exonex.cortex.v1alpha1.ListPublishersRequest
-	(*ListPublishersResponse)(nil),              // 6: exonex.cortex.v1alpha1.ListPublishersResponse
-	(*GetPublisherRequest)(nil),                 // 7: exonex.cortex.v1alpha1.GetPublisherRequest
-	(*GetPublisherResponse)(nil),                // 8: exonex.cortex.v1alpha1.GetPublisherResponse
-	(*AddPublisherRequest)(nil),                 // 9: exonex.cortex.v1alpha1.AddPublisherRequest
-	(*AddPublisherResponse)(nil),                // 10: exonex.cortex.v1alpha1.AddPublisherResponse
-	(*GetPublishersForProcessionRequest)(nil),   // 11: exonex.cortex.v1alpha1.GetPublishersForProcessionRequest
-	(*GetPublishersForProcessionResponse)(nil),  // 12: exonex.cortex.v1alpha1.GetPublishersForProcessionResponse
-	(*GetPublishersOfLeaserHolderRequest)(nil),  // 13: exonex.cortex.v1alpha1.GetPublishersOfLeaserHolderRequest
-	(*GetPublishersOfLeaserHolderResponse)(nil), // 14: exonex.cortex.v1alpha1.GetPublishersOfLeaserHolderResponse
-	(*AddPublisherRequest_Feed)(nil),            // 15: exonex.cortex.v1alpha1.AddPublisherRequest.Feed
-	(*ObjectMeta)(nil),                          // 16: exonex.cortex.v1alpha1.ObjectMeta
-	(*Lease)(nil),                               // 17: exonex.cortex.v1alpha1.Lease
-	(*timestamppb.Timestamp)(nil),               // 18: google.protobuf.Timestamp
-	(*fieldmaskpb.FieldMask)(nil),               // 19: google.protobuf.FieldMask
-	(ListOrder)(0),                              // 20: exonex.cortex.v1alpha1.ListOrder
-	(*durationpb.Duration)(nil),                 // 21: google.protobuf.Duration
+	(*Feed)(nil),                                // 5: exonex.cortex.v1alpha1.Feed
+	(*FeedPoll)(nil),                            // 6: exonex.cortex.v1alpha1.FeedPoll
+	(*ListPublishersRequest)(nil),               // 7: exonex.cortex.v1alpha1.ListPublishersRequest
+	(*ListPublishersResponse)(nil),              // 8: exonex.cortex.v1alpha1.ListPublishersResponse
+	(*GetPublisherRequest)(nil),                 // 9: exonex.cortex.v1alpha1.GetPublisherRequest
+	(*GetPublisherResponse)(nil),                // 10: exonex.cortex.v1alpha1.GetPublisherResponse
+	(*AddPublisherRequest)(nil),                 // 11: exonex.cortex.v1alpha1.AddPublisherRequest
+	(*AddPublisherResponse)(nil),                // 12: exonex.cortex.v1alpha1.AddPublisherResponse
+	(*GetPublishersForProcessionRequest)(nil),   // 13: exonex.cortex.v1alpha1.GetPublishersForProcessionRequest
+	(*GetPublishersForProcessionResponse)(nil),  // 14: exonex.cortex.v1alpha1.GetPublishersForProcessionResponse
+	(*GetPublishersOfLeaserHolderRequest)(nil),  // 15: exonex.cortex.v1alpha1.GetPublishersOfLeaserHolderRequest
+	(*GetPublishersOfLeaserHolderResponse)(nil), // 16: exonex.cortex.v1alpha1.GetPublishersOfLeaserHolderResponse
+	(*AddPublisherRequest_Feed)(nil),            // 17: exonex.cortex.v1alpha1.AddPublisherRequest.Feed
+	(*ObjectMeta)(nil),                          // 18: exonex.cortex.v1alpha1.ObjectMeta
+	(*Lease)(nil),                               // 19: exonex.cortex.v1alpha1.Lease
+	(*timestamppb.Timestamp)(nil),               // 20: google.protobuf.Timestamp
+	(PollInterval)(0),                           // 21: exonex.cortex.v1alpha1.PollInterval
+	(*fieldmaskpb.FieldMask)(nil),               // 22: google.protobuf.FieldMask
+	(ListOrder)(0),                              // 23: exonex.cortex.v1alpha1.ListOrder
+	(*durationpb.Duration)(nil),                 // 24: google.protobuf.Duration
 }
 var file_exonex_cortex_v1alpha1_publishers_proto_depIdxs = []int32{
-	16, // 0: exonex.cortex.v1alpha1.Publisher.meta:type_name -> exonex.cortex.v1alpha1.ObjectMeta
-	3,  // 1: exonex.cortex.v1alpha1.Publisher.feeds:type_name -> exonex.cortex.v1alpha1.Feed
-	0,  // 2: exonex.cortex.v1alpha1.Publisher.tdm_policy:type_name -> exonex.cortex.v1alpha1.PublisherTdmPolicy
-	4,  // 3: exonex.cortex.v1alpha1.Publisher.tdm_status_history:type_name -> exonex.cortex.v1alpha1.TdmPolicyHistory
-	17, // 4: exonex.cortex.v1alpha1.Publisher.lease:type_name -> exonex.cortex.v1alpha1.Lease
-	18, // 5: exonex.cortex.v1alpha1.Publisher.created_at:type_name -> google.protobuf.Timestamp
-	18, // 6: exonex.cortex.v1alpha1.Publisher.updated_at:type_name -> google.protobuf.Timestamp
-	1,  // 7: exonex.cortex.v1alpha1.Feed.feed_type:type_name -> exonex.cortex.v1alpha1.FeedType
-	18, // 8: exonex.cortex.v1alpha1.Feed.last_polled_at:type_name -> google.protobuf.Timestamp
-	18, // 9: exonex.cortex.v1alpha1.Feed.last_polled_last_modified:type_name -> google.protobuf.Timestamp
-	0,  // 10: exonex.cortex.v1alpha1.TdmPolicyHistory.tdm_policy:type_name -> exonex.cortex.v1alpha1.PublisherTdmPolicy
-	18, // 11: exonex.cortex.v1alpha1.TdmPolicyHistory.created_at:type_name -> google.protobuf.Timestamp
-	19, // 12: exonex.cortex.v1alpha1.ListPublishersRequest.field_mask:type_name -> google.protobuf.FieldMask
-	20, // 13: exonex.cortex.v1alpha1.ListPublishersRequest.list_order:type_name -> exonex.cortex.v1alpha1.ListOrder
-	2,  // 14: exonex.cortex.v1alpha1.ListPublishersResponse.items:type_name -> exonex.cortex.v1alpha1.Publisher
-	2,  // 15: exonex.cortex.v1alpha1.GetPublisherResponse.item:type_name -> exonex.cortex.v1alpha1.Publisher
-	2,  // 16: exonex.cortex.v1alpha1.AddPublisherResponse.item:type_name -> exonex.cortex.v1alpha1.Publisher
-	21, // 17: exonex.cortex.v1alpha1.GetPublishersForProcessionRequest.lease_duration:type_name -> google.protobuf.Duration
-	2,  // 18: exonex.cortex.v1alpha1.GetPublishersForProcessionResponse.items:type_name -> exonex.cortex.v1alpha1.Publisher
-	2,  // 19: exonex.cortex.v1alpha1.GetPublishersOfLeaserHolderResponse.items:type_name -> exonex.cortex.v1alpha1.Publisher
-	1,  // 20: exonex.cortex.v1alpha1.AddPublisherRequest.Feed.feed_type:type_name -> exonex.cortex.v1alpha1.FeedType
-	5,  // 21: exonex.cortex.v1alpha1.PublisherService.ListPublishers:input_type -> exonex.cortex.v1alpha1.ListPublishersRequest
-	7,  // 22: exonex.cortex.v1alpha1.PublisherService.GetPublisher:input_type -> exonex.cortex.v1alpha1.GetPublisherRequest
-	9,  // 23: exonex.cortex.v1alpha1.PublisherService.AddPublisher:input_type -> exonex.cortex.v1alpha1.AddPublisherRequest
-	11, // 24: exonex.cortex.v1alpha1.PublisherService.GetPublishersForProcession:input_type -> exonex.cortex.v1alpha1.GetPublishersForProcessionRequest
-	13, // 25: exonex.cortex.v1alpha1.PublisherService.GetPublishersOfLeaserHolder:input_type -> exonex.cortex.v1alpha1.GetPublishersOfLeaserHolderRequest
-	6,  // 26: exonex.cortex.v1alpha1.PublisherService.ListPublishers:output_type -> exonex.cortex.v1alpha1.ListPublishersResponse
-	8,  // 27: exonex.cortex.v1alpha1.PublisherService.GetPublisher:output_type -> exonex.cortex.v1alpha1.GetPublisherResponse
-	10, // 28: exonex.cortex.v1alpha1.PublisherService.AddPublisher:output_type -> exonex.cortex.v1alpha1.AddPublisherResponse
-	12, // 29: exonex.cortex.v1alpha1.PublisherService.GetPublishersForProcession:output_type -> exonex.cortex.v1alpha1.GetPublishersForProcessionResponse
-	14, // 30: exonex.cortex.v1alpha1.PublisherService.GetPublishersOfLeaserHolder:output_type -> exonex.cortex.v1alpha1.GetPublishersOfLeaserHolderResponse
-	26, // [26:31] is the sub-list for method output_type
-	21, // [21:26] is the sub-list for method input_type
-	21, // [21:21] is the sub-list for extension type_name
-	21, // [21:21] is the sub-list for extension extendee
-	0,  // [0:21] is the sub-list for field type_name
+	18, // 0: exonex.cortex.v1alpha1.Publisher.meta:type_name -> exonex.cortex.v1alpha1.ObjectMeta
+	0,  // 1: exonex.cortex.v1alpha1.Publisher.publisher_type:type_name -> exonex.cortex.v1alpha1.PublisherType
+	5,  // 2: exonex.cortex.v1alpha1.Publisher.feeds:type_name -> exonex.cortex.v1alpha1.Feed
+	1,  // 3: exonex.cortex.v1alpha1.Publisher.tdm_policy:type_name -> exonex.cortex.v1alpha1.PublisherTdmPolicy
+	4,  // 4: exonex.cortex.v1alpha1.Publisher.tdm_status_history:type_name -> exonex.cortex.v1alpha1.TdmPolicyHistory
+	19, // 5: exonex.cortex.v1alpha1.Publisher.lease:type_name -> exonex.cortex.v1alpha1.Lease
+	20, // 6: exonex.cortex.v1alpha1.Publisher.created_at:type_name -> google.protobuf.Timestamp
+	20, // 7: exonex.cortex.v1alpha1.Publisher.updated_at:type_name -> google.protobuf.Timestamp
+	1,  // 8: exonex.cortex.v1alpha1.TdmPolicyHistory.tdm_policy:type_name -> exonex.cortex.v1alpha1.PublisherTdmPolicy
+	20, // 9: exonex.cortex.v1alpha1.TdmPolicyHistory.created_at:type_name -> google.protobuf.Timestamp
+	18, // 10: exonex.cortex.v1alpha1.Feed.meta:type_name -> exonex.cortex.v1alpha1.ObjectMeta
+	2,  // 11: exonex.cortex.v1alpha1.Feed.feed_type:type_name -> exonex.cortex.v1alpha1.FeedType
+	21, // 12: exonex.cortex.v1alpha1.Feed.poll_interval:type_name -> exonex.cortex.v1alpha1.PollInterval
+	6,  // 13: exonex.cortex.v1alpha1.Feed.last_poll:type_name -> exonex.cortex.v1alpha1.FeedPoll
+	20, // 14: exonex.cortex.v1alpha1.FeedPoll.last_polled_at:type_name -> google.protobuf.Timestamp
+	20, // 15: exonex.cortex.v1alpha1.FeedPoll.next_poll:type_name -> google.protobuf.Timestamp
+	20, // 16: exonex.cortex.v1alpha1.FeedPoll.last_polled_last_modified:type_name -> google.protobuf.Timestamp
+	22, // 17: exonex.cortex.v1alpha1.ListPublishersRequest.field_mask:type_name -> google.protobuf.FieldMask
+	23, // 18: exonex.cortex.v1alpha1.ListPublishersRequest.list_order:type_name -> exonex.cortex.v1alpha1.ListOrder
+	3,  // 19: exonex.cortex.v1alpha1.ListPublishersResponse.items:type_name -> exonex.cortex.v1alpha1.Publisher
+	3,  // 20: exonex.cortex.v1alpha1.GetPublisherResponse.item:type_name -> exonex.cortex.v1alpha1.Publisher
+	3,  // 21: exonex.cortex.v1alpha1.AddPublisherResponse.item:type_name -> exonex.cortex.v1alpha1.Publisher
+	24, // 22: exonex.cortex.v1alpha1.GetPublishersForProcessionRequest.lease_duration:type_name -> google.protobuf.Duration
+	3,  // 23: exonex.cortex.v1alpha1.GetPublishersForProcessionResponse.items:type_name -> exonex.cortex.v1alpha1.Publisher
+	3,  // 24: exonex.cortex.v1alpha1.GetPublishersOfLeaserHolderResponse.items:type_name -> exonex.cortex.v1alpha1.Publisher
+	2,  // 25: exonex.cortex.v1alpha1.AddPublisherRequest.Feed.feed_type:type_name -> exonex.cortex.v1alpha1.FeedType
+	7,  // 26: exonex.cortex.v1alpha1.PublisherService.ListPublishers:input_type -> exonex.cortex.v1alpha1.ListPublishersRequest
+	9,  // 27: exonex.cortex.v1alpha1.PublisherService.GetPublisher:input_type -> exonex.cortex.v1alpha1.GetPublisherRequest
+	11, // 28: exonex.cortex.v1alpha1.PublisherService.AddPublisher:input_type -> exonex.cortex.v1alpha1.AddPublisherRequest
+	13, // 29: exonex.cortex.v1alpha1.PublisherService.GetPublishersForProcession:input_type -> exonex.cortex.v1alpha1.GetPublishersForProcessionRequest
+	15, // 30: exonex.cortex.v1alpha1.PublisherService.GetPublishersOfLeaserHolder:input_type -> exonex.cortex.v1alpha1.GetPublishersOfLeaserHolderRequest
+	8,  // 31: exonex.cortex.v1alpha1.PublisherService.ListPublishers:output_type -> exonex.cortex.v1alpha1.ListPublishersResponse
+	10, // 32: exonex.cortex.v1alpha1.PublisherService.GetPublisher:output_type -> exonex.cortex.v1alpha1.GetPublisherResponse
+	12, // 33: exonex.cortex.v1alpha1.PublisherService.AddPublisher:output_type -> exonex.cortex.v1alpha1.AddPublisherResponse
+	14, // 34: exonex.cortex.v1alpha1.PublisherService.GetPublishersForProcession:output_type -> exonex.cortex.v1alpha1.GetPublishersForProcessionResponse
+	16, // 35: exonex.cortex.v1alpha1.PublisherService.GetPublishersOfLeaserHolder:output_type -> exonex.cortex.v1alpha1.GetPublishersOfLeaserHolderResponse
+	31, // [31:36] is the sub-list for method output_type
+	26, // [26:31] is the sub-list for method input_type
+	26, // [26:26] is the sub-list for extension type_name
+	26, // [26:26] is the sub-list for extension extendee
+	0,  // [0:26] is the sub-list for field type_name
 }
 
 func init() { file_exonex_cortex_v1alpha1_publishers_proto_init() }
@@ -1150,16 +1326,17 @@ func file_exonex_cortex_v1alpha1_publishers_proto_init() {
 	}
 	file_exonex_cortex_v1alpha1_common_proto_init()
 	file_exonex_cortex_v1alpha1_publishers_proto_msgTypes[0].OneofWrappers = []any{}
-	file_exonex_cortex_v1alpha1_publishers_proto_msgTypes[1].OneofWrappers = []any{}
+	file_exonex_cortex_v1alpha1_publishers_proto_msgTypes[2].OneofWrappers = []any{}
 	file_exonex_cortex_v1alpha1_publishers_proto_msgTypes[3].OneofWrappers = []any{}
-	file_exonex_cortex_v1alpha1_publishers_proto_msgTypes[13].OneofWrappers = []any{}
+	file_exonex_cortex_v1alpha1_publishers_proto_msgTypes[4].OneofWrappers = []any{}
+	file_exonex_cortex_v1alpha1_publishers_proto_msgTypes[14].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_exonex_cortex_v1alpha1_publishers_proto_rawDesc), len(file_exonex_cortex_v1alpha1_publishers_proto_rawDesc)),
-			NumEnums:      2,
-			NumMessages:   14,
+			NumEnums:      3,
+			NumMessages:   15,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

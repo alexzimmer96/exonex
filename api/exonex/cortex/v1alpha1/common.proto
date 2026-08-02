@@ -18,6 +18,14 @@ enum OrderStatus {
   ORDER_STATUS_ABORTED = 4;
 }
 
+enum PollInterval {
+  POLL_INTERVAL_UNSPECIFIED = 0;
+  POLL_INTERVAL_MINUTE = 1;
+  POLL_INTERVAL_HOUR = 2;
+  POLL_INTERVAL_DAY = 3;
+  POLL_INTERVAL_WEEK = 4;
+}
+
 // ObjectMeta defines typical metadata that is available for most objects.
 message ObjectMeta {
   map<string, string> annotations = 1;
@@ -41,4 +49,11 @@ message Lease {
   google.protobuf.Timestamp created_at = 2;
   google.protobuf.Timestamp renewed_at = 3;
   google.protobuf.Timestamp expires_at = 4;
+}
+
+message File {
+  string storage_url = 1;
+  int64 size_bytes = 2;
+  string mime_type = 3;
+  string checksum_sha256 = 4;
 }

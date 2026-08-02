@@ -127,6 +127,61 @@ func (OrderStatus) EnumDescriptor() ([]byte, []int) {
 	return file_exonex_cortex_v1alpha1_common_proto_rawDescGZIP(), []int{1}
 }
 
+type PollInterval int32
+
+const (
+	PollInterval_POLL_INTERVAL_UNSPECIFIED PollInterval = 0
+	PollInterval_POLL_INTERVAL_MINUTE      PollInterval = 1
+	PollInterval_POLL_INTERVAL_HOUR        PollInterval = 2
+	PollInterval_POLL_INTERVAL_DAY         PollInterval = 3
+	PollInterval_POLL_INTERVAL_WEEK        PollInterval = 4
+)
+
+// Enum value maps for PollInterval.
+var (
+	PollInterval_name = map[int32]string{
+		0: "POLL_INTERVAL_UNSPECIFIED",
+		1: "POLL_INTERVAL_MINUTE",
+		2: "POLL_INTERVAL_HOUR",
+		3: "POLL_INTERVAL_DAY",
+		4: "POLL_INTERVAL_WEEK",
+	}
+	PollInterval_value = map[string]int32{
+		"POLL_INTERVAL_UNSPECIFIED": 0,
+		"POLL_INTERVAL_MINUTE":      1,
+		"POLL_INTERVAL_HOUR":        2,
+		"POLL_INTERVAL_DAY":         3,
+		"POLL_INTERVAL_WEEK":        4,
+	}
+)
+
+func (x PollInterval) Enum() *PollInterval {
+	p := new(PollInterval)
+	*p = x
+	return p
+}
+
+func (x PollInterval) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (PollInterval) Descriptor() protoreflect.EnumDescriptor {
+	return file_exonex_cortex_v1alpha1_common_proto_enumTypes[2].Descriptor()
+}
+
+func (PollInterval) Type() protoreflect.EnumType {
+	return &file_exonex_cortex_v1alpha1_common_proto_enumTypes[2]
+}
+
+func (x PollInterval) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use PollInterval.Descriptor instead.
+func (PollInterval) EnumDescriptor() ([]byte, []int) {
+	return file_exonex_cortex_v1alpha1_common_proto_rawDescGZIP(), []int{2}
+}
+
 // ObjectMeta defines typical metadata that is available for most objects.
 type ObjectMeta struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
@@ -342,6 +397,74 @@ func (x *Lease) GetExpiresAt() *timestamppb.Timestamp {
 	return nil
 }
 
+type File struct {
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	StorageUrl     string                 `protobuf:"bytes,1,opt,name=storage_url,json=storageUrl,proto3" json:"storage_url,omitempty"`
+	SizeBytes      int64                  `protobuf:"varint,2,opt,name=size_bytes,json=sizeBytes,proto3" json:"size_bytes,omitempty"`
+	MimeType       string                 `protobuf:"bytes,3,opt,name=mime_type,json=mimeType,proto3" json:"mime_type,omitempty"`
+	ChecksumSha256 string                 `protobuf:"bytes,4,opt,name=checksum_sha256,json=checksumSha256,proto3" json:"checksum_sha256,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *File) Reset() {
+	*x = File{}
+	mi := &file_exonex_cortex_v1alpha1_common_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *File) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*File) ProtoMessage() {}
+
+func (x *File) ProtoReflect() protoreflect.Message {
+	mi := &file_exonex_cortex_v1alpha1_common_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use File.ProtoReflect.Descriptor instead.
+func (*File) Descriptor() ([]byte, []int) {
+	return file_exonex_cortex_v1alpha1_common_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *File) GetStorageUrl() string {
+	if x != nil {
+		return x.StorageUrl
+	}
+	return ""
+}
+
+func (x *File) GetSizeBytes() int64 {
+	if x != nil {
+		return x.SizeBytes
+	}
+	return 0
+}
+
+func (x *File) GetMimeType() string {
+	if x != nil {
+		return x.MimeType
+	}
+	return ""
+}
+
+func (x *File) GetChecksumSha256() string {
+	if x != nil {
+		return x.ChecksumSha256
+	}
+	return ""
+}
+
 var File_exonex_cortex_v1alpha1_common_proto protoreflect.FileDescriptor
 
 const file_exonex_cortex_v1alpha1_common_proto_rawDesc = "" +
@@ -375,7 +498,14 @@ const file_exonex_cortex_v1alpha1_common_proto_rawDesc = "" +
 	"\n" +
 	"renewed_at\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\trenewedAt\x129\n" +
 	"\n" +
-	"expires_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\texpiresAt*a\n" +
+	"expires_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\texpiresAt\"\x8c\x01\n" +
+	"\x04File\x12\x1f\n" +
+	"\vstorage_url\x18\x01 \x01(\tR\n" +
+	"storageUrl\x12\x1d\n" +
+	"\n" +
+	"size_bytes\x18\x02 \x01(\x03R\tsizeBytes\x12\x1b\n" +
+	"\tmime_type\x18\x03 \x01(\tR\bmimeType\x12'\n" +
+	"\x0fchecksum_sha256\x18\x04 \x01(\tR\x0echecksumSha256*a\n" +
 	"\tListOrder\x12\x1a\n" +
 	"\x16LIST_ORDER_UNSPECIFIED\x10\x00\x12\x1b\n" +
 	"\x17LIST_ORDER_OLDEST_FIRST\x10\x01\x12\x1b\n" +
@@ -385,7 +515,13 @@ const file_exonex_cortex_v1alpha1_common_proto_rawDesc = "" +
 	"\x14ORDER_STATUS_PLANNED\x10\x01\x12\x1a\n" +
 	"\x16ORDER_STATUS_SUCCEEDED\x10\x02\x12\x17\n" +
 	"\x13ORDER_STATUS_FAILED\x10\x03\x12\x18\n" +
-	"\x14ORDER_STATUS_ABORTED\x10\x04B\xf1\x01\n" +
+	"\x14ORDER_STATUS_ABORTED\x10\x04*\x8e\x01\n" +
+	"\fPollInterval\x12\x1d\n" +
+	"\x19POLL_INTERVAL_UNSPECIFIED\x10\x00\x12\x18\n" +
+	"\x14POLL_INTERVAL_MINUTE\x10\x01\x12\x16\n" +
+	"\x12POLL_INTERVAL_HOUR\x10\x02\x12\x15\n" +
+	"\x11POLL_INTERVAL_DAY\x10\x03\x12\x16\n" +
+	"\x12POLL_INTERVAL_WEEK\x10\x04B\xf1\x01\n" +
 	"\x1acom.exonex.cortex.v1alpha1B\vCommonProtoP\x01ZLgithub.com/alexzimmer96/exonex/pkg/api/exonex/cortex/v1alpha1;cortexv1alpha1\xa2\x02\x03ECX\xaa\x02\x16Exonex.Cortex.V1alpha1\xca\x02\x16Exonex\\Cortex\\V1alpha1\xe2\x02\"Exonex\\Cortex\\V1alpha1\\GPBMetadata\xea\x02\x18Exonex::Cortex::V1alpha1b\x06proto3"
 
 var (
@@ -400,27 +536,29 @@ func file_exonex_cortex_v1alpha1_common_proto_rawDescGZIP() []byte {
 	return file_exonex_cortex_v1alpha1_common_proto_rawDescData
 }
 
-var file_exonex_cortex_v1alpha1_common_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_exonex_cortex_v1alpha1_common_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
+var file_exonex_cortex_v1alpha1_common_proto_enumTypes = make([]protoimpl.EnumInfo, 3)
+var file_exonex_cortex_v1alpha1_common_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
 var file_exonex_cortex_v1alpha1_common_proto_goTypes = []any{
 	(ListOrder)(0),                // 0: exonex.cortex.v1alpha1.ListOrder
 	(OrderStatus)(0),              // 1: exonex.cortex.v1alpha1.OrderStatus
-	(*ObjectMeta)(nil),            // 2: exonex.cortex.v1alpha1.ObjectMeta
-	(*LogEvent)(nil),              // 3: exonex.cortex.v1alpha1.LogEvent
-	(*Lease)(nil),                 // 4: exonex.cortex.v1alpha1.Lease
-	nil,                           // 5: exonex.cortex.v1alpha1.ObjectMeta.AnnotationsEntry
-	(*timestamppb.Timestamp)(nil), // 6: google.protobuf.Timestamp
+	(PollInterval)(0),             // 2: exonex.cortex.v1alpha1.PollInterval
+	(*ObjectMeta)(nil),            // 3: exonex.cortex.v1alpha1.ObjectMeta
+	(*LogEvent)(nil),              // 4: exonex.cortex.v1alpha1.LogEvent
+	(*Lease)(nil),                 // 5: exonex.cortex.v1alpha1.Lease
+	(*File)(nil),                  // 6: exonex.cortex.v1alpha1.File
+	nil,                           // 7: exonex.cortex.v1alpha1.ObjectMeta.AnnotationsEntry
+	(*timestamppb.Timestamp)(nil), // 8: google.protobuf.Timestamp
 }
 var file_exonex_cortex_v1alpha1_common_proto_depIdxs = []int32{
-	5, // 0: exonex.cortex.v1alpha1.ObjectMeta.annotations:type_name -> exonex.cortex.v1alpha1.ObjectMeta.AnnotationsEntry
-	6, // 1: exonex.cortex.v1alpha1.ObjectMeta.created_at:type_name -> google.protobuf.Timestamp
-	3, // 2: exonex.cortex.v1alpha1.ObjectMeta.log_events:type_name -> exonex.cortex.v1alpha1.LogEvent
-	4, // 3: exonex.cortex.v1alpha1.ObjectMeta.lease:type_name -> exonex.cortex.v1alpha1.Lease
-	6, // 4: exonex.cortex.v1alpha1.LogEvent.time:type_name -> google.protobuf.Timestamp
-	6, // 5: exonex.cortex.v1alpha1.LogEvent.retention_time:type_name -> google.protobuf.Timestamp
-	6, // 6: exonex.cortex.v1alpha1.Lease.created_at:type_name -> google.protobuf.Timestamp
-	6, // 7: exonex.cortex.v1alpha1.Lease.renewed_at:type_name -> google.protobuf.Timestamp
-	6, // 8: exonex.cortex.v1alpha1.Lease.expires_at:type_name -> google.protobuf.Timestamp
+	7, // 0: exonex.cortex.v1alpha1.ObjectMeta.annotations:type_name -> exonex.cortex.v1alpha1.ObjectMeta.AnnotationsEntry
+	8, // 1: exonex.cortex.v1alpha1.ObjectMeta.created_at:type_name -> google.protobuf.Timestamp
+	4, // 2: exonex.cortex.v1alpha1.ObjectMeta.log_events:type_name -> exonex.cortex.v1alpha1.LogEvent
+	5, // 3: exonex.cortex.v1alpha1.ObjectMeta.lease:type_name -> exonex.cortex.v1alpha1.Lease
+	8, // 4: exonex.cortex.v1alpha1.LogEvent.time:type_name -> google.protobuf.Timestamp
+	8, // 5: exonex.cortex.v1alpha1.LogEvent.retention_time:type_name -> google.protobuf.Timestamp
+	8, // 6: exonex.cortex.v1alpha1.Lease.created_at:type_name -> google.protobuf.Timestamp
+	8, // 7: exonex.cortex.v1alpha1.Lease.renewed_at:type_name -> google.protobuf.Timestamp
+	8, // 8: exonex.cortex.v1alpha1.Lease.expires_at:type_name -> google.protobuf.Timestamp
 	9, // [9:9] is the sub-list for method output_type
 	9, // [9:9] is the sub-list for method input_type
 	9, // [9:9] is the sub-list for extension type_name
@@ -440,8 +578,8 @@ func file_exonex_cortex_v1alpha1_common_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_exonex_cortex_v1alpha1_common_proto_rawDesc), len(file_exonex_cortex_v1alpha1_common_proto_rawDesc)),
-			NumEnums:      2,
-			NumMessages:   4,
+			NumEnums:      3,
+			NumMessages:   5,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

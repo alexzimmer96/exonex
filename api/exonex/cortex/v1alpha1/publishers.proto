@@ -9,6 +9,16 @@ import "google/protobuf/duration.proto";
 
 // =====================================================================================================================
 
+enum PublisherType {
+  PUBLISHER_TYPE_UNSPECIFIED = 0;
+  PUBLISHER_TYPE_PUBLIC_AUTHORITY = 1;
+  PUBLISHER_TYPE_CORPORATE = 2;
+  PUBLISHER_TYPE_MEDIA = 3;
+  PUBLISHER_TYPE_ORGANIZATION = 4;
+  PUBLISHER_TYPE_INDIVIDUAL = 5;
+  PUBLISHER_TYPE_ACADEMIC = 6;
+}
+
 // The PublisherTdmPolicy defines a TDM Policy that applies to all resources of a publisher.
 enum PublisherTdmPolicy {
   PUBLISHER_TDM_POLICY_UNSPECIFIED = 0;  // no special policy has been detected for a publisher.
@@ -18,37 +28,28 @@ enum PublisherTdmPolicy {
 
 // The FeedType defines the
 enum FeedType {
-  FEED_TYPE_UNSPECIFIED = 0;  // This should not be used.
-  FEED_TYPE_HTML_SINGLE = 1;  // A HTML page that will be used as target for a ScrapeOrder when the feed is polled.
-  FEED_TYPE_HTML_CRAWL = 2;   // A HTML page that will be used as entrypoint for a CrawlOrder when the feed is polled.
-  FEED_TYPE_RSS = 3;          // An RSS-Feed that will generate ScrapeOrders for all entries when the feed is polled.
-  FEED_TYPE_ATOM = 4;         // An Atom-Feed that will generate ScrapeOrders for all entries when the feed is polled.
+  FEED_TYPE_UNSPECIFIED = 0;  // This should not be used and marks a missing information.
+  FEED_TYPE_HTML_SINGLE = 1;  // HTML page that will be used as target for a ScrapeOrder when the feed is polled.
+  FEED_TYPE_HTML_CRAWL = 2;   // HTML page that will be used as entrypoint for a CrawlOrder when the feed is polled.
+  FEED_TYPE_RSS = 3;          // RSS-Feed that will generate ScrapeOrders for all entries when the feed is polled.
+  FEED_TYPE_ATOM = 4;         // Atom-Feed that will generate ScrapeOrders for all entries when the feed is polled.
+  FEED_TYPE_OPARL = 5;        // OPARL base URL that will generate ScrapeOrders for all
 }
 
 // A Publisher is a entity that is publishing content. This can be e.g. a News Agency.
 message Publisher {
   string id = 1;
   ObjectMeta meta = 2;
-  string name = 3;
-  string description = 4;
-  string web_url = 5;
-  repeated Feed feeds = 6;
-  PublisherTdmPolicy tdm_policy = 7;
-  repeated TdmPolicyHistory tdm_status_history = 8;
-  optional Lease lease = 9;
-  google.protobuf.Timestamp created_at = 10;
-  google.protobuf.Timestamp updated_at = 11;
-}
-
-// A Feed is a URL that is used to create Scrape- or Crawl-Orders.
-// It always belongs to one publisher.
-message Feed {
-  FeedType feed_type = 1;
-  string url = 2;
-  optional int32 poll_interval_seconds = 3;
-  optional google.protobuf.Timestamp last_polled_at = 4;
-  optional google.protobuf.Timestamp last_polled_last_modified = 5;
-  optional string last_polled_etag = 6;
+  PublisherType publisher_type = 3;
+  string name = 4;
+  string description = 5;
+  string web_url = 6;
+  repeated Feed feeds = 7;
+  PublisherTdmPolicy tdm_policy = 8;
+  repeated TdmPolicyHistory tdm_status_history = 9;
+  optional Lease lease = 10;
+  google.protobuf.Timestamp created_at = 11;
+  google.protobuf.Timestamp updated_at = 12;
 }
 
 // The TdmStatusHistory tracks the history of the TDM Status for a Publisher.
@@ -58,6 +59,27 @@ message TdmPolicyHistory {
   string document_id = 1;
   PublisherTdmPolicy tdm_policy = 2;
   google.protobuf.Timestamp created_at = 3;
+}
+
+
+// A Feed is a URL that is used to create Scrape- or Crawl-Orders.
+// It always belongs to one publisher.
+message Feed {
+  string id = 1;
+  ObjectMeta meta = 2;
+  string publisher_id = 3;
+  FeedType feed_type = 4;
+  string url = 5;
+  PollInterval poll_interval = 6;
+  optional FeedPoll last_poll = 7;
+}
+
+// A single Poll of a Feed.
+message FeedPoll {
+  optional google.protobuf.Timestamp last_polled_at = 4;
+  optional google.protobuf.Timestamp next_poll = 5;
+  optional google.protobuf.Timestamp last_polled_last_modified = 6;
+  optional string last_polled_etag = 7;
 }
 
 // =====================================================================================================================
