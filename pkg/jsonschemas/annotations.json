@@ -1,0 +1,15 @@
+{
+  "type": "object",
+  "additionalProperties": {
+    "oneOf": [
+      {
+        "type": ["string", "number", "boolean", "null"] },
+      {
+        "type": "array",
+        "items": {
+          "type": ["string", "number", "boolean", "null"]
+        }
+      }
+    ]
+  }
+}

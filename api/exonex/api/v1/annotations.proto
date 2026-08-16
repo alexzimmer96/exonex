@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+package exonex.api.v1;
+
+import "google/protobuf/descriptor.proto";
+
+// =====================================================================================================================
+
+extend google.protobuf.MethodOptions {
+  string method_permission = 50001;
+}
+
+// =====================================================================================================================
+
+enum FieldType {
+  FIELD_TYPE_UNSPECIFIED = 0;
+  FIELD_TYPE_ANNOTATIONS = 1;
+}
+
+extend google.protobuf.FieldOptions {
+  // The field_read_permission annotation defines the required permission to read a field during a list- or get operation.
+  // If the permission is defined and the caller does not have the required permissions, the field is excluded
+  // from the response by setting it to either its zero value (for non-optional fields) or to null.
+  optional string field_read_permission = 50001;
+  // The field_update_permission annotation defines the required permission to update a field using a Update operation.
+  // If the permission is defined and the caller does not have the required permissions, a PERMISSION_DENIED
+  // error will be returned.
+  optional string field_update_permission = 50002;
+  // The field_type annotation can be used to define a custom field_type that results in a special treatment on field
+  // updates.
+  optional FieldType field_type = 50003;
+}

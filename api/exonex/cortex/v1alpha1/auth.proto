@@ -1,0 +1,13 @@
+syntax = "proto3";
+package exonex.cortex.v1alpha1;
+
+service AuthService {
+  rpc WhoAmI(WhoAmIRequest) returns (WhoAmIResponse) {}
+}
+
+message WhoAmIRequest {}
+
+message WhoAmIResponse {
+  repeated string active_roles = 1;
+  repeated string active_permissions = 2;
+}

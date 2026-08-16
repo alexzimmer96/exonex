@@ -1,21 +1,57 @@
 version: '3'
 
 tasks:
-  gen-proto:
+  proto:gen:
     cmds:
       - rm -rf ./pkg/api
       - go tool buf dep update
       - go tool buf generate
       - git add .
-  add-cortex-migration:
+  # =========================================================================================
+  db:migration:create:
     cmds:
       - go tool goose create {{.CLI_ARGS}}
     env:
-      GOOSE_MIGRATION_DIR: "./database/cortex/migrations"
-  migrate-cortex-up:
+      GOOSE_MIGRATION_DIR: "./database/migrations"
+  # =========================================================================================
+  db:up:
     cmds:
       - go tool goose up
     env:
       GOOSE_DRIVER: "postgres"
-      GOOSE_DBSTRING: "postgres://cortex:cortex@localhost:5432/cortex"
-      GOOSE_MIGRATION_DIR: "./database/cortex/migrations"
+      GOOSE_DBSTRING: "postgres://exonex:exonex@localhost:5432/exonex"
+      GOOSE_MIGRATION_DIR: "./database/migrations"
+  db:down:
+    cmds:
+      - go tool goose reset
+    env:
+      GOOSE_DRIVER: "postgres"
+      GOOSE_DBSTRING: "postgres://exonex:exonex@localhost:5432/exonex"
+      GOOSE_MIGRATION_DIR: "./database/migrations"
+  # =========================================================================================
+  db:reset:
+    cmds:
+      - go tool goose reset
+      - go tool goose up
+    env:
+      GOOSE_DRIVER: "postgres"
+      GOOSE_DBSTRING: "postgres://exonex:exonex@localhost:5432/exonex"
+      GOOSE_MIGRATION_DIR: "./database/migrations"
+  # =========================================================================================
+  db:gen:
+    cmds:
+      - rm -rf ./internal/db
+      - go tool jet -dsn=postgres://exonex:exonex@localhost:5432/exonex?sslmode=disable -schema=cortex -path=internal/db
+      - git add .
+  # =========================================================================================
+  format:sql:
+    desc: "Executes pg_format on all .sql files in the project."
+    cmds:
+      - find . -name "*.sql" -not -path "*/node_modules/*" -exec pg_format -i -s 2 --keyword-case 2 --type-case 2 --function-case 2 --spaces 2 --nogrouping --keep-newline {} +
+    silent: true
+  # =========================================================================================
+  format:sql:file:
+    desc: "Executes pg_format on all .sql files in the project."
+    cmds:
+      - pg_format -i -s 2 --keyword-case 2 --type-case 2 --function-case 2 --spaces 2 --nogrouping --keep-newline {{.CLI_ARGS}}
+    silent: true

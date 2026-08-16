@@ -1,0 +1,44 @@
+syntax = "proto3";
+package exonex.cortex.v1alpha1;
+
+import "google/protobuf/struct.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/field_mask.proto";
+import "google/api/resource.proto";
+import "google/api/field_behavior.proto";
+
+message Artifact {
+  option (google.api.resource) = {
+    type: "cortex.exonex.io/Artifact"
+    pattern: "documents/{document}/artifacts/{artifact}"
+  };
+  string id = 1 [(google.api.field_behavior) = IDENTIFIER];
+  google.protobuf.Struct annotations = 2;
+  string artifact_type = 3 [(google.api.resource_reference) = {
+    type: "cortex.exonex.io//ArtifactType"
+  }];
+  string document = 4 [(google.api.resource_reference) = {
+    type: "cortex.exonex.io/Document"
+  }];
+  google.protobuf.Struct payload = 5;
+  google.protobuf.Timestamp created_at = 6;
+  optional google.protobuf.Timestamp deleted_at = 7;
+  string etag = 8;
+}
+
+message ArtifactType {
+  string id = 1 [(google.api.field_behavior) = IDENTIFIER];
+  string group = 2;
+  string kind = 3;
+  string version = 4;
+  string name = 5;
+  string description = 6;
+  google.protobuf.Struct schema = 7;
+  google.protobuf.Timestamp created_at = 8;
+  string etag = 9;
+}
+
+// =====================================================================================================================
+
+service ArtifactService {}

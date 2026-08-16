@@ -1,0 +1,177 @@
+syntax = "proto3";
+package exonex.cortex.v1alpha1;
+
+import "exonex/api/v1/annotations.proto";
+import "google/protobuf/struct.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/field_mask.proto";
+import "google/api/resource.proto";
+import "google/api/field_behavior.proto";
+
+// =====================================================================================================================
+
+message Document {
+  // The UUID that is used to uniquely identify a Document.
+  string id = 1 [
+    (google.api.field_behavior) = IDENTIFIER
+  ];
+  // Annotations are small chunks of information that are added to a Document and can be queried.
+  // They are stored as JSON object that is
+  google.protobuf.Struct annotations = 2 [
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ];
+  // Finalizers are indicators that certain background actions for a Document must be performed before the
+  // Document resource can be deleted from the Database.
+  // For example, removing the uploaded file from the storage volume.
+  repeated string finalizers = 3 [
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ];
+  // Indicates if the upload of the file for this document has already been finished.
+  bool file_upload_completed = 4 [
+    (exonex.api.v1.field_update_permission) = "documents.update/file_upload_completed"
+  ];
+  // The MIME type of the uploaded file.
+  // This field is immutable once set and will be used as restriction when generating Upload URLs.
+  string file_mime_type = 5 [
+    (google.api.field_behavior) = IMMUTABLE
+  ];
+  // The size of the uploaded file in bytes.
+  // This field may be an estimate until the upload of the file is completed.
+  int64 file_size_bytes = 6 [
+    (exonex.api.v1.field_update_permission) = "documents.update/file_size_bytes"
+  ];
+  // Name of the volume that stores the file.
+  string file_storage_volume = 7 [
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ];
+  // Key or path on the storage volume where the file of this document is stored.
+  string file_storage_key = 8 [
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ];
+  // Reference to the cortex.exonex.io/Publisher that published the file.
+  // This field is immutable once set and can be used to evaluate policies, e.g. regarding procession.
+  string publisher = 9 [
+    (google.api.field_behavior) = IMMUTABLE,
+    (google.api.resource_reference) = {
+      type: "cortex.exonex.io/v1alpha1/Publisher"
+    }
+  ];
+  // The time this document has been created.
+  google.protobuf.Timestamp created_at = 10 [
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ];
+  // The time this document has been updated the last time.
+  google.protobuf.Timestamp updated_at = 11 [
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ];
+  // The time this object has been marked for deletion.
+  // Documents follow a soft-deletion process, where all
+  optional google.protobuf.Timestamp deleted_at = 12 [
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ];
+  // The Entity Tag (ETag) indicates
+  string etag = 13 [
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ];
+}
+
+// =====================================================================================================================
+
+service DocumentService {
+  rpc ListDocuments(ListDocumentsRequest) returns (ListDocumentsResponse) {
+    option (exonex.api.v1.method_permission) = "documents.read";
+  }
+  rpc GetDocument(GetDocumentRequest) returns (GetDocumentResponse) {
+    option (exonex.api.v1.method_permission) = "documents.read";
+  }
+  rpc CreateDocument(CreateDocumentRequest) returns (CreateDocumentResponse) {
+    option (exonex.api.v1.method_permission) = "documents.create";
+  }
+  rpc CreateDocumentUploadUrl(CreateDocumentUploadUrlRequest) returns (CreateDocumentUploadUrlResponse) {
+    option (exonex.api.v1.method_permission) = "documents.upload_url.create";
+  }
+  rpc UpdateDocument(UpdateDocumentRequest) returns (UpdateDocumentResponse) {
+    option (exonex.api.v1.method_permission) = "documents.update";
+  }
+}
+
+// =====================================================================================================================
+
+message ListDocumentsRequest {
+  optional int64 page_size = 1;
+  optional string page_token = 2;
+  optional string filter = 3;     // this is currently not implemented.
+  optional string order_by = 4;   // this is currently not implemented.
+  optional bool show_deleted = 5;
+}
+
+message ListDocumentsResponse {
+  repeated Document documents = 1;
+  optional string next_page_token = 2;
+}
+
+// =====================================================================================================================
+
+message GetDocumentRequest {
+  string id = 1;
+}
+
+message GetDocumentResponse {
+  Document document = 1;
+}
+
+// =====================================================================================================================
+
+message CreateDocumentRequest {
+  string publisher_id = 1;
+  string mime_type = 2;
+  int64 size_bytes = 3;
+  optional string source_url = 4;
+}
+
+message CreateDocumentResponse {
+  string id = 1;
+  string upload_url = 2;
+  google.protobuf.Timestamp expires_at = 3;
+}
+
+// =====================================================================================================================
+
+message CreateDocumentUploadUrlRequest {
+  string id = 1;
+}
+
+message CreateDocumentUploadUrlResponse {
+  string upload_url = 1;
+  google.protobuf.Timestamp expires_at = 2;
+}
+
+// =====================================================================================================================
+
+message UpdateDocumentRequest {
+  google.protobuf.FieldMask update_mask = 2;
+}
+
+message UpdateDocumentResponse {
+
+}
+
+// =====================================================================================================================
+
+message LeaseDocumentRequest {
+  string id = 1;
+  string lease_holder_identity = 2;
+  google.protobuf.Duration lease_duration = 3;
+}
+
+message LeaseDocumentResponse {}
+
+// =====================================================================================================================
+
+message DeleteDocumentRequest {
+  string id = 1;
+}
+
+message DeleteDocumentResponse {}
+

@@ -7,10 +7,9 @@
 package cortexv1alpha1
 
 import (
-	_ "buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go/buf/validate"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
-	structpb "google.golang.org/protobuf/types/known/structpb"
+	durationpb "google.golang.org/protobuf/types/known/durationpb"
 	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
 	reflect "reflect"
 	sync "sync"
@@ -24,71 +23,13 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type AnalysisType int32
-
-const (
-	AnalysisType_ANALYSIS_TYPE_UNSPECIFIED    AnalysisType = 0
-	AnalysisType_ANALYSIS_TYPE_MARKDOWN       AnalysisType = 1 // Transforms the Document into Markdown.
-	AnalysisType_ANALYSIS_TYPE_CLEAN_MARKDOWN AnalysisType = 2 // Cleans the Markdown to remove noise.
-	AnalysisType_ANALYSIS_TYPE_TDM            AnalysisType = 3 // Analyses a document of a human-readable TDM policy.
-	AnalysisType_ANALYSIS_TYPE_SUMMARY        AnalysisType = 4 // Summarizes the document.
-)
-
-// Enum value maps for AnalysisType.
-var (
-	AnalysisType_name = map[int32]string{
-		0: "ANALYSIS_TYPE_UNSPECIFIED",
-		1: "ANALYSIS_TYPE_MARKDOWN",
-		2: "ANALYSIS_TYPE_CLEAN_MARKDOWN",
-		3: "ANALYSIS_TYPE_TDM",
-		4: "ANALYSIS_TYPE_SUMMARY",
-	}
-	AnalysisType_value = map[string]int32{
-		"ANALYSIS_TYPE_UNSPECIFIED":    0,
-		"ANALYSIS_TYPE_MARKDOWN":       1,
-		"ANALYSIS_TYPE_CLEAN_MARKDOWN": 2,
-		"ANALYSIS_TYPE_TDM":            3,
-		"ANALYSIS_TYPE_SUMMARY":        4,
-	}
-)
-
-func (x AnalysisType) Enum() *AnalysisType {
-	p := new(AnalysisType)
-	*p = x
-	return p
-}
-
-func (x AnalysisType) String() string {
-	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
-}
-
-func (AnalysisType) Descriptor() protoreflect.EnumDescriptor {
-	return file_exonex_cortex_v1alpha1_analysis_proto_enumTypes[0].Descriptor()
-}
-
-func (AnalysisType) Type() protoreflect.EnumType {
-	return &file_exonex_cortex_v1alpha1_analysis_proto_enumTypes[0]
-}
-
-func (x AnalysisType) Number() protoreflect.EnumNumber {
-	return protoreflect.EnumNumber(x)
-}
-
-// Deprecated: Use AnalysisType.Descriptor instead.
-func (AnalysisType) EnumDescriptor() ([]byte, []int) {
-	return file_exonex_cortex_v1alpha1_analysis_proto_rawDescGZIP(), []int{0}
-}
-
-// AnalysisExecution is a specific Analysis that should or have been executed for a Document.
 type Analysis struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	Meta          *ObjectMeta            `protobuf:"bytes,2,opt,name=meta,proto3" json:"meta,omitempty"`
-	AnalysisType  AnalysisType           `protobuf:"varint,3,opt,name=analysis_type,json=analysisType,proto3,enum=exonex.cortex.v1alpha1.AnalysisType" json:"analysis_type,omitempty"`
-	DocumentId    string                 `protobuf:"bytes,4,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
-	ExecutorId    string                 `protobuf:"bytes,5,opt,name=executor_id,json=executorId,proto3" json:"executor_id,omitempty"`
-	Result        *AnalysisResult        `protobuf:"bytes,6,opt,name=result,proto3,oneof" json:"result,omitempty"`
-	FinishedAt    *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=finished_at,json=finishedAt,proto3" json:"finished_at,omitempty"`
+	DocumentId    string                 `protobuf:"bytes,2,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
+	AnalyzerId    string                 `protobuf:"bytes,3,opt,name=analyzer_id,json=analyzerId,proto3" json:"analyzer_id,omitempty"`
+	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	CompletedAt   *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=completed_at,json=completedAt,proto3,oneof" json:"completed_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -130,20 +71,6 @@ func (x *Analysis) GetId() string {
 	return ""
 }
 
-func (x *Analysis) GetMeta() *ObjectMeta {
-	if x != nil {
-		return x.Meta
-	}
-	return nil
-}
-
-func (x *Analysis) GetAnalysisType() AnalysisType {
-	if x != nil {
-		return x.AnalysisType
-	}
-	return AnalysisType_ANALYSIS_TYPE_UNSPECIFIED
-}
-
 func (x *Analysis) GetDocumentId() string {
 	if x != nil {
 		return x.DocumentId
@@ -151,54 +78,300 @@ func (x *Analysis) GetDocumentId() string {
 	return ""
 }
 
-func (x *Analysis) GetExecutorId() string {
+func (x *Analysis) GetAnalyzerId() string {
 	if x != nil {
-		return x.ExecutorId
+		return x.AnalyzerId
 	}
 	return ""
 }
 
-func (x *Analysis) GetResult() *AnalysisResult {
+func (x *Analysis) GetCreatedAt() *timestamppb.Timestamp {
 	if x != nil {
-		return x.Result
+		return x.CreatedAt
 	}
 	return nil
 }
 
-func (x *Analysis) GetFinishedAt() *timestamppb.Timestamp {
+func (x *Analysis) GetCompletedAt() *timestamppb.Timestamp {
 	if x != nil {
-		return x.FinishedAt
+		return x.CompletedAt
 	}
 	return nil
 }
 
-type AnalysisResult struct {
-	state      protoimpl.MessageState `protogen:"open.v1"`
-	RawPayload *structpb.Struct       `protobuf:"bytes,1,opt,name=raw_payload,json=rawPayload,proto3" json:"raw_payload,omitempty"`
-	// Types that are valid to be assigned to Payload:
-	//
-	//	*AnalysisResult_Summary
-	//	*AnalysisResult_Tdm
-	Payload       isAnalysisResult_Payload `protobuf_oneof:"payload"`
+type Analyzer struct {
+	state             protoimpl.MessageState `protogen:"open.v1"`
+	Id                string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Group             string                 `protobuf:"bytes,3,opt,name=group,proto3" json:"group,omitempty"`
+	Kind              string                 `protobuf:"bytes,4,opt,name=kind,proto3" json:"kind,omitempty"`
+	Version           string                 `protobuf:"bytes,5,opt,name=version,proto3" json:"version,omitempty"`
+	Name              string                 `protobuf:"bytes,6,opt,name=name,proto3" json:"name,omitempty"`
+	Description       string                 `protobuf:"bytes,7,opt,name=description,proto3" json:"description,omitempty"`
+	NeedArtifactTypes []string               `protobuf:"bytes,8,rep,name=need_artifact_types,json=needArtifactTypes,proto3" json:"need_artifact_types,omitempty"`
+	Instances         []*AnalyzerInstance    `protobuf:"bytes,9,rep,name=instances,proto3" json:"instances,omitempty"`
+	CreatedAt         *timestamppb.Timestamp `protobuf:"bytes,10,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	unknownFields     protoimpl.UnknownFields
+	sizeCache         protoimpl.SizeCache
+}
+
+func (x *Analyzer) Reset() {
+	*x = Analyzer{}
+	mi := &file_exonex_cortex_v1alpha1_analysis_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Analyzer) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Analyzer) ProtoMessage() {}
+
+func (x *Analyzer) ProtoReflect() protoreflect.Message {
+	mi := &file_exonex_cortex_v1alpha1_analysis_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Analyzer.ProtoReflect.Descriptor instead.
+func (*Analyzer) Descriptor() ([]byte, []int) {
+	return file_exonex_cortex_v1alpha1_analysis_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *Analyzer) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *Analyzer) GetGroup() string {
+	if x != nil {
+		return x.Group
+	}
+	return ""
+}
+
+func (x *Analyzer) GetKind() string {
+	if x != nil {
+		return x.Kind
+	}
+	return ""
+}
+
+func (x *Analyzer) GetVersion() string {
+	if x != nil {
+		return x.Version
+	}
+	return ""
+}
+
+func (x *Analyzer) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *Analyzer) GetDescription() string {
+	if x != nil {
+		return x.Description
+	}
+	return ""
+}
+
+func (x *Analyzer) GetNeedArtifactTypes() []string {
+	if x != nil {
+		return x.NeedArtifactTypes
+	}
+	return nil
+}
+
+func (x *Analyzer) GetInstances() []*AnalyzerInstance {
+	if x != nil {
+		return x.Instances
+	}
+	return nil
+}
+
+func (x *Analyzer) GetCreatedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return nil
+}
+
+type AnalyzerInstance struct {
+	state                   protoimpl.MessageState `protogen:"open.v1"`
+	Id                      string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	LastHeartbeatReceivedAt *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=last_heartbeat_received_at,json=lastHeartbeatReceivedAt,proto3" json:"last_heartbeat_received_at,omitempty"`
+	CreatedAt               *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	unknownFields           protoimpl.UnknownFields
+	sizeCache               protoimpl.SizeCache
+}
+
+func (x *AnalyzerInstance) Reset() {
+	*x = AnalyzerInstance{}
+	mi := &file_exonex_cortex_v1alpha1_analysis_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AnalyzerInstance) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AnalyzerInstance) ProtoMessage() {}
+
+func (x *AnalyzerInstance) ProtoReflect() protoreflect.Message {
+	mi := &file_exonex_cortex_v1alpha1_analysis_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AnalyzerInstance.ProtoReflect.Descriptor instead.
+func (*AnalyzerInstance) Descriptor() ([]byte, []int) {
+	return file_exonex_cortex_v1alpha1_analysis_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *AnalyzerInstance) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *AnalyzerInstance) GetLastHeartbeatReceivedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.LastHeartbeatReceivedAt
+	}
+	return nil
+}
+
+func (x *AnalyzerInstance) GetCreatedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return nil
+}
+
+type CreateAnalyzerRequest struct {
+	state             protoimpl.MessageState `protogen:"open.v1"`
+	Group             string                 `protobuf:"bytes,1,opt,name=group,proto3" json:"group,omitempty"`
+	Kind              string                 `protobuf:"bytes,2,opt,name=kind,proto3" json:"kind,omitempty"`
+	Version           string                 `protobuf:"bytes,3,opt,name=version,proto3" json:"version,omitempty"`
+	Name              string                 `protobuf:"bytes,4,opt,name=name,proto3" json:"name,omitempty"`
+	Description       string                 `protobuf:"bytes,5,opt,name=description,proto3" json:"description,omitempty"`
+	NeedArtifactTypes []string               `protobuf:"bytes,6,rep,name=need_artifact_types,json=needArtifactTypes,proto3" json:"need_artifact_types,omitempty"`
+	unknownFields     protoimpl.UnknownFields
+	sizeCache         protoimpl.SizeCache
+}
+
+func (x *CreateAnalyzerRequest) Reset() {
+	*x = CreateAnalyzerRequest{}
+	mi := &file_exonex_cortex_v1alpha1_analysis_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateAnalyzerRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateAnalyzerRequest) ProtoMessage() {}
+
+func (x *CreateAnalyzerRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_exonex_cortex_v1alpha1_analysis_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateAnalyzerRequest.ProtoReflect.Descriptor instead.
+func (*CreateAnalyzerRequest) Descriptor() ([]byte, []int) {
+	return file_exonex_cortex_v1alpha1_analysis_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *CreateAnalyzerRequest) GetGroup() string {
+	if x != nil {
+		return x.Group
+	}
+	return ""
+}
+
+func (x *CreateAnalyzerRequest) GetKind() string {
+	if x != nil {
+		return x.Kind
+	}
+	return ""
+}
+
+func (x *CreateAnalyzerRequest) GetVersion() string {
+	if x != nil {
+		return x.Version
+	}
+	return ""
+}
+
+func (x *CreateAnalyzerRequest) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *CreateAnalyzerRequest) GetDescription() string {
+	if x != nil {
+		return x.Description
+	}
+	return ""
+}
+
+func (x *CreateAnalyzerRequest) GetNeedArtifactTypes() []string {
+	if x != nil {
+		return x.NeedArtifactTypes
+	}
+	return nil
+}
+
+type CreateAnalyzerResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *AnalysisResult) Reset() {
-	*x = AnalysisResult{}
-	mi := &file_exonex_cortex_v1alpha1_analysis_proto_msgTypes[1]
+func (x *CreateAnalyzerResponse) Reset() {
+	*x = CreateAnalyzerResponse{}
+	mi := &file_exonex_cortex_v1alpha1_analysis_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AnalysisResult) String() string {
+func (x *CreateAnalyzerResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AnalysisResult) ProtoMessage() {}
+func (*CreateAnalyzerResponse) ProtoMessage() {}
 
-func (x *AnalysisResult) ProtoReflect() protoreflect.Message {
-	mi := &file_exonex_cortex_v1alpha1_analysis_proto_msgTypes[1]
+func (x *CreateAnalyzerResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_exonex_cortex_v1alpha1_analysis_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -209,84 +382,34 @@ func (x *AnalysisResult) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AnalysisResult.ProtoReflect.Descriptor instead.
-func (*AnalysisResult) Descriptor() ([]byte, []int) {
-	return file_exonex_cortex_v1alpha1_analysis_proto_rawDescGZIP(), []int{1}
+// Deprecated: Use CreateAnalyzerResponse.ProtoReflect.Descriptor instead.
+func (*CreateAnalyzerResponse) Descriptor() ([]byte, []int) {
+	return file_exonex_cortex_v1alpha1_analysis_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *AnalysisResult) GetRawPayload() *structpb.Struct {
-	if x != nil {
-		return x.RawPayload
-	}
-	return nil
+type ListAnalyzersRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Limit         *uint64                `protobuf:"varint,1,opt,name=limit,proto3,oneof" json:"limit,omitempty"`
+	Offset        *uint64                `protobuf:"varint,2,opt,name=offset,proto3,oneof" json:"offset,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
-func (x *AnalysisResult) GetPayload() isAnalysisResult_Payload {
-	if x != nil {
-		return x.Payload
-	}
-	return nil
-}
-
-func (x *AnalysisResult) GetSummary() *SummaryAnalysisPayload {
-	if x != nil {
-		if x, ok := x.Payload.(*AnalysisResult_Summary); ok {
-			return x.Summary
-		}
-	}
-	return nil
-}
-
-func (x *AnalysisResult) GetTdm() *TdmAnalysisPayload {
-	if x != nil {
-		if x, ok := x.Payload.(*AnalysisResult_Tdm); ok {
-			return x.Tdm
-		}
-	}
-	return nil
-}
-
-type isAnalysisResult_Payload interface {
-	isAnalysisResult_Payload()
-}
-
-type AnalysisResult_Summary struct {
-	Summary *SummaryAnalysisPayload `protobuf:"bytes,10,opt,name=summary,proto3,oneof"`
-}
-
-type AnalysisResult_Tdm struct {
-	Tdm *TdmAnalysisPayload `protobuf:"bytes,11,opt,name=tdm,proto3,oneof"`
-}
-
-func (*AnalysisResult_Summary) isAnalysisResult_Payload() {}
-
-func (*AnalysisResult_Tdm) isAnalysisResult_Payload() {}
-
-type SummaryAnalysisPayload struct {
-	state          protoimpl.MessageState `protogen:"open.v1"`
-	Title          string                 `protobuf:"bytes,1,opt,name=title,proto3" json:"title,omitempty"`
-	Summary        string                 `protobuf:"bytes,2,opt,name=summary,proto3" json:"summary,omitempty"`
-	ExecuteSummary string                 `protobuf:"bytes,3,opt,name=execute_summary,json=executeSummary,proto3" json:"execute_summary,omitempty"`
-	KeyTakeaways   []string               `protobuf:"bytes,4,rep,name=key_takeaways,json=keyTakeaways,proto3" json:"key_takeaways,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
-}
-
-func (x *SummaryAnalysisPayload) Reset() {
-	*x = SummaryAnalysisPayload{}
-	mi := &file_exonex_cortex_v1alpha1_analysis_proto_msgTypes[2]
+func (x *ListAnalyzersRequest) Reset() {
+	*x = ListAnalyzersRequest{}
+	mi := &file_exonex_cortex_v1alpha1_analysis_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *SummaryAnalysisPayload) String() string {
+func (x *ListAnalyzersRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*SummaryAnalysisPayload) ProtoMessage() {}
+func (*ListAnalyzersRequest) ProtoMessage() {}
 
-func (x *SummaryAnalysisPayload) ProtoReflect() protoreflect.Message {
-	mi := &file_exonex_cortex_v1alpha1_analysis_proto_msgTypes[2]
+func (x *ListAnalyzersRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_exonex_cortex_v1alpha1_analysis_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -297,62 +420,47 @@ func (x *SummaryAnalysisPayload) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use SummaryAnalysisPayload.ProtoReflect.Descriptor instead.
-func (*SummaryAnalysisPayload) Descriptor() ([]byte, []int) {
-	return file_exonex_cortex_v1alpha1_analysis_proto_rawDescGZIP(), []int{2}
+// Deprecated: Use ListAnalyzersRequest.ProtoReflect.Descriptor instead.
+func (*ListAnalyzersRequest) Descriptor() ([]byte, []int) {
+	return file_exonex_cortex_v1alpha1_analysis_proto_rawDescGZIP(), []int{5}
 }
 
-func (x *SummaryAnalysisPayload) GetTitle() string {
-	if x != nil {
-		return x.Title
+func (x *ListAnalyzersRequest) GetLimit() uint64 {
+	if x != nil && x.Limit != nil {
+		return *x.Limit
 	}
-	return ""
+	return 0
 }
 
-func (x *SummaryAnalysisPayload) GetSummary() string {
-	if x != nil {
-		return x.Summary
+func (x *ListAnalyzersRequest) GetOffset() uint64 {
+	if x != nil && x.Offset != nil {
+		return *x.Offset
 	}
-	return ""
+	return 0
 }
 
-func (x *SummaryAnalysisPayload) GetExecuteSummary() string {
-	if x != nil {
-		return x.ExecuteSummary
-	}
-	return ""
+type ListAnalyzersResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Analyzers     []*Analyzer            `protobuf:"bytes,1,rep,name=analyzers,proto3" json:"analyzers,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
-func (x *SummaryAnalysisPayload) GetKeyTakeaways() []string {
-	if x != nil {
-		return x.KeyTakeaways
-	}
-	return nil
-}
-
-type TdmAnalysisPayload struct {
-	state          protoimpl.MessageState `protogen:"open.v1"`
-	OptOutDetected bool                   `protobuf:"varint,1,opt,name=opt_out_detected,json=optOutDetected,proto3" json:"opt_out_detected,omitempty"`
-	RawNotice      string                 `protobuf:"bytes,2,opt,name=raw_notice,json=rawNotice,proto3" json:"raw_notice,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
-}
-
-func (x *TdmAnalysisPayload) Reset() {
-	*x = TdmAnalysisPayload{}
-	mi := &file_exonex_cortex_v1alpha1_analysis_proto_msgTypes[3]
+func (x *ListAnalyzersResponse) Reset() {
+	*x = ListAnalyzersResponse{}
+	mi := &file_exonex_cortex_v1alpha1_analysis_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *TdmAnalysisPayload) String() string {
+func (x *ListAnalyzersResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*TdmAnalysisPayload) ProtoMessage() {}
+func (*ListAnalyzersResponse) ProtoMessage() {}
 
-func (x *TdmAnalysisPayload) ProtoReflect() protoreflect.Message {
-	mi := &file_exonex_cortex_v1alpha1_analysis_proto_msgTypes[3]
+func (x *ListAnalyzersResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_exonex_cortex_v1alpha1_analysis_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -363,64 +471,577 @@ func (x *TdmAnalysisPayload) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use TdmAnalysisPayload.ProtoReflect.Descriptor instead.
-func (*TdmAnalysisPayload) Descriptor() ([]byte, []int) {
-	return file_exonex_cortex_v1alpha1_analysis_proto_rawDescGZIP(), []int{3}
+// Deprecated: Use ListAnalyzersResponse.ProtoReflect.Descriptor instead.
+func (*ListAnalyzersResponse) Descriptor() ([]byte, []int) {
+	return file_exonex_cortex_v1alpha1_analysis_proto_rawDescGZIP(), []int{6}
 }
 
-func (x *TdmAnalysisPayload) GetOptOutDetected() bool {
+func (x *ListAnalyzersResponse) GetAnalyzers() []*Analyzer {
 	if x != nil {
-		return x.OptOutDetected
+		return x.Analyzers
+	}
+	return nil
+}
+
+type GetAnalyzerRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	AnalyzerId    string                 `protobuf:"bytes,1,opt,name=analyzer_id,json=analyzerId,proto3" json:"analyzer_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetAnalyzerRequest) Reset() {
+	*x = GetAnalyzerRequest{}
+	mi := &file_exonex_cortex_v1alpha1_analysis_proto_msgTypes[7]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetAnalyzerRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetAnalyzerRequest) ProtoMessage() {}
+
+func (x *GetAnalyzerRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_exonex_cortex_v1alpha1_analysis_proto_msgTypes[7]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetAnalyzerRequest.ProtoReflect.Descriptor instead.
+func (*GetAnalyzerRequest) Descriptor() ([]byte, []int) {
+	return file_exonex_cortex_v1alpha1_analysis_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *GetAnalyzerRequest) GetAnalyzerId() string {
+	if x != nil {
+		return x.AnalyzerId
+	}
+	return ""
+}
+
+type GetAnalyzerResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Analyzer      *Analyzer              `protobuf:"bytes,1,opt,name=analyzer,proto3" json:"analyzer,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetAnalyzerResponse) Reset() {
+	*x = GetAnalyzerResponse{}
+	mi := &file_exonex_cortex_v1alpha1_analysis_proto_msgTypes[8]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetAnalyzerResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetAnalyzerResponse) ProtoMessage() {}
+
+func (x *GetAnalyzerResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_exonex_cortex_v1alpha1_analysis_proto_msgTypes[8]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetAnalyzerResponse.ProtoReflect.Descriptor instead.
+func (*GetAnalyzerResponse) Descriptor() ([]byte, []int) {
+	return file_exonex_cortex_v1alpha1_analysis_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *GetAnalyzerResponse) GetAnalyzer() *Analyzer {
+	if x != nil {
+		return x.Analyzer
+	}
+	return nil
+}
+
+type LeaseAnalyzerRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	LeaseIdentity *string                `protobuf:"bytes,1,opt,name=lease_identity,json=leaseIdentity,proto3,oneof" json:"lease_identity,omitempty"`
+	LeaseDuration *durationpb.Duration   `protobuf:"bytes,2,opt,name=lease_duration,json=leaseDuration,proto3,oneof" json:"lease_duration,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *LeaseAnalyzerRequest) Reset() {
+	*x = LeaseAnalyzerRequest{}
+	mi := &file_exonex_cortex_v1alpha1_analysis_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *LeaseAnalyzerRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*LeaseAnalyzerRequest) ProtoMessage() {}
+
+func (x *LeaseAnalyzerRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_exonex_cortex_v1alpha1_analysis_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use LeaseAnalyzerRequest.ProtoReflect.Descriptor instead.
+func (*LeaseAnalyzerRequest) Descriptor() ([]byte, []int) {
+	return file_exonex_cortex_v1alpha1_analysis_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *LeaseAnalyzerRequest) GetLeaseIdentity() string {
+	if x != nil && x.LeaseIdentity != nil {
+		return *x.LeaseIdentity
+	}
+	return ""
+}
+
+func (x *LeaseAnalyzerRequest) GetLeaseDuration() *durationpb.Duration {
+	if x != nil {
+		return x.LeaseDuration
+	}
+	return nil
+}
+
+type LeaseAnalyzerResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *LeaseAnalyzerResponse) Reset() {
+	*x = LeaseAnalyzerResponse{}
+	mi := &file_exonex_cortex_v1alpha1_analysis_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *LeaseAnalyzerResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*LeaseAnalyzerResponse) ProtoMessage() {}
+
+func (x *LeaseAnalyzerResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_exonex_cortex_v1alpha1_analysis_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use LeaseAnalyzerResponse.ProtoReflect.Descriptor instead.
+func (*LeaseAnalyzerResponse) Descriptor() ([]byte, []int) {
+	return file_exonex_cortex_v1alpha1_analysis_proto_rawDescGZIP(), []int{10}
+}
+
+type SendAnalyzerHeartbeatRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	AnalyzerId    string                 `protobuf:"bytes,1,opt,name=analyzer_id,json=analyzerId,proto3" json:"analyzer_id,omitempty"`
+	InstanceName  string                 `protobuf:"bytes,2,opt,name=instance_name,json=instanceName,proto3" json:"instance_name,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SendAnalyzerHeartbeatRequest) Reset() {
+	*x = SendAnalyzerHeartbeatRequest{}
+	mi := &file_exonex_cortex_v1alpha1_analysis_proto_msgTypes[11]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SendAnalyzerHeartbeatRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SendAnalyzerHeartbeatRequest) ProtoMessage() {}
+
+func (x *SendAnalyzerHeartbeatRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_exonex_cortex_v1alpha1_analysis_proto_msgTypes[11]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SendAnalyzerHeartbeatRequest.ProtoReflect.Descriptor instead.
+func (*SendAnalyzerHeartbeatRequest) Descriptor() ([]byte, []int) {
+	return file_exonex_cortex_v1alpha1_analysis_proto_rawDescGZIP(), []int{11}
+}
+
+func (x *SendAnalyzerHeartbeatRequest) GetAnalyzerId() string {
+	if x != nil {
+		return x.AnalyzerId
+	}
+	return ""
+}
+
+func (x *SendAnalyzerHeartbeatRequest) GetInstanceName() string {
+	if x != nil {
+		return x.InstanceName
+	}
+	return ""
+}
+
+type SendAnalyzerHeartbeatResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SendAnalyzerHeartbeatResponse) Reset() {
+	*x = SendAnalyzerHeartbeatResponse{}
+	mi := &file_exonex_cortex_v1alpha1_analysis_proto_msgTypes[12]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SendAnalyzerHeartbeatResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SendAnalyzerHeartbeatResponse) ProtoMessage() {}
+
+func (x *SendAnalyzerHeartbeatResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_exonex_cortex_v1alpha1_analysis_proto_msgTypes[12]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SendAnalyzerHeartbeatResponse.ProtoReflect.Descriptor instead.
+func (*SendAnalyzerHeartbeatResponse) Descriptor() ([]byte, []int) {
+	return file_exonex_cortex_v1alpha1_analysis_proto_rawDescGZIP(), []int{12}
+}
+
+type CreateAnalysisRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	DocumentId    string                 `protobuf:"bytes,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
+	AnalyzerId    string                 `protobuf:"bytes,2,opt,name=analyzer_id,json=analyzerId,proto3" json:"analyzer_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateAnalysisRequest) Reset() {
+	*x = CreateAnalysisRequest{}
+	mi := &file_exonex_cortex_v1alpha1_analysis_proto_msgTypes[13]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateAnalysisRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateAnalysisRequest) ProtoMessage() {}
+
+func (x *CreateAnalysisRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_exonex_cortex_v1alpha1_analysis_proto_msgTypes[13]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateAnalysisRequest.ProtoReflect.Descriptor instead.
+func (*CreateAnalysisRequest) Descriptor() ([]byte, []int) {
+	return file_exonex_cortex_v1alpha1_analysis_proto_rawDescGZIP(), []int{13}
+}
+
+func (x *CreateAnalysisRequest) GetDocumentId() string {
+	if x != nil {
+		return x.DocumentId
+	}
+	return ""
+}
+
+func (x *CreateAnalysisRequest) GetAnalyzerId() string {
+	if x != nil {
+		return x.AnalyzerId
+	}
+	return ""
+}
+
+type CreateAnalysisResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateAnalysisResponse) Reset() {
+	*x = CreateAnalysisResponse{}
+	mi := &file_exonex_cortex_v1alpha1_analysis_proto_msgTypes[14]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateAnalysisResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateAnalysisResponse) ProtoMessage() {}
+
+func (x *CreateAnalysisResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_exonex_cortex_v1alpha1_analysis_proto_msgTypes[14]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateAnalysisResponse.ProtoReflect.Descriptor instead.
+func (*CreateAnalysisResponse) Descriptor() ([]byte, []int) {
+	return file_exonex_cortex_v1alpha1_analysis_proto_rawDescGZIP(), []int{14}
+}
+
+func (x *CreateAnalysisResponse) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+type PollAnalysesRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Lease         bool                   `protobuf:"varint,1,opt,name=lease,proto3" json:"lease,omitempty"`
+	LeaseIdentity *string                `protobuf:"bytes,2,opt,name=lease_identity,json=leaseIdentity,proto3,oneof" json:"lease_identity,omitempty"`
+	LeaseDuration *durationpb.Duration   `protobuf:"bytes,3,opt,name=lease_duration,json=leaseDuration,proto3,oneof" json:"lease_duration,omitempty"`
+	Limit         uint64                 `protobuf:"varint,4,opt,name=limit,proto3" json:"limit,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PollAnalysesRequest) Reset() {
+	*x = PollAnalysesRequest{}
+	mi := &file_exonex_cortex_v1alpha1_analysis_proto_msgTypes[15]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PollAnalysesRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PollAnalysesRequest) ProtoMessage() {}
+
+func (x *PollAnalysesRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_exonex_cortex_v1alpha1_analysis_proto_msgTypes[15]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PollAnalysesRequest.ProtoReflect.Descriptor instead.
+func (*PollAnalysesRequest) Descriptor() ([]byte, []int) {
+	return file_exonex_cortex_v1alpha1_analysis_proto_rawDescGZIP(), []int{15}
+}
+
+func (x *PollAnalysesRequest) GetLease() bool {
+	if x != nil {
+		return x.Lease
 	}
 	return false
 }
 
-func (x *TdmAnalysisPayload) GetRawNotice() string {
-	if x != nil {
-		return x.RawNotice
+func (x *PollAnalysesRequest) GetLeaseIdentity() string {
+	if x != nil && x.LeaseIdentity != nil {
+		return *x.LeaseIdentity
 	}
 	return ""
+}
+
+func (x *PollAnalysesRequest) GetLeaseDuration() *durationpb.Duration {
+	if x != nil {
+		return x.LeaseDuration
+	}
+	return nil
+}
+
+func (x *PollAnalysesRequest) GetLimit() uint64 {
+	if x != nil {
+		return x.Limit
+	}
+	return 0
+}
+
+type PollAnalysesResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Analyses      []*Analysis            `protobuf:"bytes,1,rep,name=analyses,proto3" json:"analyses,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PollAnalysesResponse) Reset() {
+	*x = PollAnalysesResponse{}
+	mi := &file_exonex_cortex_v1alpha1_analysis_proto_msgTypes[16]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PollAnalysesResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PollAnalysesResponse) ProtoMessage() {}
+
+func (x *PollAnalysesResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_exonex_cortex_v1alpha1_analysis_proto_msgTypes[16]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PollAnalysesResponse.ProtoReflect.Descriptor instead.
+func (*PollAnalysesResponse) Descriptor() ([]byte, []int) {
+	return file_exonex_cortex_v1alpha1_analysis_proto_rawDescGZIP(), []int{16}
+}
+
+func (x *PollAnalysesResponse) GetAnalyses() []*Analysis {
+	if x != nil {
+		return x.Analyses
+	}
+	return nil
 }
 
 var File_exonex_cortex_v1alpha1_analysis_proto protoreflect.FileDescriptor
 
 const file_exonex_cortex_v1alpha1_analysis_proto_rawDesc = "" +
 	"\n" +
-	"%exonex/cortex/v1alpha1/analysis.proto\x12\x16exonex.cortex.v1alpha1\x1a#exonex/cortex/v1alpha1/common.proto\x1a\x1bbuf/validate/validate.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1cgoogle/protobuf/struct.proto\"\xec\x02\n" +
+	"%exonex/cortex/v1alpha1/analysis.proto\x12\x16exonex.cortex.v1alpha1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1egoogle/protobuf/duration.proto\"\xec\x01\n" +
 	"\bAnalysis\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\x126\n" +
-	"\x04meta\x18\x02 \x01(\v2\".exonex.cortex.v1alpha1.ObjectMetaR\x04meta\x12I\n" +
-	"\ranalysis_type\x18\x03 \x01(\x0e2$.exonex.cortex.v1alpha1.AnalysisTypeR\fanalysisType\x12\x1f\n" +
-	"\vdocument_id\x18\x04 \x01(\tR\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1f\n" +
+	"\vdocument_id\x18\x02 \x01(\tR\n" +
 	"documentId\x12\x1f\n" +
-	"\vexecutor_id\x18\x05 \x01(\tR\n" +
-	"executorId\x12C\n" +
-	"\x06result\x18\x06 \x01(\v2&.exonex.cortex.v1alpha1.AnalysisResultH\x00R\x06result\x88\x01\x01\x12;\n" +
-	"\vfinished_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\n" +
-	"finishedAtB\t\n" +
-	"\a_result\"\xe1\x01\n" +
-	"\x0eAnalysisResult\x128\n" +
-	"\vraw_payload\x18\x01 \x01(\v2\x17.google.protobuf.StructR\n" +
-	"rawPayload\x12J\n" +
-	"\asummary\x18\n" +
-	" \x01(\v2..exonex.cortex.v1alpha1.SummaryAnalysisPayloadH\x00R\asummary\x12>\n" +
-	"\x03tdm\x18\v \x01(\v2*.exonex.cortex.v1alpha1.TdmAnalysisPayloadH\x00R\x03tdmB\t\n" +
-	"\apayload\"\x96\x01\n" +
-	"\x16SummaryAnalysisPayload\x12\x14\n" +
-	"\x05title\x18\x01 \x01(\tR\x05title\x12\x18\n" +
-	"\asummary\x18\x02 \x01(\tR\asummary\x12'\n" +
-	"\x0fexecute_summary\x18\x03 \x01(\tR\x0eexecuteSummary\x12#\n" +
-	"\rkey_takeaways\x18\x04 \x03(\tR\fkeyTakeaways\"]\n" +
-	"\x12TdmAnalysisPayload\x12(\n" +
-	"\x10opt_out_detected\x18\x01 \x01(\bR\x0eoptOutDetected\x12\x1d\n" +
+	"\vanalyzer_id\x18\x03 \x01(\tR\n" +
+	"analyzerId\x129\n" +
 	"\n" +
-	"raw_notice\x18\x02 \x01(\tR\trawNotice*\x9d\x01\n" +
-	"\fAnalysisType\x12\x1d\n" +
-	"\x19ANALYSIS_TYPE_UNSPECIFIED\x10\x00\x12\x1a\n" +
-	"\x16ANALYSIS_TYPE_MARKDOWN\x10\x01\x12 \n" +
-	"\x1cANALYSIS_TYPE_CLEAN_MARKDOWN\x10\x02\x12\x15\n" +
-	"\x11ANALYSIS_TYPE_TDM\x10\x03\x12\x19\n" +
-	"\x15ANALYSIS_TYPE_SUMMARY\x10\x04B\xf3\x01\n" +
+	"created_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x12B\n" +
+	"\fcompleted_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampH\x00R\vcompletedAt\x88\x01\x01B\x0f\n" +
+	"\r_completed_at\"\xc7\x02\n" +
+	"\bAnalyzer\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x14\n" +
+	"\x05group\x18\x03 \x01(\tR\x05group\x12\x12\n" +
+	"\x04kind\x18\x04 \x01(\tR\x04kind\x12\x18\n" +
+	"\aversion\x18\x05 \x01(\tR\aversion\x12\x12\n" +
+	"\x04name\x18\x06 \x01(\tR\x04name\x12 \n" +
+	"\vdescription\x18\a \x01(\tR\vdescription\x12.\n" +
+	"\x13need_artifact_types\x18\b \x03(\tR\x11needArtifactTypes\x12F\n" +
+	"\tinstances\x18\t \x03(\v2(.exonex.cortex.v1alpha1.AnalyzerInstanceR\tinstances\x129\n" +
+	"\n" +
+	"created_at\x18\n" +
+	" \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\"\xb6\x01\n" +
+	"\x10AnalyzerInstance\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12W\n" +
+	"\x1alast_heartbeat_received_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\x17lastHeartbeatReceivedAt\x129\n" +
+	"\n" +
+	"created_at\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\"\xc1\x01\n" +
+	"\x15CreateAnalyzerRequest\x12\x14\n" +
+	"\x05group\x18\x01 \x01(\tR\x05group\x12\x12\n" +
+	"\x04kind\x18\x02 \x01(\tR\x04kind\x12\x18\n" +
+	"\aversion\x18\x03 \x01(\tR\aversion\x12\x12\n" +
+	"\x04name\x18\x04 \x01(\tR\x04name\x12 \n" +
+	"\vdescription\x18\x05 \x01(\tR\vdescription\x12.\n" +
+	"\x13need_artifact_types\x18\x06 \x03(\tR\x11needArtifactTypes\"\x18\n" +
+	"\x16CreateAnalyzerResponse\"c\n" +
+	"\x14ListAnalyzersRequest\x12\x19\n" +
+	"\x05limit\x18\x01 \x01(\x04H\x00R\x05limit\x88\x01\x01\x12\x1b\n" +
+	"\x06offset\x18\x02 \x01(\x04H\x01R\x06offset\x88\x01\x01B\b\n" +
+	"\x06_limitB\t\n" +
+	"\a_offset\"W\n" +
+	"\x15ListAnalyzersResponse\x12>\n" +
+	"\tanalyzers\x18\x01 \x03(\v2 .exonex.cortex.v1alpha1.AnalyzerR\tanalyzers\"5\n" +
+	"\x12GetAnalyzerRequest\x12\x1f\n" +
+	"\vanalyzer_id\x18\x01 \x01(\tR\n" +
+	"analyzerId\"S\n" +
+	"\x13GetAnalyzerResponse\x12<\n" +
+	"\banalyzer\x18\x01 \x01(\v2 .exonex.cortex.v1alpha1.AnalyzerR\banalyzer\"\xaf\x01\n" +
+	"\x14LeaseAnalyzerRequest\x12*\n" +
+	"\x0elease_identity\x18\x01 \x01(\tH\x00R\rleaseIdentity\x88\x01\x01\x12E\n" +
+	"\x0elease_duration\x18\x02 \x01(\v2\x19.google.protobuf.DurationH\x01R\rleaseDuration\x88\x01\x01B\x11\n" +
+	"\x0f_lease_identityB\x11\n" +
+	"\x0f_lease_duration\"\x17\n" +
+	"\x15LeaseAnalyzerResponse\"d\n" +
+	"\x1cSendAnalyzerHeartbeatRequest\x12\x1f\n" +
+	"\vanalyzer_id\x18\x01 \x01(\tR\n" +
+	"analyzerId\x12#\n" +
+	"\rinstance_name\x18\x02 \x01(\tR\finstanceName\"\x1f\n" +
+	"\x1dSendAnalyzerHeartbeatResponse\"Y\n" +
+	"\x15CreateAnalysisRequest\x12\x1f\n" +
+	"\vdocument_id\x18\x01 \x01(\tR\n" +
+	"documentId\x12\x1f\n" +
+	"\vanalyzer_id\x18\x02 \x01(\tR\n" +
+	"analyzerId\"(\n" +
+	"\x16CreateAnalysisResponse\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\"\xda\x01\n" +
+	"\x13PollAnalysesRequest\x12\x14\n" +
+	"\x05lease\x18\x01 \x01(\bR\x05lease\x12*\n" +
+	"\x0elease_identity\x18\x02 \x01(\tH\x00R\rleaseIdentity\x88\x01\x01\x12E\n" +
+	"\x0elease_duration\x18\x03 \x01(\v2\x19.google.protobuf.DurationH\x01R\rleaseDuration\x88\x01\x01\x12\x14\n" +
+	"\x05limit\x18\x04 \x01(\x04R\x05limitB\x11\n" +
+	"\x0f_lease_identityB\x11\n" +
+	"\x0f_lease_duration\"T\n" +
+	"\x14PollAnalysesResponse\x12<\n" +
+	"\banalyses\x18\x01 \x03(\v2 .exonex.cortex.v1alpha1.AnalysisR\banalyses2\xb7\x06\n" +
+	"\x0fAnalysisService\x12q\n" +
+	"\x0eCreateAnalyzer\x12-.exonex.cortex.v1alpha1.CreateAnalyzerRequest\x1a..exonex.cortex.v1alpha1.CreateAnalyzerResponse\"\x00\x12n\n" +
+	"\rListAnalyzers\x12,.exonex.cortex.v1alpha1.ListAnalyzersRequest\x1a-.exonex.cortex.v1alpha1.ListAnalyzersResponse\"\x00\x12h\n" +
+	"\vGetAnalyzer\x12*.exonex.cortex.v1alpha1.GetAnalyzerRequest\x1a+.exonex.cortex.v1alpha1.GetAnalyzerResponse\"\x00\x12n\n" +
+	"\rLeaseAnalyzer\x12,.exonex.cortex.v1alpha1.LeaseAnalyzerRequest\x1a-.exonex.cortex.v1alpha1.LeaseAnalyzerResponse\"\x00\x12\x86\x01\n" +
+	"\x15SendAnalyzerHeartbeat\x124.exonex.cortex.v1alpha1.SendAnalyzerHeartbeatRequest\x1a5.exonex.cortex.v1alpha1.SendAnalyzerHeartbeatResponse\"\x00\x12q\n" +
+	"\x0eCreateAnalysis\x12-.exonex.cortex.v1alpha1.CreateAnalysisRequest\x1a..exonex.cortex.v1alpha1.CreateAnalysisResponse\"\x00\x12k\n" +
+	"\fPollAnalyses\x12+.exonex.cortex.v1alpha1.PollAnalysesRequest\x1a,.exonex.cortex.v1alpha1.PollAnalysesResponse\"\x00B\xf3\x01\n" +
 	"\x1acom.exonex.cortex.v1alpha1B\rAnalysisProtoP\x01ZLgithub.com/alexzimmer96/exonex/pkg/api/exonex/cortex/v1alpha1;cortexv1alpha1\xa2\x02\x03ECX\xaa\x02\x16Exonex.Cortex.V1alpha1\xca\x02\x16Exonex\\Cortex\\V1alpha1\xe2\x02\"Exonex\\Cortex\\V1alpha1\\GPBMetadata\xea\x02\x18Exonex::Cortex::V1alpha1b\x06proto3"
 
 var (
@@ -435,31 +1056,59 @@ func file_exonex_cortex_v1alpha1_analysis_proto_rawDescGZIP() []byte {
 	return file_exonex_cortex_v1alpha1_analysis_proto_rawDescData
 }
 
-var file_exonex_cortex_v1alpha1_analysis_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_exonex_cortex_v1alpha1_analysis_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
+var file_exonex_cortex_v1alpha1_analysis_proto_msgTypes = make([]protoimpl.MessageInfo, 17)
 var file_exonex_cortex_v1alpha1_analysis_proto_goTypes = []any{
-	(AnalysisType)(0),              // 0: exonex.cortex.v1alpha1.AnalysisType
-	(*Analysis)(nil),               // 1: exonex.cortex.v1alpha1.Analysis
-	(*AnalysisResult)(nil),         // 2: exonex.cortex.v1alpha1.AnalysisResult
-	(*SummaryAnalysisPayload)(nil), // 3: exonex.cortex.v1alpha1.SummaryAnalysisPayload
-	(*TdmAnalysisPayload)(nil),     // 4: exonex.cortex.v1alpha1.TdmAnalysisPayload
-	(*ObjectMeta)(nil),             // 5: exonex.cortex.v1alpha1.ObjectMeta
-	(*timestamppb.Timestamp)(nil),  // 6: google.protobuf.Timestamp
-	(*structpb.Struct)(nil),        // 7: google.protobuf.Struct
+	(*Analysis)(nil),                      // 0: exonex.cortex.v1alpha1.Analysis
+	(*Analyzer)(nil),                      // 1: exonex.cortex.v1alpha1.Analyzer
+	(*AnalyzerInstance)(nil),              // 2: exonex.cortex.v1alpha1.AnalyzerInstance
+	(*CreateAnalyzerRequest)(nil),         // 3: exonex.cortex.v1alpha1.CreateAnalyzerRequest
+	(*CreateAnalyzerResponse)(nil),        // 4: exonex.cortex.v1alpha1.CreateAnalyzerResponse
+	(*ListAnalyzersRequest)(nil),          // 5: exonex.cortex.v1alpha1.ListAnalyzersRequest
+	(*ListAnalyzersResponse)(nil),         // 6: exonex.cortex.v1alpha1.ListAnalyzersResponse
+	(*GetAnalyzerRequest)(nil),            // 7: exonex.cortex.v1alpha1.GetAnalyzerRequest
+	(*GetAnalyzerResponse)(nil),           // 8: exonex.cortex.v1alpha1.GetAnalyzerResponse
+	(*LeaseAnalyzerRequest)(nil),          // 9: exonex.cortex.v1alpha1.LeaseAnalyzerRequest
+	(*LeaseAnalyzerResponse)(nil),         // 10: exonex.cortex.v1alpha1.LeaseAnalyzerResponse
+	(*SendAnalyzerHeartbeatRequest)(nil),  // 11: exonex.cortex.v1alpha1.SendAnalyzerHeartbeatRequest
+	(*SendAnalyzerHeartbeatResponse)(nil), // 12: exonex.cortex.v1alpha1.SendAnalyzerHeartbeatResponse
+	(*CreateAnalysisRequest)(nil),         // 13: exonex.cortex.v1alpha1.CreateAnalysisRequest
+	(*CreateAnalysisResponse)(nil),        // 14: exonex.cortex.v1alpha1.CreateAnalysisResponse
+	(*PollAnalysesRequest)(nil),           // 15: exonex.cortex.v1alpha1.PollAnalysesRequest
+	(*PollAnalysesResponse)(nil),          // 16: exonex.cortex.v1alpha1.PollAnalysesResponse
+	(*timestamppb.Timestamp)(nil),         // 17: google.protobuf.Timestamp
+	(*durationpb.Duration)(nil),           // 18: google.protobuf.Duration
 }
 var file_exonex_cortex_v1alpha1_analysis_proto_depIdxs = []int32{
-	5, // 0: exonex.cortex.v1alpha1.Analysis.meta:type_name -> exonex.cortex.v1alpha1.ObjectMeta
-	0, // 1: exonex.cortex.v1alpha1.Analysis.analysis_type:type_name -> exonex.cortex.v1alpha1.AnalysisType
-	2, // 2: exonex.cortex.v1alpha1.Analysis.result:type_name -> exonex.cortex.v1alpha1.AnalysisResult
-	6, // 3: exonex.cortex.v1alpha1.Analysis.finished_at:type_name -> google.protobuf.Timestamp
-	7, // 4: exonex.cortex.v1alpha1.AnalysisResult.raw_payload:type_name -> google.protobuf.Struct
-	3, // 5: exonex.cortex.v1alpha1.AnalysisResult.summary:type_name -> exonex.cortex.v1alpha1.SummaryAnalysisPayload
-	4, // 6: exonex.cortex.v1alpha1.AnalysisResult.tdm:type_name -> exonex.cortex.v1alpha1.TdmAnalysisPayload
-	7, // [7:7] is the sub-list for method output_type
-	7, // [7:7] is the sub-list for method input_type
-	7, // [7:7] is the sub-list for extension type_name
-	7, // [7:7] is the sub-list for extension extendee
-	0, // [0:7] is the sub-list for field type_name
+	17, // 0: exonex.cortex.v1alpha1.Analysis.created_at:type_name -> google.protobuf.Timestamp
+	17, // 1: exonex.cortex.v1alpha1.Analysis.completed_at:type_name -> google.protobuf.Timestamp
+	2,  // 2: exonex.cortex.v1alpha1.Analyzer.instances:type_name -> exonex.cortex.v1alpha1.AnalyzerInstance
+	17, // 3: exonex.cortex.v1alpha1.Analyzer.created_at:type_name -> google.protobuf.Timestamp
+	17, // 4: exonex.cortex.v1alpha1.AnalyzerInstance.last_heartbeat_received_at:type_name -> google.protobuf.Timestamp
+	17, // 5: exonex.cortex.v1alpha1.AnalyzerInstance.created_at:type_name -> google.protobuf.Timestamp
+	1,  // 6: exonex.cortex.v1alpha1.ListAnalyzersResponse.analyzers:type_name -> exonex.cortex.v1alpha1.Analyzer
+	1,  // 7: exonex.cortex.v1alpha1.GetAnalyzerResponse.analyzer:type_name -> exonex.cortex.v1alpha1.Analyzer
+	18, // 8: exonex.cortex.v1alpha1.LeaseAnalyzerRequest.lease_duration:type_name -> google.protobuf.Duration
+	18, // 9: exonex.cortex.v1alpha1.PollAnalysesRequest.lease_duration:type_name -> google.protobuf.Duration
+	0,  // 10: exonex.cortex.v1alpha1.PollAnalysesResponse.analyses:type_name -> exonex.cortex.v1alpha1.Analysis
+	3,  // 11: exonex.cortex.v1alpha1.AnalysisService.CreateAnalyzer:input_type -> exonex.cortex.v1alpha1.CreateAnalyzerRequest
+	5,  // 12: exonex.cortex.v1alpha1.AnalysisService.ListAnalyzers:input_type -> exonex.cortex.v1alpha1.ListAnalyzersRequest
+	7,  // 13: exonex.cortex.v1alpha1.AnalysisService.GetAnalyzer:input_type -> exonex.cortex.v1alpha1.GetAnalyzerRequest
+	9,  // 14: exonex.cortex.v1alpha1.AnalysisService.LeaseAnalyzer:input_type -> exonex.cortex.v1alpha1.LeaseAnalyzerRequest
+	11, // 15: exonex.cortex.v1alpha1.AnalysisService.SendAnalyzerHeartbeat:input_type -> exonex.cortex.v1alpha1.SendAnalyzerHeartbeatRequest
+	13, // 16: exonex.cortex.v1alpha1.AnalysisService.CreateAnalysis:input_type -> exonex.cortex.v1alpha1.CreateAnalysisRequest
+	15, // 17: exonex.cortex.v1alpha1.AnalysisService.PollAnalyses:input_type -> exonex.cortex.v1alpha1.PollAnalysesRequest
+	4,  // 18: exonex.cortex.v1alpha1.AnalysisService.CreateAnalyzer:output_type -> exonex.cortex.v1alpha1.CreateAnalyzerResponse
+	6,  // 19: exonex.cortex.v1alpha1.AnalysisService.ListAnalyzers:output_type -> exonex.cortex.v1alpha1.ListAnalyzersResponse
+	8,  // 20: exonex.cortex.v1alpha1.AnalysisService.GetAnalyzer:output_type -> exonex.cortex.v1alpha1.GetAnalyzerResponse
+	10, // 21: exonex.cortex.v1alpha1.AnalysisService.LeaseAnalyzer:output_type -> exonex.cortex.v1alpha1.LeaseAnalyzerResponse
+	12, // 22: exonex.cortex.v1alpha1.AnalysisService.SendAnalyzerHeartbeat:output_type -> exonex.cortex.v1alpha1.SendAnalyzerHeartbeatResponse
+	14, // 23: exonex.cortex.v1alpha1.AnalysisService.CreateAnalysis:output_type -> exonex.cortex.v1alpha1.CreateAnalysisResponse
+	16, // 24: exonex.cortex.v1alpha1.AnalysisService.PollAnalyses:output_type -> exonex.cortex.v1alpha1.PollAnalysesResponse
+	18, // [18:25] is the sub-list for method output_type
+	11, // [11:18] is the sub-list for method input_type
+	11, // [11:11] is the sub-list for extension type_name
+	11, // [11:11] is the sub-list for extension extendee
+	0,  // [0:11] is the sub-list for field type_name
 }
 
 func init() { file_exonex_cortex_v1alpha1_analysis_proto_init() }
@@ -467,25 +1116,22 @@ func file_exonex_cortex_v1alpha1_analysis_proto_init() {
 	if File_exonex_cortex_v1alpha1_analysis_proto != nil {
 		return
 	}
-	file_exonex_cortex_v1alpha1_common_proto_init()
 	file_exonex_cortex_v1alpha1_analysis_proto_msgTypes[0].OneofWrappers = []any{}
-	file_exonex_cortex_v1alpha1_analysis_proto_msgTypes[1].OneofWrappers = []any{
-		(*AnalysisResult_Summary)(nil),
-		(*AnalysisResult_Tdm)(nil),
-	}
+	file_exonex_cortex_v1alpha1_analysis_proto_msgTypes[5].OneofWrappers = []any{}
+	file_exonex_cortex_v1alpha1_analysis_proto_msgTypes[9].OneofWrappers = []any{}
+	file_exonex_cortex_v1alpha1_analysis_proto_msgTypes[15].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_exonex_cortex_v1alpha1_analysis_proto_rawDesc), len(file_exonex_cortex_v1alpha1_analysis_proto_rawDesc)),
-			NumEnums:      1,
-			NumMessages:   4,
+			NumEnums:      0,
+			NumMessages:   17,
 			NumExtensions: 0,
-			NumServices:   0,
+			NumServices:   1,
 		},
 		GoTypes:           file_exonex_cortex_v1alpha1_analysis_proto_goTypes,
 		DependencyIndexes: file_exonex_cortex_v1alpha1_analysis_proto_depIdxs,
-		EnumInfos:         file_exonex_cortex_v1alpha1_analysis_proto_enumTypes,
 		MessageInfos:      file_exonex_cortex_v1alpha1_analysis_proto_msgTypes,
 	}.Build()
 	File_exonex_cortex_v1alpha1_analysis_proto = out.File

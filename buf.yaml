@@ -4,3 +4,7 @@ modules:
 deps:
   - buf.build/bufbuild/protovalidate
   - buf.build/protocolbuffers/wellknowntypes
+  - buf.build/googleapis/googleapis
+lint:
+  use:
+    - STANDARD

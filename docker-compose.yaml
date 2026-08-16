@@ -5,9 +5,8 @@ services:
       context: dist/images
       dockerfile: postgres.Dockerfile
     environment:
-      POSTGRES_USER: "cortex"
-      POSTGRES_PASSWORD: "cortex"
-      POSTGRES_DATABASE: "cortex"
+      POSTGRES_USER: "exonex"
+      POSTGRES_PASSWORD: "exonex"
       PGDATA: "/var/lib/postgresql/data"
     volumes:
       - "cortex-data:/var/lib/postgresql/data"

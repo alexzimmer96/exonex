@@ -1,60 +1,13 @@
 package document
 
-import (
-	"time"
-
-	"github.com/google/uuid"
-)
-
-// =====================================================================================================================
-
-type Type string
-
-const (
-	DocumentTypeUnspecified = Type("")
-	DocumentTypeLegal       = Type("LEGAL")
-	DocumentTypeRobotsTXT   = Type("ROBOTS_TXT")
-	DocumentTypeArticle     = Type("ARTICLE")
-	DocumentTypeSocial      = Type("SOCIAL")
-	DocumentTypeJobPosting  = Type("JOB_POSTING")
-)
-
-// =====================================================================================================================
-
-type TdmStatus string
-
-const (
-	TdmStatusUnspecified    = TdmStatus("")
-	TdmStatusAllowed        = TdmStatus("ALLOWED")
-	TdmStatusOptOutDetected = TdmStatus("OPT_OUT_DETECTED")
-)
-
-// =====================================================================================================================
-
-type ArtifactFormat string
-
-const (
-	ArtifactFormatUnspecified   = ArtifactFormat("")
-	ArtifactFormatHTML          = ArtifactFormat("HTML")
-	ArtifactFormatPDF           = ArtifactFormat("PDF")
-	ArtifactFormatImage         = ArtifactFormat("IMAGE")
-	ArtifactFormatMarkdown      = ArtifactFormat("MARKDOWN")
-	ArtifactFormatCleanMarkdown = ArtifactFormat("CLEAN_MARKDOWN")
-)
-
-// =====================================================================================================================
+import "github.com/google/uuid"
 
 type Document struct {
-	ID          uuid.UUID  `json:"id"`
-	PublisherID uuid.UUID  `json:"publisher_id"`
-	OriginalURL string     `json:"original_url"`
-	Type        string     `json:"document_type"`
-	Artifacts   []Artifact `json:"artifacts"`
-	TdmStatus   TdmStatus  `json:"tdm_status,omitempty"`
-	PublishedAt time.Time  `json:"published_at,omitempty"`
-	CreatedAt   time.Time  `json:"created_at"`
-}
-
-type Artifact struct {
-	ID uuid.UUID `json:"id"`
+	ID            uuid.UUID `db:"id" json:"id"`
+	PublisherID   uuid.UUID `db:"publisher_id" json:"publisher_id"`
+	MimeType      string    `db:"mime_type" json:"mime_type"`
+	SizeBytes     int64     `db:"size_bytes" json:"size_bytes"`
+	StorageVolume string    `db:"storage_volume" json:"storage_volume"`
+	StorageKey    string    `db:"storage_key" json:"storage_key"`
+	SourceURL     *string   `db:"source_url" json:"source_url"`
 }

@@ -1,49 +1,122 @@
 syntax = "proto3";
 package exonex.cortex.v1alpha1;
 
-import "exonex/cortex/v1alpha1/common.proto";
-import "buf/validate/validate.proto";
 import "google/protobuf/timestamp.proto";
-import "google/protobuf/struct.proto";
+import "google/protobuf/duration.proto";
 
 // =====================================================================================================================
 
-enum AnalysisType {
-  ANALYSIS_TYPE_UNSPECIFIED = 0;
-  ANALYSIS_TYPE_MARKDOWN = 1;       // Transforms the Document into Markdown.
-  ANALYSIS_TYPE_CLEAN_MARKDOWN = 2; // Cleans the Markdown to remove noise.
-  ANALYSIS_TYPE_TDM = 3;            // Analyses a document of a human-readable TDM policy.
-  ANALYSIS_TYPE_SUMMARY = 4;        // Summarizes the document.
-}
-
-// AnalysisExecution is a specific Analysis that should or have been executed for a Document.
 message Analysis {
   string id = 1;
-  ObjectMeta meta = 2;
-  bool is_experiment = 3;
-  AnalysisType analysis_type = 4;
-  string document_id = 5;
-  string executor_id = 6;
-  optional AnalysisResult result = 7;
-  google.protobuf.Timestamp finished_at = 8;
+  string document_id = 2;
+  string analyzer_id = 3;
+  google.protobuf.Timestamp created_at = 5;
+  optional google.protobuf.Timestamp completed_at = 6;
 }
 
-message AnalysisResult {
-  google.protobuf.Struct raw_payload = 1;
-  oneof payload {
-      SummaryAnalysisPayload summary = 10;
-      TdmAnalysisPayload tdm = 11;
-  }
+message Analyzer {
+  string id = 1;
+  string group = 3;
+  string kind = 4;
+  string version = 5;
+  string name = 6;
+  string description = 7;
+  repeated string need_artifact_types = 8;
+  repeated AnalyzerInstance instances = 9;
+  google.protobuf.Timestamp created_at = 10;
 }
 
-message SummaryAnalysisPayload {
-  string title = 1;
-  string summary = 2;
-  string execute_summary = 3;
-  repeated string key_takeaways = 4;
+message AnalyzerInstance {
+  string id = 1;
+  google.protobuf.Timestamp last_heartbeat_received_at = 2;
+  google.protobuf.Timestamp created_at = 3;
 }
 
-message TdmAnalysisPayload {
-  bool opt_out_detected = 1;
-  string raw_notice = 2;
+// =====================================================================================================================
+
+service AnalysisService {
+  rpc CreateAnalyzer(CreateAnalyzerRequest) returns (CreateAnalyzerResponse) {}
+  rpc ListAnalyzers(ListAnalyzersRequest) returns (ListAnalyzersResponse) {}
+  rpc GetAnalyzer(GetAnalyzerRequest) returns (GetAnalyzerResponse) {}
+  rpc LeaseAnalyzer(LeaseAnalyzerRequest) returns (LeaseAnalyzerResponse) {}
+  rpc SendAnalyzerHeartbeat(SendAnalyzerHeartbeatRequest) returns (SendAnalyzerHeartbeatResponse) {}
+  rpc CreateAnalysis(CreateAnalysisRequest) returns (CreateAnalysisResponse) {}
+  rpc PollAnalyses(PollAnalysesRequest) returns (PollAnalysesResponse) {}
 }
+
+// =====================================================================================================================
+
+message CreateAnalyzerRequest {
+  string group = 1;
+  string kind = 2;
+  string version = 3;
+  string name = 4;
+  string description = 5;
+  repeated string need_artifact_types = 6;
+}
+
+message CreateAnalyzerResponse {}
+
+// =====================================================================================================================
+
+message ListAnalyzersRequest {
+  optional uint64 limit = 1;
+  optional uint64 offset = 2;
+}
+
+message ListAnalyzersResponse {
+  repeated Analyzer analyzers = 1;
+}
+
+// =====================================================================================================================
+
+message GetAnalyzerRequest {
+  string analyzer_id = 1;
+}
+
+message GetAnalyzerResponse {
+  Analyzer analyzer = 1;
+}
+
+// =====================================================================================================================
+
+message LeaseAnalyzerRequest {
+  optional string lease_identity = 1;
+  optional google.protobuf.Duration lease_duration = 2;
+}
+
+message LeaseAnalyzerResponse {}
+
+// =====================================================================================================================
+
+message SendAnalyzerHeartbeatRequest {
+  string analyzer_id = 1;
+  string instance_name = 2;
+}
+
+message SendAnalyzerHeartbeatResponse {}
+
+// =====================================================================================================================
+
+message CreateAnalysisRequest {
+  string document_id = 1;
+  string analyzer_id = 2;
+}
+
+message CreateAnalysisResponse {
+  string id = 1;
+}
+
+// =====================================================================================================================
+
+message PollAnalysesRequest {
+  bool lease = 1;
+  optional string lease_identity = 2;
+  optional google.protobuf.Duration lease_duration = 3;
+  uint64 limit = 4;
+}
+
+message PollAnalysesResponse {
+  repeated Analysis analyses = 1;
+}
+
