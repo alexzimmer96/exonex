@@ -1,0 +1,2088 @@
+{
+  "files": [
+    {
+      "name": "exonex/api/v1/annotations.proto",
+      "description": "",
+      "package": "exonex.api.v1",
+      "hasEnums": true,
+      "hasExtensions": true,
+      "hasMessages": false,
+      "hasServices": false,
+      "enums": [
+        {
+          "name": "FieldType",
+          "longName": "FieldType",
+          "fullName": "exonex.api.v1.FieldType",
+          "description": "",
+          "values": [
+            {
+              "name": "FIELD_TYPE_UNSPECIFIED",
+              "number": "0",
+              "description": ""
+            },
+            {
+              "name": "FIELD_TYPE_ANNOTATIONS",
+              "number": "1",
+              "description": ""
+            }
+          ]
+        }
+      ],
+      "extensions": [
+        {
+          "name": "field_read_permission",
+          "longName": ".google.protobuf.FieldOptions.field_read_permission",
+          "fullName": ".google.protobuf.FieldOptions.field_read_permission",
+          "description": "The field_read_permission annotation defines the required permission to read a field during a list- or get operation.\nIf the permission is defined and the caller does not have the required permissions, the field is excluded\nfrom the response by setting it to either its zero value (for non-optional fields) or to null.",
+          "label": "optional",
+          "type": "string",
+          "longType": "string",
+          "fullType": "string",
+          "number": 50001,
+          "defaultValue": "",
+          "containingType": "FieldOptions",
+          "containingLongType": ".google.protobuf.FieldOptions",
+          "containingFullType": "google.protobuf.FieldOptions"
+        },
+        {
+          "name": "field_type",
+          "longName": ".google.protobuf.FieldOptions.field_type",
+          "fullName": ".google.protobuf.FieldOptions.field_type",
+          "description": "The field_type annotation can be used to define a custom field_type that results in a special treatment on field\nupdates.",
+          "label": "optional",
+          "type": "FieldType",
+          "longType": "FieldType",
+          "fullType": "exonex.api.v1.FieldType",
+          "number": 50003,
+          "defaultValue": "",
+          "containingType": "FieldOptions",
+          "containingLongType": ".google.protobuf.FieldOptions",
+          "containingFullType": "google.protobuf.FieldOptions"
+        },
+        {
+          "name": "field_update_permission",
+          "longName": ".google.protobuf.FieldOptions.field_update_permission",
+          "fullName": ".google.protobuf.FieldOptions.field_update_permission",
+          "description": "The field_update_permission annotation defines the required permission to update a field using a Update operation.\nIf the permission is defined and the caller does not have the required permissions, a PERMISSION_DENIED\nerror will be returned.",
+          "label": "optional",
+          "type": "string",
+          "longType": "string",
+          "fullType": "string",
+          "number": 50002,
+          "defaultValue": "",
+          "containingType": "FieldOptions",
+          "containingLongType": ".google.protobuf.FieldOptions",
+          "containingFullType": "google.protobuf.FieldOptions"
+        },
+        {
+          "name": "method_permission",
+          "longName": ".google.protobuf.MethodOptions.method_permission",
+          "fullName": ".google.protobuf.MethodOptions.method_permission",
+          "description": "",
+          "label": "",
+          "type": "string",
+          "longType": "string",
+          "fullType": "string",
+          "number": 50001,
+          "defaultValue": "",
+          "containingType": "MethodOptions",
+          "containingLongType": ".google.protobuf.MethodOptions",
+          "containingFullType": "google.protobuf.MethodOptions"
+        }
+      ],
+      "messages": [],
+      "services": []
+    },
+    {
+      "name": "exonex/cortex/v1alpha1/analysis.proto",
+      "description": "",
+      "package": "exonex.cortex.v1alpha1",
+      "hasEnums": false,
+      "hasExtensions": false,
+      "hasMessages": true,
+      "hasServices": true,
+      "enums": [],
+      "extensions": [],
+      "messages": [
+        {
+          "name": "Analysis",
+          "longName": "Analysis",
+          "fullName": "exonex.cortex.v1alpha1.Analysis",
+          "description": "",
+          "hasExtensions": false,
+          "hasFields": true,
+          "hasOneofs": true,
+          "extensions": [],
+          "fields": [
+            {
+              "name": "id",
+              "description": "",
+              "label": "",
+              "type": "string",
+              "longType": "string",
+              "fullType": "string",
+              "ismap": false,
+              "isoneof": false,
+              "oneofdecl": "",
+              "defaultValue": ""
+            },
+            {
+              "name": "document_id",
+              "description": "",
+              "label": "",
+              "type": "string",
+              "longType": "string",
+              "fullType": "string",
+              "ismap": false,
+              "isoneof": false,
+              "oneofdecl": "",
+              "defaultValue": ""
+            },
+            {
+              "name": "analyzer_id",
+              "description": "",
+              "label": "",
+              "type": "string",
+              "longType": "string",
+              "fullType": "string",
+              "ismap": false,
+              "isoneof": false,
+              "oneofdecl": "",
+              "defaultValue": ""
+            },
+            {
+              "name": "created_at",
+              "description": "",
+              "label": "",
+              "type": "Timestamp",
+              "longType": "google.protobuf.Timestamp",
+              "fullType": "google.protobuf.Timestamp",
+              "ismap": false,
+              "isoneof": false,
+              "oneofdecl": "",
+              "defaultValue": ""
+            },
+            {
+              "name": "completed_at",
+              "description": "",
+              "label": "optional",
+              "type": "Timestamp",
+              "longType": "google.protobuf.Timestamp",
+              "fullType": "google.protobuf.Timestamp",
+              "ismap": false,
+              "isoneof": true,
+              "oneofdecl": "_completed_at",
+              "defaultValue": ""
+            }
+          ]
+        },
+        {
+          "name": "Analyzer",
+          "longName": "Analyzer",
+          "fullName": "exonex.cortex.v1alpha1.Analyzer",
+          "description": "",
+          "hasExtensions": false,
+          "hasFields": true,
+          "hasOneofs": false,
+          "extensions": [],
+          "fields": [
+            {
+              "name": "id",
+              "description": "",
+              "label": "",
+              "type": "string",
+              "longType": "string",
+              "fullType": "string",
+              "ismap": false,
+              "isoneof": false,
+              "oneofdecl": "",
+              "defaultValue": ""
+            },
+            {
+              "name": "group",
+              "description": "",
+              "label": "",
+              "type": "string",
+              "longType": "string",
+              "fullType": "string",
+              "ismap": false,
+              "isoneof": false,
+              "oneofdecl": "",
+              "defaultValue": ""
+            },
+            {
+              "name": "kind",
+              "description": "",
+              "label": "",
+              "type": "string",
+              "longType": "string",
+              "fullType": "string",
+              "ismap": false,
+              "isoneof": false,
+              "oneofdecl": "",
+              "defaultValue": ""
+            },
+            {
+              "name": "version",
+              "description": "",
+              "label": "",
+              "type": "string",
+              "longType": "string",
+              "fullType": "string",
+              "ismap": false,
+              "isoneof": false,
+              "oneofdecl": "",
+              "defaultValue": ""
+            },
+            {
+              "name": "name",
+              "description": "",
+              "label": "",
+              "type": "string",
+              "longType": "string",
+              "fullType": "string",
+              "ismap": false,
+              "isoneof": false,
+              "oneofdecl": "",
+              "defaultValue": ""
+            },
+            {
+              "name": "description",
+              "description": "",
+              "label": "",
+              "type": "string",
+              "longType": "string",
+              "fullType": "string",
+              "ismap": false,
+              "isoneof": false,
+              "oneofdecl": "",
+              "defaultValue": ""
+            },
+            {
+              "name": "need_artifact_types",
+              "description": "",
+              "label": "repeated",
+              "type": "string",
+              "longType": "string",
+              "fullType": "string",
+              "ismap": false,
+              "isoneof": false,
+              "oneofdecl": "",
+              "defaultValue": ""
+            },
+            {
+              "name": "instances",
+              "description": "",
+              "label": "repeated",
+              "type": "AnalyzerInstance",
+              "longType": "AnalyzerInstance",
+              "fullType": "exonex.cortex.v1alpha1.AnalyzerInstance",
+              "ismap": false,
+              "isoneof": false,
+              "oneofdecl": "",
+              "defaultValue": ""
+            },
+            {
+              "name": "created_at",
+              "description": "",
+              "label": "",
+              "type": "Timestamp",
+              "longType": "google.protobuf.Timestamp",
+              "fullType": "google.protobuf.Timestamp",
+              "ismap": false,
+              "isoneof": false,
+              "oneofdecl": "",
+              "defaultValue": ""
+            }
+          ]
+        },
+        {
+          "name": "AnalyzerInstance",
+          "longName": "AnalyzerInstance",
+          "fullName": "exonex.cortex.v1alpha1.AnalyzerInstance",
+          "description": "",
+          "hasExtensions": false,
+          "hasFields": true,
+          "hasOneofs": false,
+          "extensions": [],
+          "fields": [
+            {
+              "name": "id",
+              "description": "",
+              "label": "",
+              "type": "string",
+              "longType": "string",
+              "fullType": "string",
+              "ismap": false,
+              "isoneof": false,
+              "oneofdecl": "",
+              "defaultValue": ""
+            },
+            {
+              "name": "last_heartbeat_received_at",
+              "description": "",
+              "label": "",
+              "type": "Timestamp",
+              "longType": "google.protobuf.Timestamp",
+              "fullType": "google.protobuf.Timestamp",
+              "ismap": false,
+              "isoneof": false,
+              "oneofdecl": "",
+              "defaultValue": ""
+            },
+            {
+              "name": "created_at",
+              "description": "",
+              "label": "",
+              "type": "Timestamp",
+              "longType": "google.protobuf.Timestamp",
+              "fullType": "google.protobuf.Timestamp",
+              "ismap": false,
+              "isoneof": false,
+              "oneofdecl": "",
+              "defaultValue": ""
+            }
+          ]
+        },
+        {
+          "name": "CreateAnalysisRequest",
+          "longName": "CreateAnalysisRequest",
+          "fullName": "exonex.cortex.v1alpha1.CreateAnalysisRequest",
+          "description": "",
+          "hasExtensions": false,
+          "hasFields": true,
+          "hasOneofs": false,
+          "extensions": [],
+          "fields": [
+            {
+              "name": "document_id",
+              "description": "",
+              "label": "",
+              "type": "string",
+              "longType": "string",
+              "fullType": "string",
+              "ismap": false,
+              "isoneof": false,
+              "oneofdecl": "",
+              "defaultValue": ""
+            },
+            {
+              "name": "analyzer_id",
+              "description": "",
+              "label": "",
+              "type": "string",
+              "longType": "string",
+              "fullType": "string",
+              "ismap": false,
+              "isoneof": false,
+              "oneofdecl": "",
+              "defaultValue": ""
+            }
+          ]
+        },
+        {
+          "name": "CreateAnalysisResponse",
+          "longName": "CreateAnalysisResponse",
+          "fullName": "exonex.cortex.v1alpha1.CreateAnalysisResponse",
+          "description": "",
+          "hasExtensions": false,
+          "hasFields": true,
+          "hasOneofs": false,
+          "extensions": [],
+          "fields": [
+            {
+              "name": "id",
+              "description": "",
+              "label": "",
+              "type": "string",
+              "longType": "string",
+              "fullType": "string",
+              "ismap": false,
+              "isoneof": false,
+              "oneofdecl": "",
+              "defaultValue": ""
+            }
+          ]
+        },
+        {
+          "name": "CreateAnalyzerRequest",
+          "longName": "CreateAnalyzerRequest",
+          "fullName": "exonex.cortex.v1alpha1.CreateAnalyzerRequest",
+          "description": "",
+          "hasExtensions": false,
+          "hasFields": true,
+          "hasOneofs": false,
+          "extensions": [],
+          "fields": [
+            {
+              "name": "group",
+              "description": "",
+              "label": "",
+              "type": "string",
+              "longType": "string",
+              "fullType": "string",
+              "ismap": false,
+              "isoneof": false,
+              "oneofdecl": "",
+              "defaultValue": ""
+            },
+            {
+              "name": "kind",
+              "description": "",
+              "label": "",
+              "type": "string",
+              "longType": "string",
+              "fullType": "string",
+              "ismap": false,
+              "isoneof": false,
+              "oneofdecl": "",
+              "defaultValue": ""
+            },
+            {
+              "name": "version",
+              "description": "",
+              "label": "",
+              "type": "string",
+              "longType": "string",
+              "fullType": "string",
+              "ismap": false,
+              "isoneof": false,
+              "oneofdecl": "",
+              "defaultValue": ""
+            },
+            {
+              "name": "name",
+              "description": "",
+              "label": "",
+              "type": "string",
+              "longType": "string",
+              "fullType": "string",
+              "ismap": false,
+              "isoneof": false,
+              "oneofdecl": "",
+              "defaultValue": ""
+            },
+            {
+              "name": "description",
+              "description": "",
+              "label": "",
+              "type": "string",
+              "longType": "string",
+              "fullType": "string",
+              "ismap": false,
+              "isoneof": false,
+              "oneofdecl": "",
+              "defaultValue": ""
+            },
+            {
+              "name": "need_artifact_types",
+              "description": "",
+              "label": "repeated",
+              "type": "string",
+              "longType": "string",
+              "fullType": "string",
+              "ismap": false,
+              "isoneof": false,
+              "oneofdecl": "",
+              "defaultValue": ""
+            }
+          ]
+        },
+        {
+          "name": "CreateAnalyzerResponse",
+          "longName": "CreateAnalyzerResponse",
+          "fullName": "exonex.cortex.v1alpha1.CreateAnalyzerResponse",
+          "description": "",
+          "hasExtensions": false,
+          "hasFields": false,
+          "hasOneofs": false,
+          "extensions": [],
+          "fields": []
+        },
+        {
+          "name": "GetAnalyzerRequest",
+          "longName": "GetAnalyzerRequest",
+          "fullName": "exonex.cortex.v1alpha1.GetAnalyzerRequest",
+          "description": "",
+          "hasExtensions": false,
+          "hasFields": true,
+          "hasOneofs": false,
+          "extensions": [],
+          "fields": [
+            {
+              "name": "analyzer_id",
+              "description": "",
+              "label": "",
+              "type": "string",
+              "longType": "string",
+              "fullType": "string",
+              "ismap": false,
+              "isoneof": false,
+              "oneofdecl": "",
+              "defaultValue": ""
+            }
+          ]
+        },
+        {
+          "name": "GetAnalyzerResponse",
+          "longName": "GetAnalyzerResponse",
+          "fullName": "exonex.cortex.v1alpha1.GetAnalyzerResponse",
+          "description": "",
+          "hasExtensions": false,
+          "hasFields": true,
+          "hasOneofs": false,
+          "extensions": [],
+          "fields": [
+            {
+              "name": "analyzer",
+              "description": "",
+              "label": "",
+              "type": "Analyzer",
+              "longType": "Analyzer",
+              "fullType": "exonex.cortex.v1alpha1.Analyzer",
+              "ismap": false,
+              "isoneof": false,
+              "oneofdecl": "",
+              "defaultValue": ""
+            }
+          ]
+        },
+        {
+          "name": "LeaseAnalyzerRequest",
+          "longName": "LeaseAnalyzerRequest",
+          "fullName": "exonex.cortex.v1alpha1.LeaseAnalyzerRequest",
+          "description": "",
+          "hasExtensions": false,
+          "hasFields": true,
+          "hasOneofs": true,
+          "extensions": [],
+          "fields": [
+            {
+              "name": "lease_identity",
+              "description": "",
+              "label": "optional",
+              "type": "string",
+              "longType": "string",
+              "fullType": "string",
+              "ismap": false,
+              "isoneof": true,
+              "oneofdecl": "_lease_identity",
+              "defaultValue": ""
+            },
+            {
+              "name": "lease_duration",
+              "description": "",
+              "label": "optional",
+              "type": "Duration",
+              "longType": "google.protobuf.Duration",
+              "fullType": "google.protobuf.Duration",
+              "ismap": false,
+              "isoneof": true,
+              "oneofdecl": "_lease_duration",
+              "defaultValue": ""
+            }
+          ]
+        },
+        {
+          "name": "LeaseAnalyzerResponse",
+          "longName": "LeaseAnalyzerResponse",
+          "fullName": "exonex.cortex.v1alpha1.LeaseAnalyzerResponse",
+          "description": "",
+          "hasExtensions": false,
+          "hasFields": false,
+          "hasOneofs": false,
+          "extensions": [],
+          "fields": []
+        },
+        {
+          "name": "ListAnalyzersRequest",
+          "longName": "ListAnalyzersRequest",
+          "fullName": "exonex.cortex.v1alpha1.ListAnalyzersRequest",
+          "description": "",
+          "hasExtensions": false,
+          "hasFields": true,
+          "hasOneofs": true,
+          "extensions": [],
+          "fields": [
+            {
+              "name": "limit",
+              "description": "",
+              "label": "optional",
+              "type": "uint64",
+              "longType": "uint64",
+              "fullType": "uint64",
+              "ismap": false,
+              "isoneof": true,
+              "oneofdecl": "_limit",
+              "defaultValue": ""
+            },
+            {
+              "name": "offset",
+              "description": "",
+              "label": "optional",
+              "type": "uint64",
+              "longType": "uint64",
+              "fullType": "uint64",
+              "ismap": false,
+              "isoneof": true,
+              "oneofdecl": "_offset",
+              "defaultValue": ""
+            }
+          ]
+        },
+        {
+          "name": "ListAnalyzersResponse",
+          "longName": "ListAnalyzersResponse",
+          "fullName": "exonex.cortex.v1alpha1.ListAnalyzersResponse",
+          "description": "",
+          "hasExtensions": false,
+          "hasFields": true,
+          "hasOneofs": false,
+          "extensions": [],
+          "fields": [
+            {
+              "name": "analyzers",
+              "description": "",
+              "label": "repeated",
+              "type": "Analyzer",
+              "longType": "Analyzer",
+              "fullType": "exonex.cortex.v1alpha1.Analyzer",
+              "ismap": false,
+              "isoneof": false,
+              "oneofdecl": "",
+              "defaultValue": ""
+            }
+          ]
+        },
+        {
+          "name": "PollAnalysesRequest",
+          "longName": "PollAnalysesRequest",
+          "fullName": "exonex.cortex.v1alpha1.PollAnalysesRequest",
+          "description": "",
+          "hasExtensions": false,
+          "hasFields": true,
+          "hasOneofs": true,
+          "extensions": [],
+          "fields": [
+            {
+              "name": "lease",
+              "description": "",
+              "label": "",
+              "type": "bool",
+              "longType": "bool",
+              "fullType": "bool",
+              "ismap": false,
+              "isoneof": false,
+              "oneofdecl": "",
+              "defaultValue": ""
+            },
+            {
+              "name": "lease_identity",
+              "description": "",
+              "label": "optional",
+              "type": "string",
+              "longType": "string",
+              "fullType": "string",
+              "ismap": false,
+              "isoneof": true,
+              "oneofdecl": "_lease_identity",
+              "defaultValue": ""
+            },
+            {
+              "name": "lease_duration",
+              "description": "",
+              "label": "optional",
+              "type": "Duration",
+              "longType": "google.protobuf.Duration",
+              "fullType": "google.protobuf.Duration",
+              "ismap": false,
+              "isoneof": true,
+              "oneofdecl": "_lease_duration",
+              "defaultValue": ""
+            },
+            {
+              "name": "limit",
+              "description": "",
+              "label": "",
+              "type": "uint64",
+              "longType": "uint64",
+              "fullType": "uint64",
+              "ismap": false,
+              "isoneof": false,
+              "oneofdecl": "",
+              "defaultValue": ""
+            }
+          ]
+        },
+        {
+          "name": "PollAnalysesResponse",
+          "longName": "PollAnalysesResponse",
+          "fullName": "exonex.cortex.v1alpha1.PollAnalysesResponse",
+          "description": "",
+          "hasExtensions": false,
+          "hasFields": true,
+          "hasOneofs": false,
+          "extensions": [],
+          "fields": [
+            {
+              "name": "analyses",
+              "description": "",
+              "label": "repeated",
+              "type": "Analysis",
+              "longType": "Analysis",
+              "fullType": "exonex.cortex.v1alpha1.Analysis",
+              "ismap": false,
+              "isoneof": false,
+              "oneofdecl": "",
+              "defaultValue": ""
+            }
+          ]
+        },
+        {
+          "name": "SendAnalyzerHeartbeatRequest",
+          "longName": "SendAnalyzerHeartbeatRequest",
+          "fullName": "exonex.cortex.v1alpha1.SendAnalyzerHeartbeatRequest",
+          "description": "",
+          "hasExtensions": false,
+          "hasFields": true,
+          "hasOneofs": false,
+          "extensions": [],
+          "fields": [
+            {
+              "name": "analyzer_id",
+              "description": "",
+              "label": "",
+              "type": "string",
+              "longType": "string",
+              "fullType": "string",
+              "ismap": false,
+              "isoneof": false,
+              "oneofdecl": "",
+              "defaultValue": ""
+            },
+            {
+              "name": "instance_name",
+              "description": "",
+              "label": "",
+              "type": "string",
+              "longType": "string",
+              "fullType": "string",
+              "ismap": false,
+              "isoneof": false,
+              "oneofdecl": "",
+              "defaultValue": ""
+            }
+          ]
+        },
+        {
+          "name": "SendAnalyzerHeartbeatResponse",
+          "longName": "SendAnalyzerHeartbeatResponse",
+          "fullName": "exonex.cortex.v1alpha1.SendAnalyzerHeartbeatResponse",
+          "description": "",
+          "hasExtensions": false,
+          "hasFields": false,
+          "hasOneofs": false,
+          "extensions": [],
+          "fields": []
+        }
+      ],
+      "services": [
+        {
+          "name": "AnalysisService",
+          "longName": "AnalysisService",
+          "fullName": "exonex.cortex.v1alpha1.AnalysisService",
+          "description": "",
+          "methods": [
+            {
+              "name": "CreateAnalyzer",
+              "description": "",
+              "requestType": "CreateAnalyzerRequest",
+              "requestLongType": "CreateAnalyzerRequest",
+              "requestFullType": "exonex.cortex.v1alpha1.CreateAnalyzerRequest",
+              "requestStreaming": false,
+              "responseType": "CreateAnalyzerResponse",
+              "responseLongType": "CreateAnalyzerResponse",
+              "responseFullType": "exonex.cortex.v1alpha1.CreateAnalyzerResponse",
+              "responseStreaming": false
+            },
+            {
+              "name": "ListAnalyzers",
+              "description": "",
+              "requestType": "ListAnalyzersRequest",
+              "requestLongType": "ListAnalyzersRequest",
+              "requestFullType": "exonex.cortex.v1alpha1.ListAnalyzersRequest",
+              "requestStreaming": false,
+              "responseType": "ListAnalyzersResponse",
+              "responseLongType": "ListAnalyzersResponse",
+              "responseFullType": "exonex.cortex.v1alpha1.ListAnalyzersResponse",
+              "responseStreaming": false
+            },
+            {
+              "name": "GetAnalyzer",
+              "description": "",
+              "requestType": "GetAnalyzerRequest",
+              "requestLongType": "GetAnalyzerRequest",
+              "requestFullType": "exonex.cortex.v1alpha1.GetAnalyzerRequest",
+              "requestStreaming": false,
+              "responseType": "GetAnalyzerResponse",
+              "responseLongType": "GetAnalyzerResponse",
+              "responseFullType": "exonex.cortex.v1alpha1.GetAnalyzerResponse",
+              "responseStreaming": false
+            },
+            {
+              "name": "LeaseAnalyzer",
+              "description": "",
+              "requestType": "LeaseAnalyzerRequest",
+              "requestLongType": "LeaseAnalyzerRequest",
+              "requestFullType": "exonex.cortex.v1alpha1.LeaseAnalyzerRequest",
+              "requestStreaming": false,
+              "responseType": "LeaseAnalyzerResponse",
+              "responseLongType": "LeaseAnalyzerResponse",
+              "responseFullType": "exonex.cortex.v1alpha1.LeaseAnalyzerResponse",
+              "responseStreaming": false
+            },
+            {
+              "name": "SendAnalyzerHeartbeat",
+              "description": "",
+              "requestType": "SendAnalyzerHeartbeatRequest",
+              "requestLongType": "SendAnalyzerHeartbeatRequest",
+              "requestFullType": "exonex.cortex.v1alpha1.SendAnalyzerHeartbeatRequest",
+              "requestStreaming": false,
+              "responseType": "SendAnalyzerHeartbeatResponse",
+              "responseLongType": "SendAnalyzerHeartbeatResponse",
+              "responseFullType": "exonex.cortex.v1alpha1.SendAnalyzerHeartbeatResponse",
+              "responseStreaming": false
+            },
+            {
+              "name": "CreateAnalysis",
+              "description": "",
+              "requestType": "CreateAnalysisRequest",
+              "requestLongType": "CreateAnalysisRequest",
+              "requestFullType": "exonex.cortex.v1alpha1.CreateAnalysisRequest",
+              "requestStreaming": false,
+              "responseType": "CreateAnalysisResponse",
+              "responseLongType": "CreateAnalysisResponse",
+              "responseFullType": "exonex.cortex.v1alpha1.CreateAnalysisResponse",
+              "responseStreaming": false
+            },
+            {
+              "name": "PollAnalyses",
+              "description": "",
+              "requestType": "PollAnalysesRequest",
+              "requestLongType": "PollAnalysesRequest",
+              "requestFullType": "exonex.cortex.v1alpha1.PollAnalysesRequest",
+              "requestStreaming": false,
+              "responseType": "PollAnalysesResponse",
+              "responseLongType": "PollAnalysesResponse",
+              "responseFullType": "exonex.cortex.v1alpha1.PollAnalysesResponse",
+              "responseStreaming": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "exonex/cortex/v1alpha1/artifact.proto",
+      "description": "",
+      "package": "exonex.cortex.v1alpha1",
+      "hasEnums": false,
+      "hasExtensions": false,
+      "hasMessages": true,
+      "hasServices": true,
+      "enums": [],
+      "extensions": [],
+      "messages": [
+        {
+          "name": "Artifact",
+          "longName": "Artifact",
+          "fullName": "exonex.cortex.v1alpha1.Artifact",
+          "description": "",
+          "hasExtensions": false,
+          "hasFields": true,
+          "hasOneofs": true,
+          "extensions": [],
+          "fields": [
+            {
+              "name": "id",
+              "description": "",
+              "label": "",
+              "type": "string",
+              "longType": "string",
+              "fullType": "string",
+              "ismap": false,
+              "isoneof": false,
+              "oneofdecl": "",
+              "defaultValue": ""
+            },
+            {
+              "name": "annotations",
+              "description": "",
+              "label": "",
+              "type": "Struct",
+              "longType": "google.protobuf.Struct",
+              "fullType": "google.protobuf.Struct",
+              "ismap": false,
+              "isoneof": false,
+              "oneofdecl": "",
+              "defaultValue": ""
+            },
+            {
+              "name": "artifact_type",
+              "description": "",
+              "label": "",
+              "type": "string",
+              "longType": "string",
+              "fullType": "string",
+              "ismap": false,
+              "isoneof": false,
+              "oneofdecl": "",
+              "defaultValue": ""
+            },
+            {
+              "name": "document",
+              "description": "",
+              "label": "",
+              "type": "string",
+              "longType": "string",
+              "fullType": "string",
+              "ismap": false,
+              "isoneof": false,
+              "oneofdecl": "",
+              "defaultValue": ""
+            },
+            {
+              "name": "payload",
+              "description": "",
+              "label": "",
+              "type": "Struct",
+              "longType": "google.protobuf.Struct",
+              "fullType": "google.protobuf.Struct",
+              "ismap": false,
+              "isoneof": false,
+              "oneofdecl": "",
+              "defaultValue": ""
+            },
+            {
+              "name": "created_at",
+              "description": "",
+              "label": "",
+              "type": "Timestamp",
+              "longType": "google.protobuf.Timestamp",
+              "fullType": "google.protobuf.Timestamp",
+              "ismap": false,
+              "isoneof": false,
+              "oneofdecl": "",
+              "defaultValue": ""
+            },
+            {
+              "name": "deleted_at",
+              "description": "",
+              "label": "optional",
+              "type": "Timestamp",
+              "longType": "google.protobuf.Timestamp",
+              "fullType": "google.protobuf.Timestamp",
+              "ismap": false,
+              "isoneof": true,
+              "oneofdecl": "_deleted_at",
+              "defaultValue": ""
+            },
+            {
+              "name": "etag",
+              "description": "",
+              "label": "",
+              "type": "string",
+              "longType": "string",
+              "fullType": "string",
+              "ismap": false,
+              "isoneof": false,
+              "oneofdecl": "",
+              "defaultValue": ""
+            }
+          ]
+        },
+        {
+          "name": "ArtifactType",
+          "longName": "ArtifactType",
+          "fullName": "exonex.cortex.v1alpha1.ArtifactType",
+          "description": "",
+          "hasExtensions": false,
+          "hasFields": true,
+          "hasOneofs": false,
+          "extensions": [],
+          "fields": [
+            {
+              "name": "id",
+              "description": "",
+              "label": "",
+              "type": "string",
+              "longType": "string",
+              "fullType": "string",
+              "ismap": false,
+              "isoneof": false,
+              "oneofdecl": "",
+              "defaultValue": ""
+            },
+            {
+              "name": "group",
+              "description": "",
+              "label": "",
+              "type": "string",
+              "longType": "string",
+              "fullType": "string",
+              "ismap": false,
+              "isoneof": false,
+              "oneofdecl": "",
+              "defaultValue": ""
+            },
+            {
+              "name": "kind",
+              "description": "",
+              "label": "",
+              "type": "string",
+              "longType": "string",
+              "fullType": "string",
+              "ismap": false,
+              "isoneof": false,
+              "oneofdecl": "",
+              "defaultValue": ""
+            },
+            {
+              "name": "version",
+              "description": "",
+              "label": "",
+              "type": "string",
+              "longType": "string",
+              "fullType": "string",
+              "ismap": false,
+              "isoneof": false,
+              "oneofdecl": "",
+              "defaultValue": ""
+            },
+            {
+              "name": "name",
+              "description": "",
+              "label": "",
+              "type": "string",
+              "longType": "string",
+              "fullType": "string",
+              "ismap": false,
+              "isoneof": false,
+              "oneofdecl": "",
+              "defaultValue": ""
+            },
+            {
+              "name": "description",
+              "description": "",
+              "label": "",
+              "type": "string",
+              "longType": "string",
+              "fullType": "string",
+              "ismap": false,
+              "isoneof": false,
+              "oneofdecl": "",
+              "defaultValue": ""
+            },
+            {
+              "name": "schema",
+              "description": "",
+              "label": "",
+              "type": "Struct",
+              "longType": "google.protobuf.Struct",
+              "fullType": "google.protobuf.Struct",
+              "ismap": false,
+              "isoneof": false,
+              "oneofdecl": "",
+              "defaultValue": ""
+            },
+            {
+              "name": "created_at",
+              "description": "",
+              "label": "",
+              "type": "Timestamp",
+              "longType": "google.protobuf.Timestamp",
+              "fullType": "google.protobuf.Timestamp",
+              "ismap": false,
+              "isoneof": false,
+              "oneofdecl": "",
+              "defaultValue": ""
+            },
+            {
+              "name": "etag",
+              "description": "",
+              "label": "",
+              "type": "string",
+              "longType": "string",
+              "fullType": "string",
+              "ismap": false,
+              "isoneof": false,
+              "oneofdecl": "",
+              "defaultValue": ""
+            }
+          ]
+        }
+      ],
+      "services": [
+        {
+          "name": "ArtifactService",
+          "longName": "ArtifactService",
+          "fullName": "exonex.cortex.v1alpha1.ArtifactService",
+          "description": "",
+          "methods": null
+        }
+      ]
+    },
+    {
+      "name": "exonex/cortex/v1alpha1/auth.proto",
+      "description": "",
+      "package": "exonex.cortex.v1alpha1",
+      "hasEnums": false,
+      "hasExtensions": false,
+      "hasMessages": true,
+      "hasServices": true,
+      "enums": [],
+      "extensions": [],
+      "messages": [
+        {
+          "name": "WhoAmIRequest",
+          "longName": "WhoAmIRequest",
+          "fullName": "exonex.cortex.v1alpha1.WhoAmIRequest",
+          "description": "",
+          "hasExtensions": false,
+          "hasFields": false,
+          "hasOneofs": false,
+          "extensions": [],
+          "fields": []
+        },
+        {
+          "name": "WhoAmIResponse",
+          "longName": "WhoAmIResponse",
+          "fullName": "exonex.cortex.v1alpha1.WhoAmIResponse",
+          "description": "",
+          "hasExtensions": false,
+          "hasFields": true,
+          "hasOneofs": false,
+          "extensions": [],
+          "fields": [
+            {
+              "name": "active_roles",
+              "description": "",
+              "label": "repeated",
+              "type": "string",
+              "longType": "string",
+              "fullType": "string",
+              "ismap": false,
+              "isoneof": false,
+              "oneofdecl": "",
+              "defaultValue": ""
+            },
+            {
+              "name": "active_permissions",
+              "description": "",
+              "label": "repeated",
+              "type": "string",
+              "longType": "string",
+              "fullType": "string",
+              "ismap": false,
+              "isoneof": false,
+              "oneofdecl": "",
+              "defaultValue": ""
+            }
+          ]
+        }
+      ],
+      "services": [
+        {
+          "name": "AuthService",
+          "longName": "AuthService",
+          "fullName": "exonex.cortex.v1alpha1.AuthService",
+          "description": "",
+          "methods": [
+            {
+              "name": "WhoAmI",
+              "description": "",
+              "requestType": "WhoAmIRequest",
+              "requestLongType": "WhoAmIRequest",
+              "requestFullType": "exonex.cortex.v1alpha1.WhoAmIRequest",
+              "requestStreaming": false,
+              "responseType": "WhoAmIResponse",
+              "responseLongType": "WhoAmIResponse",
+              "responseFullType": "exonex.cortex.v1alpha1.WhoAmIResponse",
+              "responseStreaming": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "exonex/cortex/v1alpha1/document.proto",
+      "description": "",
+      "package": "exonex.cortex.v1alpha1",
+      "hasEnums": false,
+      "hasExtensions": false,
+      "hasMessages": true,
+      "hasServices": true,
+      "enums": [],
+      "extensions": [],
+      "messages": [
+        {
+          "name": "CreateDocumentRequest",
+          "longName": "CreateDocumentRequest",
+          "fullName": "exonex.cortex.v1alpha1.CreateDocumentRequest",
+          "description": "",
+          "hasExtensions": false,
+          "hasFields": true,
+          "hasOneofs": true,
+          "extensions": [],
+          "fields": [
+            {
+              "name": "publisher_id",
+              "description": "",
+              "label": "",
+              "type": "string",
+              "longType": "string",
+              "fullType": "string",
+              "ismap": false,
+              "isoneof": false,
+              "oneofdecl": "",
+              "defaultValue": ""
+            },
+            {
+              "name": "mime_type",
+              "description": "",
+              "label": "",
+              "type": "string",
+              "longType": "string",
+              "fullType": "string",
+              "ismap": false,
+              "isoneof": false,
+              "oneofdecl": "",
+              "defaultValue": ""
+            },
+            {
+              "name": "size_bytes",
+              "description": "",
+              "label": "",
+              "type": "int64",
+              "longType": "int64",
+              "fullType": "int64",
+              "ismap": false,
+              "isoneof": false,
+              "oneofdecl": "",
+              "defaultValue": ""
+            },
+            {
+              "name": "source_url",
+              "description": "",
+              "label": "optional",
+              "type": "string",
+              "longType": "string",
+              "fullType": "string",
+              "ismap": false,
+              "isoneof": true,
+              "oneofdecl": "_source_url",
+              "defaultValue": ""
+            }
+          ]
+        },
+        {
+          "name": "CreateDocumentResponse",
+          "longName": "CreateDocumentResponse",
+          "fullName": "exonex.cortex.v1alpha1.CreateDocumentResponse",
+          "description": "",
+          "hasExtensions": false,
+          "hasFields": true,
+          "hasOneofs": false,
+          "extensions": [],
+          "fields": [
+            {
+              "name": "id",
+              "description": "",
+              "label": "",
+              "type": "string",
+              "longType": "string",
+              "fullType": "string",
+              "ismap": false,
+              "isoneof": false,
+              "oneofdecl": "",
+              "defaultValue": ""
+            },
+            {
+              "name": "upload_url",
+              "description": "",
+              "label": "",
+              "type": "string",
+              "longType": "string",
+              "fullType": "string",
+              "ismap": false,
+              "isoneof": false,
+              "oneofdecl": "",
+              "defaultValue": ""
+            },
+            {
+              "name": "expires_at",
+              "description": "",
+              "label": "",
+              "type": "Timestamp",
+              "longType": "google.protobuf.Timestamp",
+              "fullType": "google.protobuf.Timestamp",
+              "ismap": false,
+              "isoneof": false,
+              "oneofdecl": "",
+              "defaultValue": ""
+            }
+          ]
+        },
+        {
+          "name": "CreateDocumentUploadUrlRequest",
+          "longName": "CreateDocumentUploadUrlRequest",
+          "fullName": "exonex.cortex.v1alpha1.CreateDocumentUploadUrlRequest",
+          "description": "",
+          "hasExtensions": false,
+          "hasFields": true,
+          "hasOneofs": false,
+          "extensions": [],
+          "fields": [
+            {
+              "name": "id",
+              "description": "",
+              "label": "",
+              "type": "string",
+              "longType": "string",
+              "fullType": "string",
+              "ismap": false,
+              "isoneof": false,
+              "oneofdecl": "",
+              "defaultValue": ""
+            }
+          ]
+        },
+        {
+          "name": "CreateDocumentUploadUrlResponse",
+          "longName": "CreateDocumentUploadUrlResponse",
+          "fullName": "exonex.cortex.v1alpha1.CreateDocumentUploadUrlResponse",
+          "description": "",
+          "hasExtensions": false,
+          "hasFields": true,
+          "hasOneofs": false,
+          "extensions": [],
+          "fields": [
+            {
+              "name": "upload_url",
+              "description": "",
+              "label": "",
+              "type": "string",
+              "longType": "string",
+              "fullType": "string",
+              "ismap": false,
+              "isoneof": false,
+              "oneofdecl": "",
+              "defaultValue": ""
+            },
+            {
+              "name": "expires_at",
+              "description": "",
+              "label": "",
+              "type": "Timestamp",
+              "longType": "google.protobuf.Timestamp",
+              "fullType": "google.protobuf.Timestamp",
+              "ismap": false,
+              "isoneof": false,
+              "oneofdecl": "",
+              "defaultValue": ""
+            }
+          ]
+        },
+        {
+          "name": "DeleteDocumentRequest",
+          "longName": "DeleteDocumentRequest",
+          "fullName": "exonex.cortex.v1alpha1.DeleteDocumentRequest",
+          "description": "",
+          "hasExtensions": false,
+          "hasFields": true,
+          "hasOneofs": false,
+          "extensions": [],
+          "fields": [
+            {
+              "name": "id",
+              "description": "",
+              "label": "",
+              "type": "string",
+              "longType": "string",
+              "fullType": "string",
+              "ismap": false,
+              "isoneof": false,
+              "oneofdecl": "",
+              "defaultValue": ""
+            }
+          ]
+        },
+        {
+          "name": "DeleteDocumentResponse",
+          "longName": "DeleteDocumentResponse",
+          "fullName": "exonex.cortex.v1alpha1.DeleteDocumentResponse",
+          "description": "",
+          "hasExtensions": false,
+          "hasFields": false,
+          "hasOneofs": false,
+          "extensions": [],
+          "fields": []
+        },
+        {
+          "name": "Document",
+          "longName": "Document",
+          "fullName": "exonex.cortex.v1alpha1.Document",
+          "description": "",
+          "hasExtensions": false,
+          "hasFields": true,
+          "hasOneofs": true,
+          "extensions": [],
+          "fields": [
+            {
+              "name": "id",
+              "description": "The UUID that is used to uniquely identify a Document.",
+              "label": "",
+              "type": "string",
+              "longType": "string",
+              "fullType": "string",
+              "ismap": false,
+              "isoneof": false,
+              "oneofdecl": "",
+              "defaultValue": ""
+            },
+            {
+              "name": "annotations",
+              "description": "Annotations are small chunks of information that are added to a Document and can be queried.\nThey are stored as JSON object that is",
+              "label": "",
+              "type": "Struct",
+              "longType": "google.protobuf.Struct",
+              "fullType": "google.protobuf.Struct",
+              "ismap": false,
+              "isoneof": false,
+              "oneofdecl": "",
+              "defaultValue": ""
+            },
+            {
+              "name": "finalizers",
+              "description": "Finalizers are indicators that certain background actions for a Document must be performed before the\nDocument resource can be deleted from the Database.\nFor example, removing the uploaded file from the storage volume.",
+              "label": "repeated",
+              "type": "string",
+              "longType": "string",
+              "fullType": "string",
+              "ismap": false,
+              "isoneof": false,
+              "oneofdecl": "",
+              "defaultValue": ""
+            },
+            {
+              "name": "file_upload_completed",
+              "description": "Indicates if the upload of the file for this document has already been finished.",
+              "label": "",
+              "type": "bool",
+              "longType": "bool",
+              "fullType": "bool",
+              "ismap": false,
+              "isoneof": false,
+              "oneofdecl": "",
+              "defaultValue": ""
+            },
+            {
+              "name": "file_mime_type",
+              "description": "The MIME type of the uploaded file.\nThis field is immutable once set and will be used as restriction when generating Upload URLs.",
+              "label": "",
+              "type": "string",
+              "longType": "string",
+              "fullType": "string",
+              "ismap": false,
+              "isoneof": false,
+              "oneofdecl": "",
+              "defaultValue": ""
+            },
+            {
+              "name": "file_size_bytes",
+              "description": "The size of the uploaded file in bytes.\nThis field may be an estimate until the upload of the file is completed.",
+              "label": "",
+              "type": "int64",
+              "longType": "int64",
+              "fullType": "int64",
+              "ismap": false,
+              "isoneof": false,
+              "oneofdecl": "",
+              "defaultValue": ""
+            },
+            {
+              "name": "file_storage_volume",
+              "description": "Name of the volume that stores the file.",
+              "label": "",
+              "type": "string",
+              "longType": "string",
+              "fullType": "string",
+              "ismap": false,
+              "isoneof": false,
+              "oneofdecl": "",
+              "defaultValue": ""
+            },
+            {
+              "name": "file_storage_key",
+              "description": "Key or path on the storage volume where the file of this document is stored.",
+              "label": "",
+              "type": "string",
+              "longType": "string",
+              "fullType": "string",
+              "ismap": false,
+              "isoneof": false,
+              "oneofdecl": "",
+              "defaultValue": ""
+            },
+            {
+              "name": "publisher",
+              "description": "Reference to the cortex.exonex.io/Publisher that published the file.\nThis field is immutable once set and can be used to evaluate policies, e.g. regarding procession.",
+              "label": "",
+              "type": "string",
+              "longType": "string",
+              "fullType": "string",
+              "ismap": false,
+              "isoneof": false,
+              "oneofdecl": "",
+              "defaultValue": ""
+            },
+            {
+              "name": "created_at",
+              "description": "The time this document has been created.",
+              "label": "",
+              "type": "Timestamp",
+              "longType": "google.protobuf.Timestamp",
+              "fullType": "google.protobuf.Timestamp",
+              "ismap": false,
+              "isoneof": false,
+              "oneofdecl": "",
+              "defaultValue": ""
+            },
+            {
+              "name": "updated_at",
+              "description": "The time this document has been updated the last time.",
+              "label": "",
+              "type": "Timestamp",
+              "longType": "google.protobuf.Timestamp",
+              "fullType": "google.protobuf.Timestamp",
+              "ismap": false,
+              "isoneof": false,
+              "oneofdecl": "",
+              "defaultValue": ""
+            },
+            {
+              "name": "deleted_at",
+              "description": "The time this object has been marked for deletion.\nDocuments follow a soft-deletion process, where all",
+              "label": "optional",
+              "type": "Timestamp",
+              "longType": "google.protobuf.Timestamp",
+              "fullType": "google.protobuf.Timestamp",
+              "ismap": false,
+              "isoneof": true,
+              "oneofdecl": "_deleted_at",
+              "defaultValue": ""
+            },
+            {
+              "name": "etag",
+              "description": "The Entity Tag (ETag) indicates",
+              "label": "",
+              "type": "string",
+              "longType": "string",
+              "fullType": "string",
+              "ismap": false,
+              "isoneof": false,
+              "oneofdecl": "",
+              "defaultValue": ""
+            }
+          ]
+        },
+        {
+          "name": "GetDocumentRequest",
+          "longName": "GetDocumentRequest",
+          "fullName": "exonex.cortex.v1alpha1.GetDocumentRequest",
+          "description": "",
+          "hasExtensions": false,
+          "hasFields": true,
+          "hasOneofs": false,
+          "extensions": [],
+          "fields": [
+            {
+              "name": "id",
+              "description": "",
+              "label": "",
+              "type": "string",
+              "longType": "string",
+              "fullType": "string",
+              "ismap": false,
+              "isoneof": false,
+              "oneofdecl": "",
+              "defaultValue": ""
+            }
+          ]
+        },
+        {
+          "name": "GetDocumentResponse",
+          "longName": "GetDocumentResponse",
+          "fullName": "exonex.cortex.v1alpha1.GetDocumentResponse",
+          "description": "",
+          "hasExtensions": false,
+          "hasFields": true,
+          "hasOneofs": false,
+          "extensions": [],
+          "fields": [
+            {
+              "name": "document",
+              "description": "",
+              "label": "",
+              "type": "Document",
+              "longType": "Document",
+              "fullType": "exonex.cortex.v1alpha1.Document",
+              "ismap": false,
+              "isoneof": false,
+              "oneofdecl": "",
+              "defaultValue": ""
+            }
+          ]
+        },
+        {
+          "name": "LeaseDocumentRequest",
+          "longName": "LeaseDocumentRequest",
+          "fullName": "exonex.cortex.v1alpha1.LeaseDocumentRequest",
+          "description": "",
+          "hasExtensions": false,
+          "hasFields": true,
+          "hasOneofs": false,
+          "extensions": [],
+          "fields": [
+            {
+              "name": "id",
+              "description": "",
+              "label": "",
+              "type": "string",
+              "longType": "string",
+              "fullType": "string",
+              "ismap": false,
+              "isoneof": false,
+              "oneofdecl": "",
+              "defaultValue": ""
+            },
+            {
+              "name": "lease_holder_identity",
+              "description": "",
+              "label": "",
+              "type": "string",
+              "longType": "string",
+              "fullType": "string",
+              "ismap": false,
+              "isoneof": false,
+              "oneofdecl": "",
+              "defaultValue": ""
+            },
+            {
+              "name": "lease_duration",
+              "description": "",
+              "label": "",
+              "type": "Duration",
+              "longType": "google.protobuf.Duration",
+              "fullType": "google.protobuf.Duration",
+              "ismap": false,
+              "isoneof": false,
+              "oneofdecl": "",
+              "defaultValue": ""
+            }
+          ]
+        },
+        {
+          "name": "LeaseDocumentResponse",
+          "longName": "LeaseDocumentResponse",
+          "fullName": "exonex.cortex.v1alpha1.LeaseDocumentResponse",
+          "description": "",
+          "hasExtensions": false,
+          "hasFields": false,
+          "hasOneofs": false,
+          "extensions": [],
+          "fields": []
+        },
+        {
+          "name": "ListDocumentsRequest",
+          "longName": "ListDocumentsRequest",
+          "fullName": "exonex.cortex.v1alpha1.ListDocumentsRequest",
+          "description": "",
+          "hasExtensions": false,
+          "hasFields": true,
+          "hasOneofs": true,
+          "extensions": [],
+          "fields": [
+            {
+              "name": "page_size",
+              "description": "",
+              "label": "optional",
+              "type": "int64",
+              "longType": "int64",
+              "fullType": "int64",
+              "ismap": false,
+              "isoneof": true,
+              "oneofdecl": "_page_size",
+              "defaultValue": ""
+            },
+            {
+              "name": "page_token",
+              "description": "",
+              "label": "optional",
+              "type": "string",
+              "longType": "string",
+              "fullType": "string",
+              "ismap": false,
+              "isoneof": true,
+              "oneofdecl": "_page_token",
+              "defaultValue": ""
+            },
+            {
+              "name": "filter",
+              "description": "this is currently not implemented.",
+              "label": "optional",
+              "type": "string",
+              "longType": "string",
+              "fullType": "string",
+              "ismap": false,
+              "isoneof": true,
+              "oneofdecl": "_filter",
+              "defaultValue": ""
+            },
+            {
+              "name": "order_by",
+              "description": "this is currently not implemented.",
+              "label": "optional",
+              "type": "string",
+              "longType": "string",
+              "fullType": "string",
+              "ismap": false,
+              "isoneof": true,
+              "oneofdecl": "_order_by",
+              "defaultValue": ""
+            },
+            {
+              "name": "show_deleted",
+              "description": "",
+              "label": "optional",
+              "type": "bool",
+              "longType": "bool",
+              "fullType": "bool",
+              "ismap": false,
+              "isoneof": true,
+              "oneofdecl": "_show_deleted",
+              "defaultValue": ""
+            }
+          ]
+        },
+        {
+          "name": "ListDocumentsResponse",
+          "longName": "ListDocumentsResponse",
+          "fullName": "exonex.cortex.v1alpha1.ListDocumentsResponse",
+          "description": "",
+          "hasExtensions": false,
+          "hasFields": true,
+          "hasOneofs": true,
+          "extensions": [],
+          "fields": [
+            {
+              "name": "documents",
+              "description": "",
+              "label": "repeated",
+              "type": "Document",
+              "longType": "Document",
+              "fullType": "exonex.cortex.v1alpha1.Document",
+              "ismap": false,
+              "isoneof": false,
+              "oneofdecl": "",
+              "defaultValue": ""
+            },
+            {
+              "name": "next_page_token",
+              "description": "",
+              "label": "optional",
+              "type": "string",
+              "longType": "string",
+              "fullType": "string",
+              "ismap": false,
+              "isoneof": true,
+              "oneofdecl": "_next_page_token",
+              "defaultValue": ""
+            }
+          ]
+        },
+        {
+          "name": "UpdateDocumentRequest",
+          "longName": "UpdateDocumentRequest",
+          "fullName": "exonex.cortex.v1alpha1.UpdateDocumentRequest",
+          "description": "",
+          "hasExtensions": false,
+          "hasFields": true,
+          "hasOneofs": false,
+          "extensions": [],
+          "fields": [
+            {
+              "name": "update_mask",
+              "description": "",
+              "label": "",
+              "type": "FieldMask",
+              "longType": "google.protobuf.FieldMask",
+              "fullType": "google.protobuf.FieldMask",
+              "ismap": false,
+              "isoneof": false,
+              "oneofdecl": "",
+              "defaultValue": ""
+            }
+          ]
+        },
+        {
+          "name": "UpdateDocumentResponse",
+          "longName": "UpdateDocumentResponse",
+          "fullName": "exonex.cortex.v1alpha1.UpdateDocumentResponse",
+          "description": "",
+          "hasExtensions": false,
+          "hasFields": false,
+          "hasOneofs": false,
+          "extensions": [],
+          "fields": []
+        }
+      ],
+      "services": [
+        {
+          "name": "DocumentService",
+          "longName": "DocumentService",
+          "fullName": "exonex.cortex.v1alpha1.DocumentService",
+          "description": "",
+          "methods": [
+            {
+              "name": "ListDocuments",
+              "description": "",
+              "requestType": "ListDocumentsRequest",
+              "requestLongType": "ListDocumentsRequest",
+              "requestFullType": "exonex.cortex.v1alpha1.ListDocumentsRequest",
+              "requestStreaming": false,
+              "responseType": "ListDocumentsResponse",
+              "responseLongType": "ListDocumentsResponse",
+              "responseFullType": "exonex.cortex.v1alpha1.ListDocumentsResponse",
+              "responseStreaming": false
+            },
+            {
+              "name": "GetDocument",
+              "description": "",
+              "requestType": "GetDocumentRequest",
+              "requestLongType": "GetDocumentRequest",
+              "requestFullType": "exonex.cortex.v1alpha1.GetDocumentRequest",
+              "requestStreaming": false,
+              "responseType": "GetDocumentResponse",
+              "responseLongType": "GetDocumentResponse",
+              "responseFullType": "exonex.cortex.v1alpha1.GetDocumentResponse",
+              "responseStreaming": false
+            },
+            {
+              "name": "CreateDocument",
+              "description": "",
+              "requestType": "CreateDocumentRequest",
+              "requestLongType": "CreateDocumentRequest",
+              "requestFullType": "exonex.cortex.v1alpha1.CreateDocumentRequest",
+              "requestStreaming": false,
+              "responseType": "CreateDocumentResponse",
+              "responseLongType": "CreateDocumentResponse",
+              "responseFullType": "exonex.cortex.v1alpha1.CreateDocumentResponse",
+              "responseStreaming": false
+            },
+            {
+              "name": "CreateDocumentUploadUrl",
+              "description": "",
+              "requestType": "CreateDocumentUploadUrlRequest",
+              "requestLongType": "CreateDocumentUploadUrlRequest",
+              "requestFullType": "exonex.cortex.v1alpha1.CreateDocumentUploadUrlRequest",
+              "requestStreaming": false,
+              "responseType": "CreateDocumentUploadUrlResponse",
+              "responseLongType": "CreateDocumentUploadUrlResponse",
+              "responseFullType": "exonex.cortex.v1alpha1.CreateDocumentUploadUrlResponse",
+              "responseStreaming": false
+            },
+            {
+              "name": "UpdateDocument",
+              "description": "",
+              "requestType": "UpdateDocumentRequest",
+              "requestLongType": "UpdateDocumentRequest",
+              "requestFullType": "exonex.cortex.v1alpha1.UpdateDocumentRequest",
+              "requestStreaming": false,
+              "responseType": "UpdateDocumentResponse",
+              "responseLongType": "UpdateDocumentResponse",
+              "responseFullType": "exonex.cortex.v1alpha1.UpdateDocumentResponse",
+              "responseStreaming": false
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "scalarValueTypes": [
+    {
+      "protoType": "double",
+      "notes": "",
+      "cppType": "double",
+      "csType": "double",
+      "goType": "float64",
+      "javaType": "double",
+      "phpType": "float",
+      "pythonType": "float",
+      "rubyType": "Float"
+    },
+    {
+      "protoType": "float",
+      "notes": "",
+      "cppType": "float",
+      "csType": "float",
+      "goType": "float32",
+      "javaType": "float",
+      "phpType": "float",
+      "pythonType": "float",
+      "rubyType": "Float"
+    },
+    {
+      "protoType": "int32",
+      "notes": "Uses variable-length encoding. Inefficient for encoding negative numbers – if your field is likely to have negative values, use sint32 instead.",
+      "cppType": "int32",
+      "csType": "int",
+      "goType": "int32",
+      "javaType": "int",
+      "phpType": "integer",
+      "pythonType": "int",
+      "rubyType": "Bignum or Fixnum (as required)"
+    },
+    {
+      "protoType": "int64",
+      "notes": "Uses variable-length encoding. Inefficient for encoding negative numbers – if your field is likely to have negative values, use sint64 instead.",
+      "cppType": "int64",
+      "csType": "long",
+      "goType": "int64",
+      "javaType": "long",
+      "phpType": "integer/string",
+      "pythonType": "int/long",
+      "rubyType": "Bignum"
+    },
+    {
+      "protoType": "uint32",
+      "notes": "Uses variable-length encoding.",
+      "cppType": "uint32",
+      "csType": "uint",
+      "goType": "uint32",
+      "javaType": "int",
+      "phpType": "integer",
+      "pythonType": "int/long",
+      "rubyType": "Bignum or Fixnum (as required)"
+    },
+    {
+      "protoType": "uint64",
+      "notes": "Uses variable-length encoding.",
+      "cppType": "uint64",
+      "csType": "ulong",
+      "goType": "uint64",
+      "javaType": "long",
+      "phpType": "integer/string",
+      "pythonType": "int/long",
+      "rubyType": "Bignum or Fixnum (as required)"
+    },
+    {
+      "protoType": "sint32",
+      "notes": "Uses variable-length encoding. Signed int value. These more efficiently encode negative numbers than regular int32s.",
+      "cppType": "int32",
+      "csType": "int",
+      "goType": "int32",
+      "javaType": "int",
+      "phpType": "integer",
+      "pythonType": "int",
+      "rubyType": "Bignum or Fixnum (as required)"
+    },
+    {
+      "protoType": "sint64",
+      "notes": "Uses variable-length encoding. Signed int value. These more efficiently encode negative numbers than regular int64s.",
+      "cppType": "int64",
+      "csType": "long",
+      "goType": "int64",
+      "javaType": "long",
+      "phpType": "integer/string",
+      "pythonType": "int/long",
+      "rubyType": "Bignum"
+    },
+    {
+      "protoType": "fixed32",
+      "notes": "Always four bytes. More efficient than uint32 if values are often greater than 2^28.",
+      "cppType": "uint32",
+      "csType": "uint",
+      "goType": "uint32",
+      "javaType": "int",
+      "phpType": "integer",
+      "pythonType": "int",
+      "rubyType": "Bignum or Fixnum (as required)"
+    },
+    {
+      "protoType": "fixed64",
+      "notes": "Always eight bytes. More efficient than uint64 if values are often greater than 2^56.",
+      "cppType": "uint64",
+      "csType": "ulong",
+      "goType": "uint64",
+      "javaType": "long",
+      "phpType": "integer/string",
+      "pythonType": "int/long",
+      "rubyType": "Bignum"
+    },
+    {
+      "protoType": "sfixed32",
+      "notes": "Always four bytes.",
+      "cppType": "int32",
+      "csType": "int",
+      "goType": "int32",
+      "javaType": "int",
+      "phpType": "integer",
+      "pythonType": "int",
+      "rubyType": "Bignum or Fixnum (as required)"
+    },
+    {
+      "protoType": "sfixed64",
+      "notes": "Always eight bytes.",
+      "cppType": "int64",
+      "csType": "long",
+      "goType": "int64",
+      "javaType": "long",
+      "phpType": "integer/string",
+      "pythonType": "int/long",
+      "rubyType": "Bignum"
+    },
+    {
+      "protoType": "bool",
+      "notes": "",
+      "cppType": "bool",
+      "csType": "bool",
+      "goType": "bool",
+      "javaType": "boolean",
+      "phpType": "boolean",
+      "pythonType": "boolean",
+      "rubyType": "TrueClass/FalseClass"
+    },
+    {
+      "protoType": "string",
+      "notes": "A string must always contain UTF-8 encoded or 7-bit ASCII text.",
+      "cppType": "string",
+      "csType": "string",
+      "goType": "string",
+      "javaType": "String",
+      "phpType": "string",
+      "pythonType": "str/unicode",
+      "rubyType": "String (UTF-8)"
+    },
+    {
+      "protoType": "bytes",
+      "notes": "May contain any arbitrary sequence of bytes.",
+      "cppType": "string",
+      "csType": "ByteString",
+      "goType": "[]byte",
+      "javaType": "ByteString",
+      "phpType": "string",
+      "pythonType": "str",
+      "rubyType": "String (ASCII-8BIT)"
+    }
+  ]
+}

@@ -21,5 +21,6 @@ plugins:
     opt:
       - paths=source_relative
   - local: ["go", "tool", "protoc-gen-doc"]
-    out: docs/content/en/docs/reference/api
-    opt: markdown,index.md
+    out: docs/data
+    opt: json,api.json
+    strategy: all
