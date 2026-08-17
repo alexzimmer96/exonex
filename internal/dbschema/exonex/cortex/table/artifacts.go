@@ -24,7 +24,9 @@ type artifactsTable struct {
 	DocumentID   postgres.ColumnString
 	Name         postgres.ColumnString
 	Payload      postgres.ColumnString
+	Version      postgres.ColumnInteger
 	CreatedAt    postgres.ColumnTimestampz
+	UpdatedAt    postgres.ColumnTimestampz
 	DeletedAt    postgres.ColumnTimestampz
 
 	AllColumns     postgres.ColumnList
@@ -74,11 +76,13 @@ func newArtifactsTableImpl(schemaName, tableName, alias string) artifactsTable {
 		DocumentIDColumn   = postgres.StringColumn("document_id")
 		NameColumn         = postgres.StringColumn("name")
 		PayloadColumn      = postgres.StringColumn("payload")
+		VersionColumn      = postgres.IntegerColumn("version")
 		CreatedAtColumn    = postgres.TimestampzColumn("created_at")
+		UpdatedAtColumn    = postgres.TimestampzColumn("updated_at")
 		DeletedAtColumn    = postgres.TimestampzColumn("deleted_at")
-		allColumns         = postgres.ColumnList{IDColumn, AnnotationsColumn, FinalizersColumn, ArtifactTypeColumn, DocumentIDColumn, NameColumn, PayloadColumn, CreatedAtColumn, DeletedAtColumn}
-		mutableColumns     = postgres.ColumnList{AnnotationsColumn, FinalizersColumn, ArtifactTypeColumn, DocumentIDColumn, NameColumn, PayloadColumn, DeletedAtColumn}
-		defaultColumns     = postgres.ColumnList{AnnotationsColumn, FinalizersColumn, NameColumn, CreatedAtColumn}
+		allColumns         = postgres.ColumnList{IDColumn, AnnotationsColumn, FinalizersColumn, ArtifactTypeColumn, DocumentIDColumn, NameColumn, PayloadColumn, VersionColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn}
+		mutableColumns     = postgres.ColumnList{AnnotationsColumn, FinalizersColumn, ArtifactTypeColumn, DocumentIDColumn, NameColumn, PayloadColumn, VersionColumn, UpdatedAtColumn, DeletedAtColumn}
+		defaultColumns     = postgres.ColumnList{AnnotationsColumn, FinalizersColumn, NameColumn, VersionColumn, CreatedAtColumn, UpdatedAtColumn}
 	)
 
 	return artifactsTable{
@@ -92,7 +96,9 @@ func newArtifactsTableImpl(schemaName, tableName, alias string) artifactsTable {
 		DocumentID:   DocumentIDColumn,
 		Name:         NameColumn,
 		Payload:      PayloadColumn,
+		Version:      VersionColumn,
 		CreatedAt:    CreatedAtColumn,
+		UpdatedAt:    UpdatedAtColumn,
 		DeletedAt:    DeletedAtColumn,
 
 		AllColumns:     allColumns,

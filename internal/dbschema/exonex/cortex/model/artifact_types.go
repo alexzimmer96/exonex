@@ -23,6 +23,8 @@ type ArtifactTypes struct {
 	Name        string
 	Description string
 	Schema      string
+	Version     int64
 	CreatedAt   time.Time
+	UpdatedAt   time.Time
 	DeletedAt   *time.Time
 }

@@ -41,7 +41,7 @@ tasks:
   db:gen:
     cmds:
       - rm -rf ./internal/db
-      - go tool jet -dsn=postgres://exonex:exonex@localhost:5432/exonex?sslmode=disable -schema=cortex -path=internal/db
+      - go tool jet -dsn=postgres://exonex:exonex@localhost:5432/exonex?sslmode=disable -schema=cortex -path=internal/dbschema
       - git add .
   # =========================================================================================
   format:sql:

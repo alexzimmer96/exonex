@@ -1235,7 +1235,19 @@
           "extensions": [],
           "fields": [
             {
-              "name": "publisher_id",
+              "name": "annotations",
+              "description": "",
+              "label": "optional",
+              "type": "Struct",
+              "longType": "google.protobuf.Struct",
+              "fullType": "google.protobuf.Struct",
+              "ismap": false,
+              "isoneof": true,
+              "oneofdecl": "_annotations",
+              "defaultValue": ""
+            },
+            {
+              "name": "publisher",
               "description": "",
               "label": "",
               "type": "string",
@@ -1247,7 +1259,7 @@
               "defaultValue": ""
             },
             {
-              "name": "mime_type",
+              "name": "file_mime_type",
               "description": "",
               "label": "",
               "type": "string",
@@ -1259,7 +1271,19 @@
               "defaultValue": ""
             },
             {
-              "name": "size_bytes",
+              "name": "file_extension",
+              "description": "",
+              "label": "",
+              "type": "string",
+              "longType": "string",
+              "fullType": "string",
+              "ismap": false,
+              "isoneof": false,
+              "oneofdecl": "",
+              "defaultValue": ""
+            },
+            {
+              "name": "file_size_bytes",
               "description": "",
               "label": "",
               "type": "int64",
@@ -1268,18 +1292,6 @@
               "ismap": false,
               "isoneof": false,
               "oneofdecl": "",
-              "defaultValue": ""
-            },
-            {
-              "name": "source_url",
-              "description": "",
-              "label": "optional",
-              "type": "string",
-              "longType": "string",
-              "fullType": "string",
-              "ismap": false,
-              "isoneof": true,
-              "oneofdecl": "_source_url",
               "defaultValue": ""
             }
           ]
@@ -1295,36 +1307,12 @@
           "extensions": [],
           "fields": [
             {
-              "name": "id",
+              "name": "document",
               "description": "",
               "label": "",
-              "type": "string",
-              "longType": "string",
-              "fullType": "string",
-              "ismap": false,
-              "isoneof": false,
-              "oneofdecl": "",
-              "defaultValue": ""
-            },
-            {
-              "name": "upload_url",
-              "description": "",
-              "label": "",
-              "type": "string",
-              "longType": "string",
-              "fullType": "string",
-              "ismap": false,
-              "isoneof": false,
-              "oneofdecl": "",
-              "defaultValue": ""
-            },
-            {
-              "name": "expires_at",
-              "description": "",
-              "label": "",
-              "type": "Timestamp",
-              "longType": "google.protobuf.Timestamp",
-              "fullType": "google.protobuf.Timestamp",
+              "type": "Document",
+              "longType": "Document",
+              "fullType": "exonex.cortex.v1alpha1.Document",
               "ismap": false,
               "isoneof": false,
               "oneofdecl": "",
@@ -1474,6 +1462,18 @@
               "defaultValue": ""
             },
             {
+              "name": "publisher",
+              "description": "Reference to the cortex.exonex.io/Publisher that published the file.\nThis field is immutable once set and can be used to evaluate policies, e.g. regarding procession.",
+              "label": "",
+              "type": "string",
+              "longType": "string",
+              "fullType": "string",
+              "ismap": false,
+              "isoneof": false,
+              "oneofdecl": "",
+              "defaultValue": ""
+            },
+            {
               "name": "file_upload_completed",
               "description": "Indicates if the upload of the file for this document has already been finished.",
               "label": "",
@@ -1534,12 +1534,12 @@
               "defaultValue": ""
             },
             {
-              "name": "publisher",
-              "description": "Reference to the cortex.exonex.io/Publisher that published the file.\nThis field is immutable once set and can be used to evaluate policies, e.g. regarding procession.",
+              "name": "version",
+              "description": "An increasing counter that is used for optimistic concurrency locking.",
               "label": "",
-              "type": "string",
-              "longType": "string",
-              "fullType": "string",
+              "type": "int64",
+              "longType": "int64",
+              "fullType": "int64",
               "ismap": false,
               "isoneof": false,
               "oneofdecl": "",
@@ -1579,18 +1579,6 @@
               "ismap": false,
               "isoneof": true,
               "oneofdecl": "_deleted_at",
-              "defaultValue": ""
-            },
-            {
-              "name": "etag",
-              "description": "The Entity Tag (ETag) indicates",
-              "label": "",
-              "type": "string",
-              "longType": "string",
-              "fullType": "string",
-              "ismap": false,
-              "isoneof": false,
-              "oneofdecl": "",
               "defaultValue": ""
             }
           ]
@@ -1738,7 +1726,7 @@
             },
             {
               "name": "filter",
-              "description": "this is currently not implemented.",
+              "description": "",
               "label": "optional",
               "type": "string",
               "longType": "string",
@@ -1750,7 +1738,7 @@
             },
             {
               "name": "order_by",
-              "description": "this is currently not implemented.",
+              "description": "",
               "label": "optional",
               "type": "string",
               "longType": "string",
@@ -1840,10 +1828,23 @@
           "fullName": "exonex.cortex.v1alpha1.UpdateDocumentResponse",
           "description": "",
           "hasExtensions": false,
-          "hasFields": false,
+          "hasFields": true,
           "hasOneofs": false,
           "extensions": [],
-          "fields": []
+          "fields": [
+            {
+              "name": "document",
+              "description": "",
+              "label": "",
+              "type": "Document",
+              "longType": "Document",
+              "fullType": "exonex.cortex.v1alpha1.Document",
+              "ismap": false,
+              "isoneof": false,
+              "oneofdecl": "",
+              "defaultValue": ""
+            }
+          ]
         }
       ],
       "services": [
@@ -1863,7 +1864,10 @@
               "responseType": "ListDocumentsResponse",
               "responseLongType": "ListDocumentsResponse",
               "responseFullType": "exonex.cortex.v1alpha1.ListDocumentsResponse",
-              "responseStreaming": false
+              "responseStreaming": false,
+              "options": {
+                "idempotency_level": "NO_SIDE_EFFECTS"
+              }
             },
             {
               "name": "GetDocument",

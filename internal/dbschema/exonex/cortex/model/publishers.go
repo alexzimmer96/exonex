@@ -18,6 +18,8 @@ type Publishers struct {
 	Annotations   string
 	Finalizers    pq.StringArray
 	CanonicalName string
+	Version       int64
 	CreatedAt     time.Time
+	UpdatedAt     time.Time
 	DeletedAt     *time.Time
 }

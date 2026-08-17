@@ -21,7 +21,9 @@ type publishersTable struct {
 	Annotations   postgres.ColumnString
 	Finalizers    postgres.ColumnStringArray
 	CanonicalName postgres.ColumnString
+	Version       postgres.ColumnInteger
 	CreatedAt     postgres.ColumnTimestampz
+	UpdatedAt     postgres.ColumnTimestampz
 	DeletedAt     postgres.ColumnTimestampz
 
 	AllColumns     postgres.ColumnList
@@ -68,11 +70,13 @@ func newPublishersTableImpl(schemaName, tableName, alias string) publishersTable
 		AnnotationsColumn   = postgres.StringColumn("annotations")
 		FinalizersColumn    = postgres.StringArrayColumn("finalizers")
 		CanonicalNameColumn = postgres.StringColumn("canonical_name")
+		VersionColumn       = postgres.IntegerColumn("version")
 		CreatedAtColumn     = postgres.TimestampzColumn("created_at")
+		UpdatedAtColumn     = postgres.TimestampzColumn("updated_at")
 		DeletedAtColumn     = postgres.TimestampzColumn("deleted_at")
-		allColumns          = postgres.ColumnList{IDColumn, AnnotationsColumn, FinalizersColumn, CanonicalNameColumn, CreatedAtColumn, DeletedAtColumn}
-		mutableColumns      = postgres.ColumnList{AnnotationsColumn, FinalizersColumn, CanonicalNameColumn, CreatedAtColumn, DeletedAtColumn}
-		defaultColumns      = postgres.ColumnList{AnnotationsColumn, FinalizersColumn, CreatedAtColumn}
+		allColumns          = postgres.ColumnList{IDColumn, AnnotationsColumn, FinalizersColumn, CanonicalNameColumn, VersionColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn}
+		mutableColumns      = postgres.ColumnList{AnnotationsColumn, FinalizersColumn, CanonicalNameColumn, VersionColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn}
+		defaultColumns      = postgres.ColumnList{AnnotationsColumn, FinalizersColumn, VersionColumn, CreatedAtColumn, UpdatedAtColumn}
 	)
 
 	return publishersTable{
@@ -83,7 +87,9 @@ func newPublishersTableImpl(schemaName, tableName, alias string) publishersTable
 		Annotations:   AnnotationsColumn,
 		Finalizers:    FinalizersColumn,
 		CanonicalName: CanonicalNameColumn,
+		Version:       VersionColumn,
 		CreatedAt:     CreatedAtColumn,
+		UpdatedAt:     UpdatedAtColumn,
 		DeletedAt:     DeletedAtColumn,
 
 		AllColumns:     allColumns,

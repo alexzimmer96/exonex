@@ -27,7 +27,9 @@ type artifactTypesTable struct {
 	Name        postgres.ColumnString
 	Description postgres.ColumnString
 	Schema      postgres.ColumnString
+	Version     postgres.ColumnInteger
 	CreatedAt   postgres.ColumnTimestampz
+	UpdatedAt   postgres.ColumnTimestampz
 	DeletedAt   postgres.ColumnTimestampz
 
 	AllColumns     postgres.ColumnList
@@ -80,11 +82,13 @@ func newArtifactTypesTableImpl(schemaName, tableName, alias string) artifactType
 		NameColumn        = postgres.StringColumn("name")
 		DescriptionColumn = postgres.StringColumn("description")
 		SchemaColumn      = postgres.StringColumn("schema")
+		VersionColumn     = postgres.IntegerColumn("version")
 		CreatedAtColumn   = postgres.TimestampzColumn("created_at")
+		UpdatedAtColumn   = postgres.TimestampzColumn("updated_at")
 		DeletedAtColumn   = postgres.TimestampzColumn("deleted_at")
-		allColumns        = postgres.ColumnList{IDColumn, AnnotationsColumn, FinalizersColumn, APIGroupColumn, APIKindColumn, APIVersionColumn, DeprecatedColumn, NameColumn, DescriptionColumn, SchemaColumn, CreatedAtColumn, DeletedAtColumn}
-		mutableColumns    = postgres.ColumnList{AnnotationsColumn, FinalizersColumn, APIGroupColumn, APIKindColumn, APIVersionColumn, DeprecatedColumn, NameColumn, DescriptionColumn, SchemaColumn, CreatedAtColumn, DeletedAtColumn}
-		defaultColumns    = postgres.ColumnList{AnnotationsColumn, FinalizersColumn, DeprecatedColumn, CreatedAtColumn}
+		allColumns        = postgres.ColumnList{IDColumn, AnnotationsColumn, FinalizersColumn, APIGroupColumn, APIKindColumn, APIVersionColumn, DeprecatedColumn, NameColumn, DescriptionColumn, SchemaColumn, VersionColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn}
+		mutableColumns    = postgres.ColumnList{AnnotationsColumn, FinalizersColumn, APIGroupColumn, APIKindColumn, APIVersionColumn, DeprecatedColumn, NameColumn, DescriptionColumn, SchemaColumn, VersionColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn}
+		defaultColumns    = postgres.ColumnList{AnnotationsColumn, FinalizersColumn, DeprecatedColumn, VersionColumn, CreatedAtColumn, UpdatedAtColumn}
 	)
 
 	return artifactTypesTable{
@@ -101,7 +105,9 @@ func newArtifactTypesTableImpl(schemaName, tableName, alias string) artifactType
 		Name:        NameColumn,
 		Description: DescriptionColumn,
 		Schema:      SchemaColumn,
+		Version:     VersionColumn,
 		CreatedAt:   CreatedAtColumn,
+		UpdatedAt:   UpdatedAtColumn,
 		DeletedAt:   DeletedAtColumn,
 
 		AllColumns:     allColumns,

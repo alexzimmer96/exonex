@@ -22,8 +22,12 @@ type Driver interface {
 	Exec(ctx context.Context, sql string, arguments ...any) (pgconn.CommandTag, error)
 }
 
+func SetTxInContext(ctx context.Context, tx pgx.Tx) context.Context {
+	return context.WithValue(ctx, txKey, tx)
+}
+
 func TxFromContext(ctx context.Context, fb *pgxpool.Pool) Driver {
-	q, ok := ctx.Value(txKey).(Driver)
+	q, ok := ctx.Value(txKey).(pgx.Tx)
 	if ok {
 		return q
 	}

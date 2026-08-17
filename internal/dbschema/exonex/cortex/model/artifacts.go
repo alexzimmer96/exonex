@@ -21,6 +21,8 @@ type Artifacts struct {
 	DocumentID   uuid.UUID
 	Name         string
 	Payload      string
+	Version      int64
 	CreatedAt    time.Time `sql:"primary_key"`
+	UpdatedAt    time.Time
 	DeletedAt    *time.Time
 }

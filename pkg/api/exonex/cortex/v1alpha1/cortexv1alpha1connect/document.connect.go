@@ -74,6 +74,7 @@ func NewDocumentServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 			httpClient,
 			baseURL+DocumentServiceListDocumentsProcedure,
 			connect.WithSchema(documentServiceMethods.ByName("ListDocuments")),
+			connect.WithIdempotency(connect.IdempotencyNoSideEffects),
 			connect.WithClientOptions(opts...),
 		),
 		getDocument: connect.NewClient[v1alpha1.GetDocumentRequest, v1alpha1.GetDocumentResponse](
@@ -158,6 +159,7 @@ func NewDocumentServiceHandler(svc DocumentServiceHandler, opts ...connect.Handl
 		DocumentServiceListDocumentsProcedure,
 		svc.ListDocuments,
 		connect.WithSchema(documentServiceMethods.ByName("ListDocuments")),
+		connect.WithIdempotency(connect.IdempotencyNoSideEffects),
 		connect.WithHandlerOptions(opts...),
 	)
 	documentServiceGetDocumentHandler := connect.NewUnaryHandler(
