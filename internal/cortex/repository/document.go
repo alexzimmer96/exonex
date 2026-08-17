@@ -12,7 +12,7 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-var UserFieldMap = sql.CELFieldMap{
+var UserFieldMap = sql.FieldMap{
 	"id":                  sql.AsUUID(Documents.ID),
 	"annotations":         Documents.Annotations,
 	"finalizers":          Documents.Finalizers,

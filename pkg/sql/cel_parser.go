@@ -10,15 +10,17 @@ import (
 	exprpb "google.golang.org/genproto/googleapis/api/expr/v1alpha1"
 )
 
-type CELFieldMap map[string]jet.Column
+type FieldMap map[string]jet.Column
 
-type FilterBuilder struct {
-	env *cel.Env
-}
+// =====================================================================================================================
 
 type ColumnUUID interface {
 	jet.ColumnString
 	IsUUID() bool
+}
+
+func AsUUID(c jet.ColumnString) ColumnUUID {
+	return columnUUID{c}
 }
 
 type columnUUID struct {
@@ -29,8 +31,10 @@ func (c columnUUID) IsUUID() bool {
 	return true
 }
 
-func AsUUID(c jet.ColumnString) ColumnUUID {
-	return columnUUID{c}
+// =====================================================================================================================
+
+type FilterBuilder struct {
+	env *cel.Env
 }
 
 func NewFilterBuilder() (*FilterBuilder, error) {
@@ -41,7 +45,7 @@ func NewFilterBuilder() (*FilterBuilder, error) {
 	return &FilterBuilder{env: env}, nil
 }
 
-func (b *FilterBuilder) BuildExpression(filterStr string, mapping CELFieldMap) (jet.BoolExpression, error) {
+func (b *FilterBuilder) BuildExpression(filterStr string, mapping FieldMap) (jet.BoolExpression, error) {
 	if filterStr == "" {
 		return nil, nil
 	}
@@ -51,10 +55,15 @@ func (b *FilterBuilder) BuildExpression(filterStr string, mapping CELFieldMap) (
 		return nil, fmt.Errorf("invalid CEL expression: %w", iss.Err())
 	}
 
-	return walkAST(ast.Expr(), mapping)
+	parsedExpr, err := cel.AstToParsedExpr(ast)
+	if err != nil {
+		return nil, fmt.Errorf("failed to convert AST: %w", err)
+	}
+
+	return walkAST(parsedExpr.Expr, mapping)
 }
 
-func walkAST(e *exprpb.Expr, mapping CELFieldMap) (jet.BoolExpression, error) {
+func walkAST(e *exprpb.Expr, mapping FieldMap) (jet.BoolExpression, error) {
 	switch kind := e.ExprKind.(type) {
 	case *exprpb.Expr_CallExpr:
 		return parseCall(kind.CallExpr, mapping)
@@ -63,7 +72,7 @@ func walkAST(e *exprpb.Expr, mapping CELFieldMap) (jet.BoolExpression, error) {
 	}
 }
 
-func parseCall(call *exprpb.Expr_Call, mapping CELFieldMap) (jet.BoolExpression, error) {
+func parseCall(call *exprpb.Expr_Call, mapping FieldMap) (jet.BoolExpression, error) {
 	switch call.Function {
 	case "_&&_":
 		left, err := walkAST(call.Args[0], mapping)
@@ -98,7 +107,7 @@ func parseCall(call *exprpb.Expr_Call, mapping CELFieldMap) (jet.BoolExpression,
 	}
 }
 
-func parseInOperator(args []*exprpb.Expr, mapping CELFieldMap) (jet.BoolExpression, error) {
+func parseInOperator(args []*exprpb.Expr, mapping FieldMap) (jet.BoolExpression, error) {
 	if len(args) < 2 {
 		return nil, fmt.Errorf("invalid @in arguments")
 	}
@@ -125,7 +134,7 @@ func parseInOperator(args []*exprpb.Expr, mapping CELFieldMap) (jet.BoolExpressi
 	return nil, fmt.Errorf("unsupported right-hand expression for 'in' operator")
 }
 
-func createSQLInList(left *exprpb.Expr, listExpr *exprpb.Expr_CreateList, mapping CELFieldMap) (jet.BoolExpression, error) {
+func createSQLInList(left *exprpb.Expr, listExpr *exprpb.Expr_CreateList, mapping FieldMap) (jet.BoolExpression, error) {
 	ident := left.GetIdentExpr().Name
 	col, ok := mapping[ident]
 	if !ok {
@@ -187,7 +196,7 @@ func createNativeArrayContains(left *exprpb.Expr, arrayCol jet.Column) (jet.Bool
 	}), nil
 }
 
-func createJSONContains(selectExpr *exprpb.Expr_Select, valueExpr *exprpb.Expr, mapping CELFieldMap) (jet.BoolExpression, error) {
+func createJSONContains(selectExpr *exprpb.Expr_Select, valueExpr *exprpb.Expr, mapping FieldMap) (jet.BoolExpression, error) {
 	baseField := selectExpr.Operand.GetIdentExpr().Name
 	jsonKey := selectExpr.Field
 
@@ -216,7 +225,7 @@ func createJSONContains(selectExpr *exprpb.Expr_Select, valueExpr *exprpb.Expr, 
 	}), nil
 }
 
-func createComparison(op string, args []*exprpb.Expr, mapping CELFieldMap) (jet.BoolExpression, error) {
+func createComparison(op string, args []*exprpb.Expr, mapping FieldMap) (jet.BoolExpression, error) {
 	if len(args) < 2 {
 		return nil, fmt.Errorf("invalid operator arguments")
 	}
@@ -244,83 +253,101 @@ func createComparison(op string, args []*exprpb.Expr, mapping CELFieldMap) (jet.
 
 	switch c := col.(type) {
 	case ColumnUUID:
-		val := valExpr.GetStringValue()
-		parsedUUID, err := uuid.Parse(val)
-		if err != nil {
-			return nil, fmt.Errorf("invalid UUID format for field %s: %w", ident, err)
-		}
-		uuidLiteral := jet.UUID(parsedUUID)
-		switch op {
-		case "_==_":
-			return c.EQ(uuidLiteral), nil
-		case "_!=_":
-			return c.NOT_EQ(uuidLiteral), nil
-		}
+		return mapUUIDOperations(ident, valExpr, c, op)
 	case jet.ColumnString:
-		val := valExpr.GetStringValue()
-		switch op {
-		case "_==_":
-			return c.EQ(jet.String(val)), nil
-		case "_!=_":
-			return c.NOT_EQ(jet.String(val)), nil
-		case "_>_":
-			return c.GT(jet.String(val)), nil
-		case "_<_":
-			return c.LT(jet.String(val)), nil
-		}
-
+		return mapStringOperations(ident, valExpr, c, op)
 	case jet.ColumnInteger:
-		val := valExpr.GetInt64Value()
-		switch op {
-		case "_==_":
-			return c.EQ(jet.Int(val)), nil
-		case "_!=_":
-			return c.NOT_EQ(jet.Int(val)), nil
-		case "_>_":
-			return c.GT(jet.Int(val)), nil
-		case "_>=_":
-			return c.GT_EQ(jet.Int(val)), nil
-		case "_<_":
-			return c.LT(jet.Int(val)), nil
-		case "_<=_":
-			return c.LT_EQ(jet.Int(val)), nil
-		}
-
+		return mapIntOperations(ident, valExpr, c, op)
 	case jet.ColumnBool:
-		val := valExpr.GetBoolValue()
-		switch op {
-		case "_==_":
-			return c.EQ(jet.Bool(val)), nil
-		case "_!=_":
-			return c.NOT_EQ(jet.Bool(val)), nil
-		}
-
-	case jet.ColumnTimestamp:
-		t, err := time.Parse(time.RFC3339, valExpr.GetStringValue())
-		if err != nil {
-			return nil, fmt.Errorf("invalid timestamp format for %s: %w", ident, err)
-		}
-		tsVal := jet.TimestampT(t)
-		switch op {
-		case "_==_":
-			return c.EQ(tsVal), nil
-		case "_!=_":
-			return c.NOT_EQ(tsVal), nil
-		case "_>_":
-			return c.GT(tsVal), nil
-		case "_>=_":
-			return c.GT_EQ(tsVal), nil
-		case "_<_":
-			return c.LT(tsVal), nil
-		case "_<=_":
-			return c.LT_EQ(tsVal), nil
-		}
-
-	default:
-		return nil, fmt.Errorf("unsupported column type %T for field %s", col, ident)
+		return mapBoolOperations(ident, valExpr, c, op)
+	case jet.ColumnTimestampz:
+		return mapTimestampOperations(ident, valExpr, c, op)
 	}
+	return nil, fmt.Errorf("unsupported column type %T for field %s", col, ident)
+}
 
-	return nil, fmt.Errorf("operator %s not supported for field %s", op, ident)
+func mapUUIDOperations(ident string, valExpr *exprpb.Constant, c ColumnUUID, op string) (jet.BoolExpression, error) {
+	val := valExpr.GetStringValue()
+	parsedUUID, err := uuid.Parse(val)
+	if err != nil {
+		return nil, fmt.Errorf("invalid UUID format for field %s: %w", ident, err)
+	}
+	uuidLiteral := jet.UUID(parsedUUID)
+	switch op {
+	case "_==_":
+		return c.EQ(uuidLiteral), nil
+	case "_!=_":
+		return c.NOT_EQ(uuidLiteral), nil
+	}
+	return nil, fmt.Errorf("unsupported operator '%s' for UUID field '%s'", op, ident)
+}
+
+func mapStringOperations(ident string, valExpr *exprpb.Constant, c jet.ColumnString, op string) (jet.BoolExpression, error) {
+	val := valExpr.GetStringValue()
+	switch op {
+	case "_==_":
+		return c.EQ(jet.String(val)), nil
+	case "_!=_":
+		return c.NOT_EQ(jet.String(val)), nil
+	case "_>_":
+		return c.GT(jet.String(val)), nil
+	case "_<_":
+		return c.LT(jet.String(val)), nil
+	}
+	return nil, fmt.Errorf("unsupported operator '%s' for string field '%s'", op, ident)
+}
+
+func mapIntOperations(ident string, valExpr *exprpb.Constant, c jet.ColumnInteger, op string) (jet.BoolExpression, error) {
+	val := valExpr.GetInt64Value()
+	switch op {
+	case "_==_":
+		return c.EQ(jet.Int(val)), nil
+	case "_!=_":
+		return c.NOT_EQ(jet.Int(val)), nil
+	case "_>_":
+		return c.GT(jet.Int(val)), nil
+	case "_>=_":
+		return c.GT_EQ(jet.Int(val)), nil
+	case "_<_":
+		return c.LT(jet.Int(val)), nil
+	case "_<=_":
+		return c.LT_EQ(jet.Int(val)), nil
+	}
+	return nil, fmt.Errorf("unsupported operator '%s' for integer field '%s'", op, ident)
+}
+
+func mapBoolOperations(ident string, valExpr *exprpb.Constant, c jet.ColumnBool, op string) (jet.BoolExpression, error) {
+	val := valExpr.GetBoolValue()
+	switch op {
+	case "_==_":
+		return c.EQ(jet.Bool(val)), nil
+	case "_!=_":
+		return c.NOT_EQ(jet.Bool(val)), nil
+	}
+	return nil, fmt.Errorf("unsupported operator '%s' for bool field '%s'", op, ident)
+}
+
+func mapTimestampOperations(ident string, valExpr *exprpb.Constant, c jet.ColumnTimestampz, op string) (jet.BoolExpression, error) {
+	t, err := extractTime(valExpr, ident)
+	if err != nil {
+		return nil, err
+	}
+	tsVal := jet.TimestampzT(t)
+	switch op {
+	case "_==_":
+		return c.EQ(tsVal), nil
+	case "_!=_":
+		return c.NOT_EQ(tsVal), nil
+	case "_>_":
+		return c.GT(tsVal), nil
+	case "_>=_":
+		return c.GT_EQ(tsVal), nil
+	case "_<_":
+		return c.LT(tsVal), nil
+	case "_<=_":
+		return c.LT_EQ(tsVal), nil
+	}
+	return nil, fmt.Errorf("unsupported operator '%s' for timestamp field '%s'", op, ident)
 }
 
 func createJSONComparison(op string, baseCol jet.Column, jsonKey string, rightExpr *exprpb.Expr) (jet.BoolExpression, error) {
@@ -374,4 +401,18 @@ func createJSONComparison(op string, baseCol jet.Column, jsonKey string, rightEx
 		return nil, fmt.Errorf("unsupported JSON value type for key %s", jsonKey)
 	}
 	return nil, fmt.Errorf("operator %s not supported for JSON key %s", op, jsonKey)
+}
+
+func extractTime(valExpr *exprpb.Constant, ident string) (time.Time, error) {
+	if strVal, ok := valExpr.ConstantKind.(*exprpb.Constant_StringValue); ok {
+		t, err := time.Parse(time.RFC3339, strVal.StringValue)
+		if err != nil {
+			return time.Time{}, fmt.Errorf("invalid RFC3339 timestamp format for %s: %w", ident, err)
+		}
+		return t.UTC(), nil
+	}
+	if intVal, ok := valExpr.ConstantKind.(*exprpb.Constant_Int64Value); ok {
+		return time.Unix(intVal.Int64Value, 0).UTC(), nil
+	}
+	return time.Time{}, fmt.Errorf("expected RFC3339 string for timestamp comparison on field %s", ident)
 }
