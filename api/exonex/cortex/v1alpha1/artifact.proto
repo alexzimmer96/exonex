@@ -16,7 +16,7 @@ message Artifact {
   string id = 1 [(google.api.field_behavior) = IDENTIFIER];
   google.protobuf.Struct annotations = 2;
   string artifact_type = 3 [(google.api.resource_reference) = {
-    type: "cortex.exonex.io//ArtifactType"
+    type: "cortex.exonex.io/ArtifactType"
   }];
   string document = 4 [(google.api.resource_reference) = {
     type: "cortex.exonex.io/Document"

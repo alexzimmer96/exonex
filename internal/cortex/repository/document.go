@@ -2,29 +2,23 @@ package repository
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/alexzimmer96/exonex/internal/cortex/domain"
 	. "github.com/alexzimmer96/exonex/internal/dbschema/exonex/cortex/table"
 	"github.com/alexzimmer96/exonex/pkg/sql"
 	. "github.com/go-jet/jet/v2/postgres"
+	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-var UserFieldMap = sql.FieldMap{
-	"id":                  sql.AsUUID(Documents.ID),
-	"annotations":         Documents.Annotations,
-	"finalizers":          Documents.Finalizers,
-	"publisher":           sql.AsUUID(Documents.PublisherID),
-	"fileUploadCompleted": Documents.FileUploadCompleted,
-	"fileMimeType":        Documents.FileMimeType,
-	"fileSizeBytes":       Documents.FileSizeBytes,
-	"fileStorageVolume":   Documents.FileStorageVolume,
-	"fileStorageKey":      Documents.FileStorageKey,
-	"createdAt":           Documents.CreatedAt,
-	"updatedAt":           Documents.UpdatedAt,
-}
+var (
+	InvalidDocumentFilterError = errors.New("invalid filter")
+	UnknownDocumentFieldError  = errors.New("unknown field")
+	DocumentNotFoundError      = errors.New("document not found")
+)
 
 type DocumentRepository struct {
 	pool          *pgxpool.Pool
@@ -38,13 +32,31 @@ func NewDocumentRepository(pool *pgxpool.Pool, filterBuilder *sql.FilterBuilder)
 	}
 }
 
-func (s *DocumentRepository) ListDocuments(ctx context.Context, filter string) ([]domain.Document, error) {
-	stmt := Documents.SELECT(Documents.AllColumns)
+var UserFieldMap = sql.FieldMap{
+	"id":                  sql.AsUUID(Documents.ID),
+	"annotations":         Documents.Annotations,
+	"finalizers":          Documents.Finalizers,
+	"publisher":           sql.AsUUID(Documents.PublisherID),
+	"fileUploadCompleted": Documents.FileUploadCompleted,
+	"fileMimeType":        Documents.FileMimeType,
+	"fileSizeBytes":       Documents.FileSizeBytes,
+	"fileStorageVolume":   Documents.FileStorageVolume,
+	"fileStorageKey":      Documents.FileStorageKey,
+	"createdAt":           Documents.CreatedAt,
+	"updatedAt":           Documents.UpdatedAt,
+	"deletedAt":           Documents.DeletedAt,
+}
+
+// =====================================================================================================================
+
+func (s *DocumentRepository) ListDocuments(ctx context.Context, filter string, fields []string) ([]domain.Document, error) {
+	projection := UserFieldMap.BuildProjection(fields, Documents.AllColumns)
+	stmt := Documents.SELECT(projection[0], projection[1:]...)
 
 	if filter != "" {
 		whereExpr, err := s.filterBuilder.BuildExpression(filter, UserFieldMap)
 		if err != nil {
-			return nil, fmt.Errorf("invalid filter: %w", err)
+			return nil, fmt.Errorf("%w: %w", InvalidDocumentFilterError, err)
 		}
 		stmt = stmt.WHERE(whereExpr)
 	}
@@ -54,8 +66,22 @@ func (s *DocumentRepository) ListDocuments(ctx context.Context, filter string) (
 	if err != nil {
 		return nil, err
 	}
-	return pgx.CollectRows(rows, pgx.RowToStructByName[domain.Document])
+	return pgx.CollectRows(rows, pgx.RowToStructByNameLax[domain.Document])
 }
+
+// =====================================================================================================================
+
+func (s *DocumentRepository) GetDocument(ctx context.Context, id uuid.UUID, fields []string) (*domain.Document, error) {
+	projection := UserFieldMap.BuildProjection(fields, Documents.AllColumns)
+	query, args := Documents.SELECT(projection[0], projection[1:]...).WHERE(Documents.ID.EQ(UUID(id))).Sql()
+	rows, err := sql.TxFromContext(ctx, s.pool).Query(ctx, query, args...)
+	if err != nil {
+		return nil, err
+	}
+	return pgx.CollectExactlyOneRow(rows, pgx.RowToAddrOfStructByNameLax[domain.Document])
+}
+
+// =====================================================================================================================
 
 func (s *DocumentRepository) CreateDocument(ctx context.Context, doc domain.Document) (*domain.Document, error) {
 	query, args := Documents.INSERT(
@@ -80,8 +106,10 @@ func (s *DocumentRepository) CreateDocument(ctx context.Context, doc domain.Docu
 	if err != nil {
 		return nil, err
 	}
-	return pgx.CollectExactlyOneRow(rows, pgx.RowToAddrOfStructByName[domain.Document])
+	return pgx.CollectExactlyOneRow(rows, pgx.RowToAddrOfStructByNameLax[domain.Document])
 }
+
+// =====================================================================================================================
 
 func (s *DocumentRepository) UpdateDocument(ctx context.Context, doc domain.Document) (*domain.Document, error) {
 	query, args := Documents.UPDATE(
@@ -100,5 +128,5 @@ func (s *DocumentRepository) UpdateDocument(ctx context.Context, doc domain.Docu
 	if err != nil {
 		return nil, err
 	}
-	return pgx.CollectExactlyOneRow(rows, pgx.RowToAddrOfStructByName[domain.Document])
+	return pgx.CollectExactlyOneRow(rows, pgx.RowToAddrOfStructByNameLax[domain.Document])
 }

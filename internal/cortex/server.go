@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"connectrpc.com/connect"
+	"connectrpc.com/grpcreflect"
 	"github.com/alexzimmer96/exonex/internal/auth"
 	"github.com/alexzimmer96/exonex/internal/cortex/domain"
 	"github.com/alexzimmer96/exonex/internal/cortex/handler"
@@ -47,6 +48,15 @@ func NewServer(addr string, pool *pgxpool.Pool) *Server {
 	interceptors := getInterceptors()
 
 	mux := http.NewServeMux()
+
+	reflector := grpcreflect.NewStaticReflector(
+		cortexv1alpha1connect.AuthServiceName,
+		cortexv1alpha1connect.DocumentServiceName,
+		cortexv1alpha1connect.ArtifactServiceName,
+	)
+	mux.Handle(grpcreflect.NewHandlerV1(reflector))
+	mux.Handle(grpcreflect.NewHandlerV1Alpha(reflector))
+
 	mux.Handle(cortexv1alpha1connect.NewAuthServiceHandler(
 		handler.NewAuthHandler(),
 		interceptors,

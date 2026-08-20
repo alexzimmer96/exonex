@@ -31,7 +31,8 @@ type Document struct {
 // =====================================================================================================================
 
 type DocumentRepository interface {
-	ListDocuments(ctx context.Context, filter string) ([]Document, error)
+	ListDocuments(ctx context.Context, filter string, fields []string) ([]Document, error)
+	GetDocument(ctx context.Context, id uuid.UUID, fields []string) (*Document, error)
 	CreateDocument(ctx context.Context, doc Document) (*Document, error)
 	UpdateDocument(ctx context.Context, doc Document) (*Document, error)
 }
@@ -51,17 +52,14 @@ func NewDocumentService(documentRepo DocumentRepository) *DocumentService {
 // =====================================================================================================================
 
 type ListDocumentsAction struct {
-	Filter string `json:"filter"`
+	Filter   string   `json:"filter"`
+	ReadMask []string `json:"readMask"`
 }
 
 func (svc *DocumentService) ListDocuments(ctx context.Context, action ListDocumentsAction) ([]Document, error) {
-	docs, err := svc.documentRepo.ListDocuments(ctx, action.Filter)
+	docs, err := svc.documentRepo.ListDocuments(ctx, action.Filter, action.ReadMask)
 	if err != nil {
-		slog.ErrorContext(
-			ctx,
-			"failed to list Documents from database",
-			slog.String("error", err.Error()),
-		)
+		slog.ErrorContext(ctx, "failed to list Documents from database", slog.String("error", err.Error()))
 		return nil, Error{
 			Kind:    ErrorKindInternal,
 			Message: "failed to list new Documents from database",
@@ -69,6 +67,16 @@ func (svc *DocumentService) ListDocuments(ctx context.Context, action ListDocume
 		}
 	}
 	return docs, nil
+}
+
+// =====================================================================================================================
+
+func (svc *DocumentService) GetDocument(ctx context.Context, id uuid.UUID, readMask []string) (*Document, error) {
+	doc, err := svc.documentRepo.GetDocument(ctx, id, readMask)
+	if err != nil {
+		slog.ErrorContext(ctx, "failed to get Document from database", slog.String("error", err.Error()))
+	}
+	return doc, nil
 }
 
 // =====================================================================================================================
@@ -141,3 +149,5 @@ func (svc *DocumentService) CreateDocument(ctx context.Context, action CreateDoc
 func (svc *DocumentService) buildStorageKey(publisherId, documentId uuid.UUID, fileExtension string) string {
 	return fmt.Sprintf("/%s/%d/%s%s", publisherId.String(), time.Now().Year(), documentId, fileExtension)
 }
+
+// =====================================================================================================================

@@ -10,10 +10,6 @@ import (
 	exprpb "google.golang.org/genproto/googleapis/api/expr/v1alpha1"
 )
 
-type FieldMap map[string]jet.Column
-
-// =====================================================================================================================
-
 type ColumnUUID interface {
 	jet.ColumnString
 	IsUUID() bool
