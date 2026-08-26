@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/alexzimmer96/exonex/pkg"
+	"github.com/alexzimmer96/exonex/pkg/storage"
 	"github.com/google/uuid"
 )
 
@@ -50,13 +51,15 @@ type DocumentRepository interface {
 
 // DocumentService implements the business rules for documents on top of a DocumentRepository.
 type DocumentService struct {
-	documentRepo DocumentRepository
+	documentRepo  DocumentRepository
+	volumeManager *storage.VolumeManager
 }
 
 // NewDocumentService creates a DocumentService backed by the given repository.
-func NewDocumentService(documentRepo DocumentRepository) *DocumentService {
+func NewDocumentService(documentRepo DocumentRepository, volumeManager *storage.VolumeManager) *DocumentService {
 	return &DocumentService{
-		documentRepo: documentRepo,
+		documentRepo:  documentRepo,
+		volumeManager: volumeManager,
 	}
 }
 
@@ -174,7 +177,46 @@ func (svc *DocumentService) CreateDocument(ctx context.Context, action CreateDoc
 // buildStorageKey derives the object-storage key for a document, partitioned by
 // publisher and year to spread keys across prefixes.
 func (svc *DocumentService) buildStorageKey(publisherId, documentId uuid.UUID, fileExtension string) string {
-	return fmt.Sprintf("/%s/%d/%s%s", publisherId.String(), time.Now().Year(), documentId, fileExtension)
+	return fmt.Sprintf("%s/%d/%s%s", publisherId.String(), time.Now().Year(), documentId, fileExtension)
 }
 
 // =====================================================================================================================
+
+func (svc *DocumentService) CreateDocumentUploadURL(ctx context.Context, id uuid.UUID) (string, error) {
+	doc, err := svc.documentRepo.GetDocument(ctx, id, nil)
+	if err != nil {
+		slog.ErrorContext(ctx, "failed to get Document from database", slog.String("error", err.Error()))
+		return "", Error{
+			Kind:    ErrorKindInternal,
+			Message: "failed to get Document from database",
+			Wrapped: err,
+		}
+	}
+	adapter, err := svc.volumeManager.GetAdapter(doc.FileStorageVolume)
+	if err != nil {
+		slog.ErrorContext(
+			ctx,
+			"failed to get storage Adapter for volume",
+			slog.String("volume", doc.FileStorageVolume),
+			slog.String("error", err.Error()),
+		)
+		return "", Error{
+			Kind:    ErrorKindInternal,
+			Message: "failed to generate upload URL for document",
+			Wrapped: err,
+		}
+	}
+	url, err := adapter.CreatePresignedUploadURL(ctx, storage.CreatePresignedUploadURLAction{
+		Key:        doc.FileStorageKey,
+		Expiration: time.Now().Add(time.Hour),
+	})
+	if err != nil {
+		slog.ErrorContext(ctx, "failed to generate upload URL for Document", slog.String("error", err.Error()))
+		return "", Error{
+			Kind:    ErrorKindInternal,
+			Message: "failed to generate upload URL for document",
+			Wrapped: err,
+		}
+	}
+	return url, nil
+}

@@ -20,6 +20,7 @@ import (
 	"github.com/alexzimmer96/exonex/pkg/api/exonex/cortex/v1alpha1/cortexv1alpha1connect"
 	"github.com/alexzimmer96/exonex/pkg/grpc"
 	"github.com/alexzimmer96/exonex/pkg/sql"
+	"github.com/alexzimmer96/exonex/pkg/storage"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
@@ -36,7 +37,20 @@ type services struct {
 	documentSvc *domain.DocumentService
 }
 
-func NewServer(addr string, pool *pgxpool.Pool) *Server {
+func NewServer(config Config) *Server {
+	pool, err := config.GetDatabasePool()
+	if err != nil {
+		slog.Error("failed to connect to database", slog.String("error", err.Error()))
+		os.Exit(1)
+	}
+	defer pool.Close()
+
+	volumeManager, err := config.GetVolumeManager()
+	if err != nil {
+		slog.Error("failed to initialize volume manager", slog.String("error", err.Error()))
+		os.Exit(1)
+	}
+
 	filterBuilder, err := sql.NewFilterBuilder()
 	if err != nil {
 		slog.Error("failed to initiate CEL to SQL filter builder", slog.String("error", err.Error()))
@@ -44,7 +58,7 @@ func NewServer(addr string, pool *pgxpool.Pool) *Server {
 	}
 
 	repos := initRepositories(pool, filterBuilder)
-	svc := initServices(repos)
+	svc := initServices(repos, volumeManager)
 	interceptors := getInterceptors()
 
 	mux := http.NewServeMux()
@@ -67,7 +81,7 @@ func NewServer(addr string, pool *pgxpool.Pool) *Server {
 	))
 
 	return &Server{
-		addr: addr,
+		addr: config.ServerAddr,
 		mux:  mux,
 	}
 }
@@ -86,9 +100,9 @@ func initRepositories(pool *pgxpool.Pool, filterBuilder *sql.FilterBuilder) repo
 	}
 }
 
-func initServices(repos repositories) services {
+func initServices(repos repositories, volumeManager *storage.VolumeManager) services {
 	return services{
-		documentSvc: domain.NewDocumentService(repos.documentRepo),
+		documentSvc: domain.NewDocumentService(repos.documentRepo, volumeManager),
 	}
 }
 
@@ -99,9 +113,9 @@ func (srv *Server) ListenAndServe() {
 	httpServer := pkg.NewSecureHttpServer(srv.addr, srv.mux)
 
 	go func() {
-		slog.Info("starting server", "addr", httpServer.Addr)
+		slog.Info("starting server", slog.String("addr", srv.addr))
 		if err := httpServer.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
-			slog.Error("failed to serve http server", "error", err)
+			slog.Error("failed to serve http server", slog.String("error", err.Error()))
 		}
 	}()
 

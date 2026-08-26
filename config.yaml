@@ -1,0 +1,8 @@
+database-url: "postgres://exonex:exonex@localhost:5432/exonex"
+volumes:
+  default:
+    endpoint: "https://storage.k8s.home.zimmermann.technology"
+    region: "us-east-1"
+    bucket: "example"
+    accessKey: "wrTiY1KIyUi3XnHwY6f7AOmdswpXVRxR"
+    secretKey: "SgRaG4HaMpYNZcWoKlUiFCBgpH8XN7pIMAQuvvPzn82sYJS6w9ZSPIiFRyGmGLOT"

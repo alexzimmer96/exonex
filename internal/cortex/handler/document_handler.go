@@ -3,6 +3,7 @@ package handler
 import (
 	"context"
 	"errors"
+	"time"
 
 	"connectrpc.com/connect"
 	"github.com/alexzimmer96/exonex/internal/cortex/domain"
@@ -66,14 +67,14 @@ func (h *DocumentHandler) GetDocument(ctx context.Context, c *connect.Request[v1
 // =====================================================================================================================
 
 func (h *DocumentHandler) CreateDocument(ctx context.Context, c *connect.Request[v1alpha1.CreateDocumentRequest]) (*connect.Response[v1alpha1.CreateDocumentResponse], error) {
-	publisherId, err := uuid.Parse(c.Msg.GetPublisher())
+	publisherID, err := uuid.Parse(c.Msg.GetPublisher())
 	if err != nil {
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("publisher_id field is malformed"))
 	}
 
 	action := domain.CreateDocumentAction{
 		Annotations:   c.Msg.Annotations.AsMap(),
-		PublisherID:   publisherId,
+		PublisherID:   publisherID,
 		FileMimeType:  c.Msg.GetFileMimeType(),
 		FileSizeBytes: c.Msg.GetFileSizeBytes(),
 		FileExtension: c.Msg.GetFileExtension(),
@@ -95,7 +96,18 @@ func (h *DocumentHandler) CreateDocument(ctx context.Context, c *connect.Request
 // =====================================================================================================================
 
 func (h *DocumentHandler) CreateDocumentUploadUrl(ctx context.Context, c *connect.Request[v1alpha1.CreateDocumentUploadUrlRequest]) (*connect.Response[v1alpha1.CreateDocumentUploadUrlResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("method is unimplemented"))
+	docID, err := uuid.Parse(c.Msg.GetId())
+	if err != nil {
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("id field is malformed"))
+	}
+	url, err := h.documentSvc.CreateDocumentUploadURL(ctx, docID)
+	if err != nil {
+		return nil, err
+	}
+	return connect.NewResponse(&v1alpha1.CreateDocumentUploadUrlResponse{
+		UploadUrl: url,
+		ExpiresAt: timestamppb.New(time.Now().Add(time.Hour)),
+	}), nil
 }
 
 // =====================================================================================================================
