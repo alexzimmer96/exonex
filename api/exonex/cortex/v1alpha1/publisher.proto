@@ -1,0 +1,35 @@
+syntax = "proto3";
+package exonex.cortex.v1alpha1;
+
+import "exonex/api/v1/meta.proto";
+import "google/protobuf/struct.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/duration.proto";
+import "google/api/resource.proto";
+import "google/api/field_behavior.proto";
+
+// =====================================================================================================================
+
+message Publisher {
+  option (google.api.resource) = {
+    type: "cortex.exonex.io/Publisher"
+    pattern: "publishers/{publisher}"
+    singular: "publisher"
+    plural: "publishers"
+  };
+  // General metadata about the Resource.
+  exonex.api.v1.ResourceMeta meta = 1;
+  // The UUID that is used to uniquely identify the Publisher.
+  string id = 2 [
+    (google.api.field_behavior) = IDENTIFIER
+  ];
+  // The canonical name of the Publisher.
+  string canonical_name = 3;
+  // Alias names under which the Publisher is also known.
+  repeated string name_aliases = 4;
+  // Annotations are small chunks of information that are added to a Document and can be queried.
+  // They are stored as JSON object that is
+  google.protobuf.Struct annotations = 5 [
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ];
+}

@@ -34,15 +34,23 @@ func NewAdapter(endpoint, region, bucket, accessKey, secretKey string) *Adapter 
 // =====================================================================================================================
 
 type CreatePresignedUploadURLAction struct {
-	Key        string    `json:"key"`
-	Expiration time.Time `json:"expiration"`
+	Key                    string    `json:"key"`
+	Expiration             time.Time `json:"expiration"`
+	ExpectedChecksumSHA256 *string   `json:"expectedChecksumSHA256"` // optional, base64 encoded
+	ExpectedContentType    *string   `json:"expectedContentType"`    // optional
+	ExpectedFileSize       *int64    `json:"expectedFileSize"`       // optional
+	IfNoneMatch            *string   `json:"ifNoneMatch"`            // optional
 }
 
 // CreatePresignedUploadURL creates an URL for the S3 Provider that can be used to upload a new object.
 func (a *Adapter) CreatePresignedUploadURL(ctx context.Context, action CreatePresignedUploadURLAction) (string, error) {
 	response, err := a.presignClient.PresignPutObject(ctx, &s3.PutObjectInput{
-		Bucket: new(a.bucket),
-		Key:    new(action.Key),
+		Bucket:         new(a.bucket),
+		Key:            new(action.Key),
+		ChecksumSHA256: action.ExpectedChecksumSHA256,
+		ContentType:    action.ExpectedContentType,
+		ContentLength:  action.ExpectedFileSize,
+		IfNoneMatch:    action.IfNoneMatch,
 	})
 	if err != nil {
 		return "", err

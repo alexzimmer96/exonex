@@ -1,6 +1,11 @@
 version: '3'
 
 tasks:
+  gen:
+    cmds:
+      - task: proto:gen
+      - task: db:gen
+      - task: format:sql
   proto:gen:
     cmds:
       - rm -rf ./pkg/api

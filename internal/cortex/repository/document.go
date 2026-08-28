@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/alexzimmer96/exonex/internal/cortex/domain"
+	"github.com/alexzimmer96/exonex/internal/cortex/domain/document"
 	. "github.com/alexzimmer96/exonex/internal/dbschema/exonex/cortex/table"
 	"github.com/alexzimmer96/exonex/pkg/sql"
 	. "github.com/go-jet/jet/v2/postgres"
@@ -34,22 +34,22 @@ func NewDocumentRepository(pool *pgxpool.Pool, filterBuilder *sql.FilterBuilder)
 
 var UserFieldMap = sql.FieldMap{
 	"id":                  sql.AsUUID(Documents.ID),
-	"annotations":         Documents.Annotations,
-	"finalizers":          Documents.Finalizers,
+	"meta.annotations":    Documents.Annotations,
+	"meta.finalizers":     Documents.Finalizers,
 	"publisher":           sql.AsUUID(Documents.PublisherID),
 	"fileUploadCompleted": Documents.FileUploadCompleted,
 	"fileMimeType":        Documents.FileMimeType,
 	"fileSizeBytes":       Documents.FileSizeBytes,
 	"fileStorageVolume":   Documents.FileStorageVolume,
 	"fileStorageKey":      Documents.FileStorageKey,
-	"createdAt":           Documents.CreatedAt,
-	"updatedAt":           Documents.UpdatedAt,
-	"deletedAt":           Documents.DeletedAt,
+	"meta.createdAt":      Documents.CreatedAt,
+	"meta.updatedAt":      Documents.UpdatedAt,
+	"meta.deletedAt":      Documents.DeletedAt,
 }
 
 // =====================================================================================================================
 
-func (s *DocumentRepository) ListDocuments(ctx context.Context, filter string, fields []string) ([]domain.Document, error) {
+func (s *DocumentRepository) ListDocuments(ctx context.Context, filter string, fields []string) ([]document.Document, error) {
 	projection := UserFieldMap.BuildProjection(fields, Documents.AllColumns)
 	stmt := Documents.SELECT(projection[0], projection[1:]...)
 
@@ -66,24 +66,24 @@ func (s *DocumentRepository) ListDocuments(ctx context.Context, filter string, f
 	if err != nil {
 		return nil, err
 	}
-	return pgx.CollectRows(rows, pgx.RowToStructByNameLax[domain.Document])
+	return pgx.CollectRows(rows, pgx.RowToStructByNameLax[document.Document])
 }
 
 // =====================================================================================================================
 
-func (s *DocumentRepository) GetDocument(ctx context.Context, id uuid.UUID, fields []string) (*domain.Document, error) {
+func (s *DocumentRepository) GetDocument(ctx context.Context, id uuid.UUID, fields []string) (*document.Document, error) {
 	projection := UserFieldMap.BuildProjection(fields, Documents.AllColumns)
 	query, args := Documents.SELECT(projection[0], projection[1:]...).WHERE(Documents.ID.EQ(UUID(id))).Sql()
 	rows, err := sql.TxFromContext(ctx, s.pool).Query(ctx, query, args...)
 	if err != nil {
 		return nil, err
 	}
-	return pgx.CollectExactlyOneRow(rows, pgx.RowToAddrOfStructByNameLax[domain.Document])
+	return pgx.CollectExactlyOneRow(rows, pgx.RowToAddrOfStructByNameLax[document.Document])
 }
 
 // =====================================================================================================================
 
-func (s *DocumentRepository) CreateDocument(ctx context.Context, doc domain.Document) (*domain.Document, error) {
+func (s *DocumentRepository) CreateDocument(ctx context.Context, doc document.Document) (*document.Document, error) {
 	query, args := Documents.INSERT(
 		Documents.ID,
 		Documents.Annotations,
@@ -106,12 +106,12 @@ func (s *DocumentRepository) CreateDocument(ctx context.Context, doc domain.Docu
 	if err != nil {
 		return nil, err
 	}
-	return pgx.CollectExactlyOneRow(rows, pgx.RowToAddrOfStructByNameLax[domain.Document])
+	return pgx.CollectExactlyOneRow(rows, pgx.RowToAddrOfStructByNameLax[document.Document])
 }
 
 // =====================================================================================================================
 
-func (s *DocumentRepository) UpdateDocument(ctx context.Context, doc domain.Document) (*domain.Document, error) {
+func (s *DocumentRepository) UpdateDocument(ctx context.Context, doc document.Document) (*document.Document, error) {
 	query, args := Documents.UPDATE(
 		Documents.FileUploadCompleted,
 		Documents.FileSizeBytes,
@@ -128,5 +128,5 @@ func (s *DocumentRepository) UpdateDocument(ctx context.Context, doc domain.Docu
 	if err != nil {
 		return nil, err
 	}
-	return pgx.CollectExactlyOneRow(rows, pgx.RowToAddrOfStructByNameLax[domain.Document])
+	return pgx.CollectExactlyOneRow(rows, pgx.RowToAddrOfStructByNameLax[document.Document])
 }

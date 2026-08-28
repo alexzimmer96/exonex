@@ -94,6 +94,104 @@
       "services": []
     },
     {
+      "name": "exonex/api/v1/meta.proto",
+      "description": "",
+      "package": "exonex.api.v1",
+      "hasEnums": false,
+      "hasExtensions": false,
+      "hasMessages": true,
+      "hasServices": false,
+      "enums": [],
+      "extensions": [],
+      "messages": [
+        {
+          "name": "ResourceMeta",
+          "longName": "ResourceMeta",
+          "fullName": "exonex.api.v1.ResourceMeta",
+          "description": "",
+          "hasExtensions": false,
+          "hasFields": true,
+          "hasOneofs": true,
+          "extensions": [],
+          "fields": [
+            {
+              "name": "annotations",
+              "description": "Annotations are small chunks of information that are added to a Resource and can be queried.\nThey are stored as a flat JSON object.",
+              "label": "",
+              "type": "Struct",
+              "longType": "google.protobuf.Struct",
+              "fullType": "google.protobuf.Struct",
+              "ismap": false,
+              "isoneof": false,
+              "oneofdecl": "",
+              "defaultValue": ""
+            },
+            {
+              "name": "finalizers",
+              "description": "Finalizers are indicators that certain background actions for a Resource must be performed before the\nResource resource can be finally deleted from the Database.",
+              "label": "repeated",
+              "type": "string",
+              "longType": "string",
+              "fullType": "string",
+              "ismap": false,
+              "isoneof": false,
+              "oneofdecl": "",
+              "defaultValue": ""
+            },
+            {
+              "name": "version",
+              "description": "An increasing counter that is used for optimistic concurrency locking.",
+              "label": "",
+              "type": "int64",
+              "longType": "int64",
+              "fullType": "int64",
+              "ismap": false,
+              "isoneof": false,
+              "oneofdecl": "",
+              "defaultValue": ""
+            },
+            {
+              "name": "created_at",
+              "description": "The time this Resource has been created.",
+              "label": "",
+              "type": "Timestamp",
+              "longType": "google.protobuf.Timestamp",
+              "fullType": "google.protobuf.Timestamp",
+              "ismap": false,
+              "isoneof": false,
+              "oneofdecl": "",
+              "defaultValue": ""
+            },
+            {
+              "name": "updated_at",
+              "description": "The time this Resource has been updated the last time.",
+              "label": "",
+              "type": "Timestamp",
+              "longType": "google.protobuf.Timestamp",
+              "fullType": "google.protobuf.Timestamp",
+              "ismap": false,
+              "isoneof": false,
+              "oneofdecl": "",
+              "defaultValue": ""
+            },
+            {
+              "name": "deleted_at",
+              "description": "The time this Resource has been marked for deletion.",
+              "label": "optional",
+              "type": "Timestamp",
+              "longType": "google.protobuf.Timestamp",
+              "fullType": "google.protobuf.Timestamp",
+              "ismap": false,
+              "isoneof": true,
+              "oneofdecl": "_deleted_at",
+              "defaultValue": ""
+            }
+          ]
+        }
+      ],
+      "services": []
+    },
+    {
       "name": "exonex/cortex/v1alpha1/analysis.proto",
       "description": "",
       "package": "exonex.cortex.v1alpha1",
@@ -1422,37 +1520,25 @@
           "description": "",
           "hasExtensions": false,
           "hasFields": true,
-          "hasOneofs": true,
+          "hasOneofs": false,
           "extensions": [],
           "fields": [
+            {
+              "name": "meta",
+              "description": "General metadata about the Resource.",
+              "label": "",
+              "type": "ResourceMeta",
+              "longType": "exonex.api.v1.ResourceMeta",
+              "fullType": "exonex.api.v1.ResourceMeta",
+              "ismap": false,
+              "isoneof": false,
+              "oneofdecl": "",
+              "defaultValue": ""
+            },
             {
               "name": "id",
               "description": "The UUID that is used to uniquely identify a Document.",
               "label": "",
-              "type": "string",
-              "longType": "string",
-              "fullType": "string",
-              "ismap": false,
-              "isoneof": false,
-              "oneofdecl": "",
-              "defaultValue": ""
-            },
-            {
-              "name": "annotations",
-              "description": "Annotations are small chunks of information that are added to a Document and can be queried.\nThey are stored as JSON object that is",
-              "label": "",
-              "type": "Struct",
-              "longType": "google.protobuf.Struct",
-              "fullType": "google.protobuf.Struct",
-              "ismap": false,
-              "isoneof": false,
-              "oneofdecl": "",
-              "defaultValue": ""
-            },
-            {
-              "name": "finalizers",
-              "description": "Finalizers are indicators that certain background actions for a Document must be performed before the\nDocument resource can be deleted from the Database.\nFor example, removing the uploaded file from the storage volume.",
-              "label": "repeated",
               "type": "string",
               "longType": "string",
               "fullType": "string",
@@ -1531,54 +1617,6 @@
               "ismap": false,
               "isoneof": false,
               "oneofdecl": "",
-              "defaultValue": ""
-            },
-            {
-              "name": "version",
-              "description": "An increasing counter that is used for optimistic concurrency locking.",
-              "label": "",
-              "type": "int64",
-              "longType": "int64",
-              "fullType": "int64",
-              "ismap": false,
-              "isoneof": false,
-              "oneofdecl": "",
-              "defaultValue": ""
-            },
-            {
-              "name": "created_at",
-              "description": "The time this document has been created.",
-              "label": "",
-              "type": "Timestamp",
-              "longType": "google.protobuf.Timestamp",
-              "fullType": "google.protobuf.Timestamp",
-              "ismap": false,
-              "isoneof": false,
-              "oneofdecl": "",
-              "defaultValue": ""
-            },
-            {
-              "name": "updated_at",
-              "description": "The time this document has been updated the last time.",
-              "label": "",
-              "type": "Timestamp",
-              "longType": "google.protobuf.Timestamp",
-              "fullType": "google.protobuf.Timestamp",
-              "ismap": false,
-              "isoneof": false,
-              "oneofdecl": "",
-              "defaultValue": ""
-            },
-            {
-              "name": "deleted_at",
-              "description": "The time this object has been marked for deletion.\nDocuments follow a soft-deletion process, where all",
-              "label": "optional",
-              "type": "Timestamp",
-              "longType": "google.protobuf.Timestamp",
-              "fullType": "google.protobuf.Timestamp",
-              "ismap": false,
-              "isoneof": true,
-              "oneofdecl": "_deleted_at",
               "defaultValue": ""
             }
           ]
@@ -1879,7 +1917,10 @@
               "responseType": "GetDocumentResponse",
               "responseLongType": "GetDocumentResponse",
               "responseFullType": "exonex.cortex.v1alpha1.GetDocumentResponse",
-              "responseStreaming": false
+              "responseStreaming": false,
+              "options": {
+                "idempotency_level": "NO_SIDE_EFFECTS"
+              }
             },
             {
               "name": "CreateDocument",
@@ -1920,6 +1961,178 @@
           ]
         }
       ]
+    },
+    {
+      "name": "exonex/cortex/v1alpha1/feed.proto",
+      "description": "",
+      "package": "exonex.cortex.v1alpha1",
+      "hasEnums": false,
+      "hasExtensions": false,
+      "hasMessages": true,
+      "hasServices": false,
+      "enums": [],
+      "extensions": [],
+      "messages": [
+        {
+          "name": "Feed",
+          "longName": "Feed",
+          "fullName": "exonex.cortex.v1alpha1.Feed",
+          "description": "A Feed is a Datasource under which a Publisher publishes information in a machine-readable format.",
+          "hasExtensions": false,
+          "hasFields": true,
+          "hasOneofs": false,
+          "extensions": [],
+          "fields": [
+            {
+              "name": "meta",
+              "description": "General metadata about the Resource.",
+              "label": "",
+              "type": "ResourceMeta",
+              "longType": "exonex.api.v1.ResourceMeta",
+              "fullType": "exonex.api.v1.ResourceMeta",
+              "ismap": false,
+              "isoneof": false,
+              "oneofdecl": "",
+              "defaultValue": ""
+            },
+            {
+              "name": "id",
+              "description": "The UUID that is used to uniquely identify the Feed.",
+              "label": "",
+              "type": "string",
+              "longType": "string",
+              "fullType": "string",
+              "ismap": false,
+              "isoneof": false,
+              "oneofdecl": "",
+              "defaultValue": ""
+            },
+            {
+              "name": "kind",
+              "description": "The kind of this Feed.\nCan be something like RSS, Atom, OParl or something other.",
+              "label": "",
+              "type": "string",
+              "longType": "string",
+              "fullType": "string",
+              "ismap": false,
+              "isoneof": false,
+              "oneofdecl": "",
+              "defaultValue": ""
+            },
+            {
+              "name": "url",
+              "description": "URL under which the Feed can be accessed.",
+              "label": "",
+              "type": "string",
+              "longType": "string",
+              "fullType": "string",
+              "ismap": false,
+              "isoneof": false,
+              "oneofdecl": "",
+              "defaultValue": ""
+            },
+            {
+              "name": "crawl_interval",
+              "description": "The interval between two crawls of the Feed.",
+              "label": "",
+              "type": "Duration",
+              "longType": "google.protobuf.Duration",
+              "fullType": "google.protobuf.Duration",
+              "ismap": false,
+              "isoneof": false,
+              "oneofdecl": "",
+              "defaultValue": ""
+            }
+          ]
+        }
+      ],
+      "services": []
+    },
+    {
+      "name": "exonex/cortex/v1alpha1/publisher.proto",
+      "description": "",
+      "package": "exonex.cortex.v1alpha1",
+      "hasEnums": false,
+      "hasExtensions": false,
+      "hasMessages": true,
+      "hasServices": false,
+      "enums": [],
+      "extensions": [],
+      "messages": [
+        {
+          "name": "Publisher",
+          "longName": "Publisher",
+          "fullName": "exonex.cortex.v1alpha1.Publisher",
+          "description": "",
+          "hasExtensions": false,
+          "hasFields": true,
+          "hasOneofs": false,
+          "extensions": [],
+          "fields": [
+            {
+              "name": "meta",
+              "description": "General metadata about the Resource.",
+              "label": "",
+              "type": "ResourceMeta",
+              "longType": "exonex.api.v1.ResourceMeta",
+              "fullType": "exonex.api.v1.ResourceMeta",
+              "ismap": false,
+              "isoneof": false,
+              "oneofdecl": "",
+              "defaultValue": ""
+            },
+            {
+              "name": "id",
+              "description": "The UUID that is used to uniquely identify the Publisher.",
+              "label": "",
+              "type": "string",
+              "longType": "string",
+              "fullType": "string",
+              "ismap": false,
+              "isoneof": false,
+              "oneofdecl": "",
+              "defaultValue": ""
+            },
+            {
+              "name": "canonical_name",
+              "description": "The canonical name of the Publisher.",
+              "label": "",
+              "type": "string",
+              "longType": "string",
+              "fullType": "string",
+              "ismap": false,
+              "isoneof": false,
+              "oneofdecl": "",
+              "defaultValue": ""
+            },
+            {
+              "name": "name_aliases",
+              "description": "Alias names under which the Publisher is also known.",
+              "label": "repeated",
+              "type": "string",
+              "longType": "string",
+              "fullType": "string",
+              "ismap": false,
+              "isoneof": false,
+              "oneofdecl": "",
+              "defaultValue": ""
+            },
+            {
+              "name": "annotations",
+              "description": "Annotations are small chunks of information that are added to a Document and can be queried.\nThey are stored as JSON object that is",
+              "label": "",
+              "type": "Struct",
+              "longType": "google.protobuf.Struct",
+              "fullType": "google.protobuf.Struct",
+              "ismap": false,
+              "isoneof": false,
+              "oneofdecl": "",
+              "defaultValue": ""
+            }
+          ]
+        }
+      ],
+      "services": []
     }
   ],
   "scalarValueTypes": [

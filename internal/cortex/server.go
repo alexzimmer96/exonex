@@ -12,8 +12,9 @@ import (
 
 	"connectrpc.com/connect"
 	"connectrpc.com/grpcreflect"
-	"github.com/alexzimmer96/exonex/internal/auth"
-	"github.com/alexzimmer96/exonex/internal/cortex/domain"
+	"connectrpc.com/validate"
+	"github.com/alexzimmer96/exonex/internal/cortex/auth"
+	"github.com/alexzimmer96/exonex/internal/cortex/domain/document"
 	"github.com/alexzimmer96/exonex/internal/cortex/handler"
 	"github.com/alexzimmer96/exonex/internal/cortex/repository"
 	"github.com/alexzimmer96/exonex/pkg"
@@ -27,6 +28,7 @@ import (
 type Server struct {
 	addr string
 	mux  *http.ServeMux
+	pool *pgxpool.Pool
 }
 
 type repositories struct {
@@ -34,7 +36,7 @@ type repositories struct {
 }
 
 type services struct {
-	documentSvc *domain.DocumentService
+	documentSvc *document.Service
 }
 
 func NewServer(config Config) *Server {
@@ -43,7 +45,6 @@ func NewServer(config Config) *Server {
 		slog.Error("failed to connect to database", slog.String("error", err.Error()))
 		os.Exit(1)
 	}
-	defer pool.Close()
 
 	volumeManager, err := config.GetVolumeManager()
 	if err != nil {
@@ -83,6 +84,7 @@ func NewServer(config Config) *Server {
 	return &Server{
 		addr: config.ServerAddr,
 		mux:  mux,
+		pool: pool,
 	}
 }
 
@@ -91,6 +93,7 @@ func getInterceptors() connect.Option {
 		auth.CreateAuthContextInterceptor(),
 		auth.CreateMethodPermissionInterceptor(),
 		grpc.CreateFieldTypeValidationInterceptor(),
+		validate.NewInterceptor(),
 	)
 }
 
@@ -102,11 +105,13 @@ func initRepositories(pool *pgxpool.Pool, filterBuilder *sql.FilterBuilder) repo
 
 func initServices(repos repositories, volumeManager *storage.VolumeManager) services {
 	return services{
-		documentSvc: domain.NewDocumentService(repos.documentRepo, volumeManager),
+		documentSvc: document.NewService(repos.documentRepo, volumeManager),
 	}
 }
 
 func (srv *Server) ListenAndServe() {
+	defer srv.pool.Close()
+
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
 

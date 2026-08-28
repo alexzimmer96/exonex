@@ -1,0 +1,21 @@
+---
+id: "cortex.exonex.io/source/file-url"
+description: > 
+  The URL where the File of the Document has been downloaded.
+type: string
+resources:
+  - "cortex.exonex.io/Document"
+---
+id: "cortex.exonex.io/source/modified"
+description: >
+  Time the Resource has been modified.
+type: string
+resources:
+  - "cortex.exonex.io/Document"
+---
+id: "cortex.exonex.io/politics/reference"
+description: >
+  The URL where the File of the Document has been downloaded.
+type: string
+resources:
+  - "cortex.exonex.io/Document"

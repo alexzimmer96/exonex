@@ -5,7 +5,7 @@ import (
 	"slices"
 
 	"connectrpc.com/connect"
-	"github.com/alexzimmer96/exonex/internal/auth"
+	"github.com/alexzimmer96/exonex/internal/cortex/auth"
 	"github.com/alexzimmer96/exonex/pkg"
 	v1alpha1 "github.com/alexzimmer96/exonex/pkg/api/exonex/cortex/v1alpha1"
 )

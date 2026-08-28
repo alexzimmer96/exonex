@@ -238,12 +238,12 @@ var File_exonex_cortex_v1alpha1_artifact_proto protoreflect.FileDescriptor
 
 const file_exonex_cortex_v1alpha1_artifact_proto_rawDesc = "" +
 	"\n" +
-	"%exonex/cortex/v1alpha1/artifact.proto\x12\x16exonex.cortex.v1alpha1\x1a\x1cgoogle/protobuf/struct.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1egoogle/protobuf/duration.proto\x1a google/protobuf/field_mask.proto\x1a\x19google/api/resource.proto\x1a\x1fgoogle/api/field_behavior.proto\"\xfc\x03\n" +
+	"%exonex/cortex/v1alpha1/artifact.proto\x12\x16exonex.cortex.v1alpha1\x1a\x1cgoogle/protobuf/struct.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1egoogle/protobuf/duration.proto\x1a google/protobuf/field_mask.proto\x1a\x19google/api/resource.proto\x1a\x1fgoogle/api/field_behavior.proto\"\xfb\x03\n" +
 	"\bArtifact\x12\x13\n" +
 	"\x02id\x18\x01 \x01(\tB\x03\xe0A\bR\x02id\x129\n" +
-	"\vannotations\x18\x02 \x01(\v2\x17.google.protobuf.StructR\vannotations\x12H\n" +
-	"\rartifact_type\x18\x03 \x01(\tB#\xfaA \n" +
-	"\x1ecortex.exonex.io//ArtifactTypeR\fartifactType\x12:\n" +
+	"\vannotations\x18\x02 \x01(\v2\x17.google.protobuf.StructR\vannotations\x12G\n" +
+	"\rartifact_type\x18\x03 \x01(\tB\"\xfaA\x1f\n" +
+	"\x1dcortex.exonex.io/ArtifactTypeR\fartifactType\x12:\n" +
 	"\bdocument\x18\x04 \x01(\tB\x1e\xfaA\x1b\n" +
 	"\x19cortex.exonex.io/DocumentR\bdocument\x121\n" +
 	"\apayload\x18\x05 \x01(\v2\x17.google.protobuf.StructR\apayload\x129\n" +

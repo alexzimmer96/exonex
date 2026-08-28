@@ -1,0 +1,33 @@
+syntax = "proto3";
+package exonex.cortex.v1alpha1;
+
+import "exonex/api/v1/meta.proto";
+import "google/protobuf/struct.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/field_mask.proto";
+import "google/api/resource.proto";
+import "google/api/field_behavior.proto";
+
+// A Feed is a Datasource under which a Publisher publishes information in a machine-readable format.
+message Feed {
+  option (google.api.resource) = {
+    type: "cortex.exonex.io/Feed"
+    pattern: "publishers/{publisher}/feeds/{feed}"
+    singular: "feed"
+    plural: "feeds"
+  };
+  // General metadata about the Resource.
+  exonex.api.v1.ResourceMeta meta = 1;
+  // The UUID that is used to uniquely identify the Feed.
+  string id = 2 [
+    (google.api.field_behavior) = IDENTIFIER
+  ];
+  // The kind of this Feed.
+  // Can be something like RSS, Atom, OParl or something other.
+  string kind = 3;
+  // URL under which the Feed can be accessed.
+  string url = 4;
+  // The interval between two crawls of the Feed.
+  google.protobuf.Duration crawl_interval = 5;
+}

@@ -131,7 +131,11 @@ func parseInOperator(args []*exprpb.Expr, mapping FieldMap) (jet.BoolExpression,
 }
 
 func createSQLInList(left *exprpb.Expr, listExpr *exprpb.Expr_CreateList, mapping FieldMap) (jet.BoolExpression, error) {
-	ident := left.GetIdentExpr().Name
+	ident, ok := extractPath(left)
+	if !ok {
+		return nil, fmt.Errorf("invalid left-hand expression for IN operator")
+	}
+
 	col, ok := mapping[ident]
 	if !ok {
 		return nil, fmt.Errorf("unknown field: %s", ident)
@@ -193,7 +197,10 @@ func createNativeArrayContains(left *exprpb.Expr, arrayCol jet.Column) (jet.Bool
 }
 
 func createJSONContains(selectExpr *exprpb.Expr_Select, valueExpr *exprpb.Expr, mapping FieldMap) (jet.BoolExpression, error) {
-	baseField := selectExpr.Operand.GetIdentExpr().Name
+	baseField, ok := extractPath(selectExpr.Operand)
+	if !ok {
+		return nil, fmt.Errorf("invalid base field for json array contains")
+	}
 	jsonKey := selectExpr.Field
 
 	baseCol, ok := mapping[baseField]
@@ -229,14 +236,40 @@ func createComparison(op string, args []*exprpb.Expr, mapping FieldMap) (jet.Boo
 	leftExpr := args[0]
 	rightExpr := args[1]
 
-	if selectExpr := leftExpr.GetSelectExpr(); selectExpr != nil {
-		baseField := selectExpr.Operand.GetIdentExpr().Name
-		jsonKey := selectExpr.Field
-		baseCol, ok := mapping[baseField]
-		if !ok {
-			return nil, fmt.Errorf("unknown base field: %s", baseField)
+	fullPath, ok := extractPath(leftExpr)
+	if !ok {
+		return nil, fmt.Errorf("invalid left-hand expression in comparison")
+	}
+
+	if col, exists := mapping[fullPath]; exists {
+		valExpr := rightExpr.GetConstExpr()
+		if valExpr == nil {
+			return nil, fmt.Errorf("right-hand side of comparison for %s must be a constant", fullPath)
 		}
-		return createJSONComparison(op, baseCol, jsonKey, rightExpr)
+
+		switch c := col.(type) {
+		case ColumnUUID:
+			return mapUUIDOperations(fullPath, valExpr, c, op)
+		case jet.ColumnString:
+			return mapStringOperations(fullPath, valExpr, c, op)
+		case jet.ColumnInteger:
+			return mapIntOperations(fullPath, valExpr, c, op)
+		case jet.ColumnBool:
+			return mapBoolOperations(fullPath, valExpr, c, op)
+		case jet.ColumnTimestampz:
+			return mapTimestampOperations(fullPath, valExpr, c, op)
+		}
+		return nil, fmt.Errorf("unsupported column type %T for field %s", col, fullPath)
+	}
+
+	if selectExpr := leftExpr.GetSelectExpr(); selectExpr != nil {
+		baseField, baseOk := extractPath(selectExpr.Operand)
+		if baseOk {
+			if baseCol, exists := mapping[baseField]; exists {
+				jsonKey := selectExpr.Field
+				return createJSONComparison(op, baseCol, jsonKey, rightExpr)
+			}
+		}
 	}
 
 	ident := args[0].GetIdentExpr().Name
@@ -411,4 +444,18 @@ func extractTime(valExpr *exprpb.Constant, ident string) (time.Time, error) {
 		return time.Unix(intVal.Int64Value, 0).UTC(), nil
 	}
 	return time.Time{}, fmt.Errorf("expected RFC3339 string for timestamp comparison on field %s", ident)
+}
+
+func extractPath(e *exprpb.Expr) (string, bool) {
+	if ident := e.GetIdentExpr(); ident != nil {
+		return ident.Name, true
+	}
+	if sel := e.GetSelectExpr(); sel != nil {
+		base, ok := extractPath(sel.Operand)
+		if !ok {
+			return "", false
+		}
+		return base + "." + sel.Field, true
+	}
+	return "", false
 }

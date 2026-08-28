@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"log/slog"
 
-	"github.com/alexzimmer96/exonex/pkg"
 	apiv1 "github.com/alexzimmer96/exonex/pkg/api/exonex/api/v1"
+	"github.com/alexzimmer96/exonex/pkg/schema"
 	"github.com/santhosh-tekuri/jsonschema/v5"
 	"google.golang.org/genproto/googleapis/rpc/errdetails"
 	"google.golang.org/protobuf/encoding/protojson"
@@ -15,7 +15,7 @@ import (
 )
 
 var (
-	annotationsSchema = jsonschema.MustCompileString("annotations.json", pkg.AnnotationsSchema)
+	annotationsSchema = jsonschema.MustCompileString("annotations.json", schema.AnnotationsSchema)
 )
 
 func validateFieldTypes(ctx context.Context, msg proto.Message) *errdetails.BadRequest {

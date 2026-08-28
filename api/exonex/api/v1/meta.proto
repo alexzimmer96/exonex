@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+package exonex.api.v1;
+
+import "google/protobuf/struct.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/duration.proto";
+import "google/api/resource.proto";
+import "google/api/field_behavior.proto";
+
+message ResourceMeta {
+  // Annotations are small chunks of information that are added to a Resource and can be queried.
+  // They are stored as a flat JSON object.
+  google.protobuf.Struct annotations = 1 [
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ];
+  // Finalizers are indicators that certain background actions for a Resource must be performed before the
+  // Resource resource can be finally deleted from the Database.
+  repeated string finalizers = 2 [
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ];
+  // An increasing counter that is used for optimistic concurrency locking.
+  int64 version = 3 [
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ];
+  // The time this Resource has been created.
+  google.protobuf.Timestamp created_at = 4 [
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ];
+  // The time this Resource has been updated the last time.
+  google.protobuf.Timestamp updated_at = 5 [
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ];
+  // The time this Resource has been marked for deletion.
+  optional google.protobuf.Timestamp deleted_at = 6 [
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ];
+}

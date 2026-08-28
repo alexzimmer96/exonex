@@ -7,7 +7,7 @@
 package cortexv1alpha1
 
 import (
-	_ "github.com/alexzimmer96/exonex/pkg/api/exonex/api/v1"
+	v1 "github.com/alexzimmer96/exonex/pkg/api/exonex/api/v1"
 	_ "google.golang.org/genproto/googleapis/api/annotations"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
@@ -29,15 +29,10 @@ const (
 
 type Document struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
+	// General metadata about the Resource.
+	Meta *v1.ResourceMeta `protobuf:"bytes,1,opt,name=meta,proto3" json:"meta,omitempty"`
 	// The UUID that is used to uniquely identify a Document.
-	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	// Annotations are small chunks of information that are added to a Document and can be queried.
-	// They are stored as JSON object that is
-	Annotations *structpb.Struct `protobuf:"bytes,2,opt,name=annotations,proto3" json:"annotations,omitempty"`
-	// Finalizers are indicators that certain background actions for a Document must be performed before the
-	// Document resource can be deleted from the Database.
-	// For example, removing the uploaded file from the storage volume.
-	Finalizers []string `protobuf:"bytes,3,rep,name=finalizers,proto3" json:"finalizers,omitempty"`
+	Id string `protobuf:"bytes,2,opt,name=id,proto3" json:"id,omitempty"`
 	// Reference to the cortex.exonex.io/Publisher that published the file.
 	// This field is immutable once set and can be used to evaluate policies, e.g. regarding procession.
 	Publisher string `protobuf:"bytes,4,opt,name=publisher,proto3" json:"publisher,omitempty"`
@@ -53,17 +48,8 @@ type Document struct {
 	FileStorageVolume string `protobuf:"bytes,8,opt,name=file_storage_volume,json=fileStorageVolume,proto3" json:"file_storage_volume,omitempty"`
 	// Key or path on the storage volume where the file of this document is stored.
 	FileStorageKey string `protobuf:"bytes,9,opt,name=file_storage_key,json=fileStorageKey,proto3" json:"file_storage_key,omitempty"`
-	// An increasing counter that is used for optimistic concurrency locking.
-	Version int64 `protobuf:"varint,10,opt,name=version,proto3" json:"version,omitempty"`
-	// The time this document has been created.
-	CreatedAt *timestamppb.Timestamp `protobuf:"bytes,11,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	// The time this document has been updated the last time.
-	UpdatedAt *timestamppb.Timestamp `protobuf:"bytes,12,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
-	// The time this object has been marked for deletion.
-	// Documents follow a soft-deletion process, where all
-	DeletedAt     *timestamppb.Timestamp `protobuf:"bytes,13,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
 }
 
 func (x *Document) Reset() {
@@ -96,25 +82,18 @@ func (*Document) Descriptor() ([]byte, []int) {
 	return file_exonex_cortex_v1alpha1_document_proto_rawDescGZIP(), []int{0}
 }
 
+func (x *Document) GetMeta() *v1.ResourceMeta {
+	if x != nil {
+		return x.Meta
+	}
+	return nil
+}
+
 func (x *Document) GetId() string {
 	if x != nil {
 		return x.Id
 	}
 	return ""
-}
-
-func (x *Document) GetAnnotations() *structpb.Struct {
-	if x != nil {
-		return x.Annotations
-	}
-	return nil
-}
-
-func (x *Document) GetFinalizers() []string {
-	if x != nil {
-		return x.Finalizers
-	}
-	return nil
 }
 
 func (x *Document) GetPublisher() string {
@@ -157,34 +136,6 @@ func (x *Document) GetFileStorageKey() string {
 		return x.FileStorageKey
 	}
 	return ""
-}
-
-func (x *Document) GetVersion() int64 {
-	if x != nil {
-		return x.Version
-	}
-	return 0
-}
-
-func (x *Document) GetCreatedAt() *timestamppb.Timestamp {
-	if x != nil {
-		return x.CreatedAt
-	}
-	return nil
-}
-
-func (x *Document) GetUpdatedAt() *timestamppb.Timestamp {
-	if x != nil {
-		return x.UpdatedAt
-	}
-	return nil
-}
-
-func (x *Document) GetDeletedAt() *timestamppb.Timestamp {
-	if x != nil {
-		return x.DeletedAt
-	}
-	return nil
 }
 
 type ListDocumentsRequest struct {
@@ -887,29 +838,18 @@ var File_exonex_cortex_v1alpha1_document_proto protoreflect.FileDescriptor
 
 const file_exonex_cortex_v1alpha1_document_proto_rawDesc = "" +
 	"\n" +
-	"%exonex/cortex/v1alpha1/document.proto\x12\x16exonex.cortex.v1alpha1\x1a\x1fexonex/api/v1/annotations.proto\x1a\x1cgoogle/protobuf/struct.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1egoogle/protobuf/duration.proto\x1a google/protobuf/field_mask.proto\x1a\x19google/api/resource.proto\x1a\x1fgoogle/api/field_behavior.proto\"\xff\x05\n" +
-	"\bDocument\x12\x13\n" +
-	"\x02id\x18\x01 \x01(\tB\x03\xe0A\bR\x02id\x12>\n" +
-	"\vannotations\x18\x02 \x01(\v2\x17.google.protobuf.StructB\x03\xe0A\x03R\vannotations\x12#\n" +
-	"\n" +
-	"finalizers\x18\x03 \x03(\tB\x03\xe0A\x03R\n" +
-	"finalizers\x12I\n" +
-	"\tpublisher\x18\x04 \x01(\tB+\xe0A\x05\xfaA%\n" +
-	"#cortex.exonex.io/v1alpha1/PublisherR\tpublisher\x12^\n" +
+	"%exonex/cortex/v1alpha1/document.proto\x12\x16exonex.cortex.v1alpha1\x1a\x18exonex/api/v1/meta.proto\x1a\x1fexonex/api/v1/annotations.proto\x1a\x1cgoogle/protobuf/struct.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1egoogle/protobuf/duration.proto\x1a google/protobuf/field_mask.proto\x1a\x19google/api/resource.proto\x1a\x1fgoogle/api/field_behavior.proto\"\xb1\x04\n" +
+	"\bDocument\x12/\n" +
+	"\x04meta\x18\x01 \x01(\v2\x1b.exonex.api.v1.ResourceMetaR\x04meta\x12\x13\n" +
+	"\x02id\x18\x02 \x01(\tB\x03\xe0A\bR\x02id\x12@\n" +
+	"\tpublisher\x18\x04 \x01(\tB\"\xe0A\x05\xfaA\x1c\n" +
+	"\x1acortex.exonex.io/PublisherR\tpublisher\x12^\n" +
 	"\x15file_upload_completed\x18\x05 \x01(\bB*\x92\xb5\x18&documents.update/file_upload_completedR\x13fileUploadCompleted\x12)\n" +
 	"\x0efile_mime_type\x18\x06 \x01(\tB\x03\xe0A\x05R\ffileMimeType\x12L\n" +
 	"\x0ffile_size_bytes\x18\a \x01(\x03B$\x92\xb5\x18 documents.update/file_size_bytesR\rfileSizeBytes\x123\n" +
 	"\x13file_storage_volume\x18\b \x01(\tB\x03\xe0A\x03R\x11fileStorageVolume\x12-\n" +
-	"\x10file_storage_key\x18\t \x01(\tB\x03\xe0A\x03R\x0efileStorageKey\x12\x1d\n" +
-	"\aversion\x18\n" +
-	" \x01(\x03B\x03\xe0A\x03R\aversion\x12>\n" +
-	"\n" +
-	"created_at\x18\v \x01(\v2\x1a.google.protobuf.TimestampB\x03\xe0A\x03R\tcreatedAt\x12>\n" +
-	"\n" +
-	"updated_at\x18\f \x01(\v2\x1a.google.protobuf.TimestampB\x03\xe0A\x03R\tupdatedAt\x12C\n" +
-	"\n" +
-	"deleted_at\x18\r \x01(\v2\x1a.google.protobuf.TimestampB\x03\xe0A\x03H\x00R\tdeletedAt\x88\x01\x01B\r\n" +
-	"\v_deleted_at\"\x87\x02\n" +
+	"\x10file_storage_key\x18\t \x01(\tB\x03\xe0A\x03R\x0efileStorageKey:`\xeaA]\n" +
+	"\x19cortex.exonex.io/Document\x12+publishers/{publisher}/documents/{document}*\tdocuments2\bdocument\"\x87\x02\n" +
 	"\x14ListDocumentsRequest\x12 \n" +
 	"\tpage_size\x18\x01 \x01(\x03H\x00R\bpageSize\x88\x01\x01\x12\"\n" +
 	"\n" +
@@ -930,11 +870,11 @@ const file_exonex_cortex_v1alpha1_document_proto_rawDesc = "" +
 	"\x12GetDocumentRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\"S\n" +
 	"\x13GetDocumentResponse\x12<\n" +
-	"\bdocument\x18\x01 \x01(\v2 .exonex.cortex.v1alpha1.DocumentR\bdocument\"\xa4\x02\n" +
+	"\bdocument\x18\x01 \x01(\v2 .exonex.cortex.v1alpha1.DocumentR\bdocument\"\x9b\x02\n" +
 	"\x15CreateDocumentRequest\x12>\n" +
-	"\vannotations\x18\x01 \x01(\v2\x17.google.protobuf.StructH\x00R\vannotations\x88\x01\x01\x12F\n" +
-	"\tpublisher\x18\x02 \x01(\tB(\xfaA%\n" +
-	"#cortex.exonex.io/v1alpha1/PublisherR\tpublisher\x12$\n" +
+	"\vannotations\x18\x01 \x01(\v2\x17.google.protobuf.StructH\x00R\vannotations\x88\x01\x01\x12=\n" +
+	"\tpublisher\x18\x02 \x01(\tB\x1f\xfaA\x1c\n" +
+	"\x1acortex.exonex.io/PublisherR\tpublisher\x12$\n" +
 	"\x0efile_mime_type\x18\x03 \x01(\tR\ffileMimeType\x12%\n" +
 	"\x0efile_extension\x18\x04 \x01(\tR\rfileExtension\x12&\n" +
 	"\x0ffile_size_bytes\x18\x05 \x01(\x03R\rfileSizeBytesB\x0e\n" +
@@ -960,10 +900,10 @@ const file_exonex_cortex_v1alpha1_document_proto_rawDesc = "" +
 	"\x15LeaseDocumentResponse\"'\n" +
 	"\x15DeleteDocumentRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\"\x18\n" +
-	"\x16DeleteDocumentResponse2\xd1\x05\n" +
+	"\x16DeleteDocumentResponse2\xd4\x05\n" +
 	"\x0fDocumentService\x12\x83\x01\n" +
-	"\rListDocuments\x12,.exonex.cortex.v1alpha1.ListDocumentsRequest\x1a-.exonex.cortex.v1alpha1.ListDocumentsResponse\"\x15\x8a\xb5\x18\x0edocuments.read\x90\x02\x01\x12z\n" +
-	"\vGetDocument\x12*.exonex.cortex.v1alpha1.GetDocumentRequest\x1a+.exonex.cortex.v1alpha1.GetDocumentResponse\"\x12\x8a\xb5\x18\x0edocuments.read\x12\x85\x01\n" +
+	"\rListDocuments\x12,.exonex.cortex.v1alpha1.ListDocumentsRequest\x1a-.exonex.cortex.v1alpha1.ListDocumentsResponse\"\x15\x8a\xb5\x18\x0edocuments.read\x90\x02\x01\x12}\n" +
+	"\vGetDocument\x12*.exonex.cortex.v1alpha1.GetDocumentRequest\x1a+.exonex.cortex.v1alpha1.GetDocumentResponse\"\x15\x8a\xb5\x18\x0edocuments.read\x90\x02\x01\x12\x85\x01\n" +
 	"\x0eCreateDocument\x12-.exonex.cortex.v1alpha1.CreateDocumentRequest\x1a..exonex.cortex.v1alpha1.CreateDocumentResponse\"\x14\x8a\xb5\x18\x10documents.create\x12\xab\x01\n" +
 	"\x17CreateDocumentUploadUrl\x126.exonex.cortex.v1alpha1.CreateDocumentUploadUrlRequest\x1a7.exonex.cortex.v1alpha1.CreateDocumentUploadUrlResponse\"\x1f\x8a\xb5\x18\x1bdocuments.upload_url.create\x12\x85\x01\n" +
 	"\x0eUpdateDocument\x12-.exonex.cortex.v1alpha1.UpdateDocumentRequest\x1a..exonex.cortex.v1alpha1.UpdateDocumentResponse\"\x14\x8a\xb5\x18\x10documents.updateB\xf3\x01\n" +
@@ -998,39 +938,37 @@ var file_exonex_cortex_v1alpha1_document_proto_goTypes = []any{
 	(*LeaseDocumentResponse)(nil),           // 12: exonex.cortex.v1alpha1.LeaseDocumentResponse
 	(*DeleteDocumentRequest)(nil),           // 13: exonex.cortex.v1alpha1.DeleteDocumentRequest
 	(*DeleteDocumentResponse)(nil),          // 14: exonex.cortex.v1alpha1.DeleteDocumentResponse
-	(*structpb.Struct)(nil),                 // 15: google.protobuf.Struct
-	(*timestamppb.Timestamp)(nil),           // 16: google.protobuf.Timestamp
-	(*fieldmaskpb.FieldMask)(nil),           // 17: google.protobuf.FieldMask
-	(*durationpb.Duration)(nil),             // 18: google.protobuf.Duration
+	(*v1.ResourceMeta)(nil),                 // 15: exonex.api.v1.ResourceMeta
+	(*structpb.Struct)(nil),                 // 16: google.protobuf.Struct
+	(*timestamppb.Timestamp)(nil),           // 17: google.protobuf.Timestamp
+	(*fieldmaskpb.FieldMask)(nil),           // 18: google.protobuf.FieldMask
+	(*durationpb.Duration)(nil),             // 19: google.protobuf.Duration
 }
 var file_exonex_cortex_v1alpha1_document_proto_depIdxs = []int32{
-	15, // 0: exonex.cortex.v1alpha1.Document.annotations:type_name -> google.protobuf.Struct
-	16, // 1: exonex.cortex.v1alpha1.Document.created_at:type_name -> google.protobuf.Timestamp
-	16, // 2: exonex.cortex.v1alpha1.Document.updated_at:type_name -> google.protobuf.Timestamp
-	16, // 3: exonex.cortex.v1alpha1.Document.deleted_at:type_name -> google.protobuf.Timestamp
-	0,  // 4: exonex.cortex.v1alpha1.ListDocumentsResponse.documents:type_name -> exonex.cortex.v1alpha1.Document
-	0,  // 5: exonex.cortex.v1alpha1.GetDocumentResponse.document:type_name -> exonex.cortex.v1alpha1.Document
-	15, // 6: exonex.cortex.v1alpha1.CreateDocumentRequest.annotations:type_name -> google.protobuf.Struct
-	0,  // 7: exonex.cortex.v1alpha1.CreateDocumentResponse.document:type_name -> exonex.cortex.v1alpha1.Document
-	16, // 8: exonex.cortex.v1alpha1.CreateDocumentUploadUrlResponse.expires_at:type_name -> google.protobuf.Timestamp
-	17, // 9: exonex.cortex.v1alpha1.UpdateDocumentRequest.update_mask:type_name -> google.protobuf.FieldMask
-	0,  // 10: exonex.cortex.v1alpha1.UpdateDocumentResponse.document:type_name -> exonex.cortex.v1alpha1.Document
-	18, // 11: exonex.cortex.v1alpha1.LeaseDocumentRequest.lease_duration:type_name -> google.protobuf.Duration
-	1,  // 12: exonex.cortex.v1alpha1.DocumentService.ListDocuments:input_type -> exonex.cortex.v1alpha1.ListDocumentsRequest
-	3,  // 13: exonex.cortex.v1alpha1.DocumentService.GetDocument:input_type -> exonex.cortex.v1alpha1.GetDocumentRequest
-	5,  // 14: exonex.cortex.v1alpha1.DocumentService.CreateDocument:input_type -> exonex.cortex.v1alpha1.CreateDocumentRequest
-	7,  // 15: exonex.cortex.v1alpha1.DocumentService.CreateDocumentUploadUrl:input_type -> exonex.cortex.v1alpha1.CreateDocumentUploadUrlRequest
-	9,  // 16: exonex.cortex.v1alpha1.DocumentService.UpdateDocument:input_type -> exonex.cortex.v1alpha1.UpdateDocumentRequest
-	2,  // 17: exonex.cortex.v1alpha1.DocumentService.ListDocuments:output_type -> exonex.cortex.v1alpha1.ListDocumentsResponse
-	4,  // 18: exonex.cortex.v1alpha1.DocumentService.GetDocument:output_type -> exonex.cortex.v1alpha1.GetDocumentResponse
-	6,  // 19: exonex.cortex.v1alpha1.DocumentService.CreateDocument:output_type -> exonex.cortex.v1alpha1.CreateDocumentResponse
-	8,  // 20: exonex.cortex.v1alpha1.DocumentService.CreateDocumentUploadUrl:output_type -> exonex.cortex.v1alpha1.CreateDocumentUploadUrlResponse
-	10, // 21: exonex.cortex.v1alpha1.DocumentService.UpdateDocument:output_type -> exonex.cortex.v1alpha1.UpdateDocumentResponse
-	17, // [17:22] is the sub-list for method output_type
-	12, // [12:17] is the sub-list for method input_type
-	12, // [12:12] is the sub-list for extension type_name
-	12, // [12:12] is the sub-list for extension extendee
-	0,  // [0:12] is the sub-list for field type_name
+	15, // 0: exonex.cortex.v1alpha1.Document.meta:type_name -> exonex.api.v1.ResourceMeta
+	0,  // 1: exonex.cortex.v1alpha1.ListDocumentsResponse.documents:type_name -> exonex.cortex.v1alpha1.Document
+	0,  // 2: exonex.cortex.v1alpha1.GetDocumentResponse.document:type_name -> exonex.cortex.v1alpha1.Document
+	16, // 3: exonex.cortex.v1alpha1.CreateDocumentRequest.annotations:type_name -> google.protobuf.Struct
+	0,  // 4: exonex.cortex.v1alpha1.CreateDocumentResponse.document:type_name -> exonex.cortex.v1alpha1.Document
+	17, // 5: exonex.cortex.v1alpha1.CreateDocumentUploadUrlResponse.expires_at:type_name -> google.protobuf.Timestamp
+	18, // 6: exonex.cortex.v1alpha1.UpdateDocumentRequest.update_mask:type_name -> google.protobuf.FieldMask
+	0,  // 7: exonex.cortex.v1alpha1.UpdateDocumentResponse.document:type_name -> exonex.cortex.v1alpha1.Document
+	19, // 8: exonex.cortex.v1alpha1.LeaseDocumentRequest.lease_duration:type_name -> google.protobuf.Duration
+	1,  // 9: exonex.cortex.v1alpha1.DocumentService.ListDocuments:input_type -> exonex.cortex.v1alpha1.ListDocumentsRequest
+	3,  // 10: exonex.cortex.v1alpha1.DocumentService.GetDocument:input_type -> exonex.cortex.v1alpha1.GetDocumentRequest
+	5,  // 11: exonex.cortex.v1alpha1.DocumentService.CreateDocument:input_type -> exonex.cortex.v1alpha1.CreateDocumentRequest
+	7,  // 12: exonex.cortex.v1alpha1.DocumentService.CreateDocumentUploadUrl:input_type -> exonex.cortex.v1alpha1.CreateDocumentUploadUrlRequest
+	9,  // 13: exonex.cortex.v1alpha1.DocumentService.UpdateDocument:input_type -> exonex.cortex.v1alpha1.UpdateDocumentRequest
+	2,  // 14: exonex.cortex.v1alpha1.DocumentService.ListDocuments:output_type -> exonex.cortex.v1alpha1.ListDocumentsResponse
+	4,  // 15: exonex.cortex.v1alpha1.DocumentService.GetDocument:output_type -> exonex.cortex.v1alpha1.GetDocumentResponse
+	6,  // 16: exonex.cortex.v1alpha1.DocumentService.CreateDocument:output_type -> exonex.cortex.v1alpha1.CreateDocumentResponse
+	8,  // 17: exonex.cortex.v1alpha1.DocumentService.CreateDocumentUploadUrl:output_type -> exonex.cortex.v1alpha1.CreateDocumentUploadUrlResponse
+	10, // 18: exonex.cortex.v1alpha1.DocumentService.UpdateDocument:output_type -> exonex.cortex.v1alpha1.UpdateDocumentResponse
+	14, // [14:19] is the sub-list for method output_type
+	9,  // [9:14] is the sub-list for method input_type
+	9,  // [9:9] is the sub-list for extension type_name
+	9,  // [9:9] is the sub-list for extension extendee
+	0,  // [0:9] is the sub-list for field type_name
 }
 
 func init() { file_exonex_cortex_v1alpha1_document_proto_init() }
@@ -1038,7 +976,6 @@ func file_exonex_cortex_v1alpha1_document_proto_init() {
 	if File_exonex_cortex_v1alpha1_document_proto != nil {
 		return
 	}
-	file_exonex_cortex_v1alpha1_document_proto_msgTypes[0].OneofWrappers = []any{}
 	file_exonex_cortex_v1alpha1_document_proto_msgTypes[1].OneofWrappers = []any{}
 	file_exonex_cortex_v1alpha1_document_proto_msgTypes[2].OneofWrappers = []any{}
 	file_exonex_cortex_v1alpha1_document_proto_msgTypes[5].OneofWrappers = []any{}
