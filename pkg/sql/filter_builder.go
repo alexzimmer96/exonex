@@ -1,3 +1,15 @@
+// Package sql provides helpers for translating user supplied query strings into
+// SQL expressions understood by the go-jet query builder.
+//
+// FilterBuilder converts a CEL (Common Expression Language) filter string into a
+// jet.BoolExpression that can be plugged into a WHERE clause. The overall flow is:
+//
+//	filter string --(CEL parser)--> AST --(walkAST/parseCall)--> jet.BoolExpression
+//
+// A FieldMap tells the builder which CEL identifiers are allowed and which SQL
+// column each identifier maps to. Identifiers that are not present in the map are
+// rejected, which keeps the generated SQL restricted to an explicit allow-list of
+// columns.
 package sql
 
 import (
@@ -10,11 +22,31 @@ import (
 	exprpb "google.golang.org/genproto/googleapis/api/expr/v1alpha1"
 )
 
+// CEL represents binary/relational operators as synthetic function names in the
+// parsed AST (e.g. "a == b" becomes a call to "_==_"). These constants name those
+// functions so the switch statements below read intentionally instead of relying on
+// scattered magic strings.
+const (
+	celFuncAnd = "_&&_"
+	celFuncOr  = "_||_"
+	celFuncIn  = "@in"
+
+	celFuncEq  = "_==_"
+	celFuncNeq = "_!=_"
+	celFuncGt  = "_>_"
+	celFuncGte = "_>=_"
+	celFuncLt  = "_<_"
+	celFuncLte = "_<=_"
+)
+
+// ColumnUUID marks a jet string column that actually stores a UUID value. It lets
+// the builder parse/validate UUID literals instead of treating them as plain text.
 type ColumnUUID interface {
 	jet.ColumnString
 	IsUUID() bool
 }
 
+// AsUUID wraps a jet string column so the filter builder treats its values as UUIDs.
 func AsUUID(c jet.ColumnString) ColumnUUID {
 	return columnUUID{c}
 }
@@ -29,10 +61,12 @@ func (c columnUUID) IsUUID() bool {
 
 // =====================================================================================================================
 
+// FilterBuilder builds SQL boolean expressions from CEL filter strings.
 type FilterBuilder struct {
 	env *cel.Env
 }
 
+// NewFilterBuilder creates a FilterBuilder backed by a default CEL environment.
 func NewFilterBuilder() (*FilterBuilder, error) {
 	env, err := cel.NewEnv()
 	if err != nil {
@@ -41,6 +75,11 @@ func NewFilterBuilder() (*FilterBuilder, error) {
 	return &FilterBuilder{env: env}, nil
 }
 
+// BuildExpression parses filterStr as a CEL expression and translates it into a
+// jet.BoolExpression using mapping to resolve field names to columns.
+//
+// An empty filter string is not an error: it returns (nil, nil), letting callers
+// omit the WHERE clause entirely.
 func (b *FilterBuilder) BuildExpression(filterStr string, mapping FieldMap) (jet.BoolExpression, error) {
 	if filterStr == "" {
 		return nil, nil
@@ -59,6 +98,9 @@ func (b *FilterBuilder) BuildExpression(filterStr string, mapping FieldMap) (jet
 	return walkAST(parsedExpr.Expr, mapping)
 }
 
+// walkAST recursively translates a CEL expression node into a SQL boolean
+// expression. Only call expressions (operators and functions) can form a boolean
+// predicate, so any other node kind is rejected.
 func walkAST(e *exprpb.Expr, mapping FieldMap) (jet.BoolExpression, error) {
 	switch kind := e.ExprKind.(type) {
 	case *exprpb.Expr_CallExpr:
@@ -68,34 +110,16 @@ func walkAST(e *exprpb.Expr, mapping FieldMap) (jet.BoolExpression, error) {
 	}
 }
 
+// parseCall dispatches a CEL call node to the handler for its operator.
 func parseCall(call *exprpb.Expr_Call, mapping FieldMap) (jet.BoolExpression, error) {
 	switch call.Function {
-	case "_&&_":
-		left, err := walkAST(call.Args[0], mapping)
-		if err != nil {
-			return nil, err
-		}
-		right, err := walkAST(call.Args[1], mapping)
-		if err != nil {
-			return nil, err
-		}
-		return left.AND(right), nil
+	case celFuncAnd, celFuncOr:
+		return parseLogical(call, mapping)
 
-	case "_||_":
-		left, err := walkAST(call.Args[0], mapping)
-		if err != nil {
-			return nil, err
-		}
-		right, err := walkAST(call.Args[1], mapping)
-		if err != nil {
-			return nil, err
-		}
-		return left.OR(right), nil
-
-	case "@in":
+	case celFuncIn:
 		return parseInOperator(call.Args, mapping)
 
-	case "_==_", "_!=_", "_>_", "_>=_", "_<_", "_<=_":
+	case celFuncEq, celFuncNeq, celFuncGt, celFuncGte, celFuncLt, celFuncLte:
 		return createComparison(call.Function, call.Args, mapping)
 
 	default:
@@ -103,6 +127,34 @@ func parseCall(call *exprpb.Expr_Call, mapping FieldMap) (jet.BoolExpression, er
 	}
 }
 
+// parseLogical handles the binary "&&" and "||" operators by recursively building
+// the left and right sub-expressions and combining them.
+func parseLogical(call *exprpb.Expr_Call, mapping FieldMap) (jet.BoolExpression, error) {
+	if len(call.Args) < 2 {
+		return nil, fmt.Errorf("invalid arguments for logical operator %s", call.Function)
+	}
+
+	left, err := walkAST(call.Args[0], mapping)
+	if err != nil {
+		return nil, err
+	}
+	right, err := walkAST(call.Args[1], mapping)
+	if err != nil {
+		return nil, err
+	}
+
+	if call.Function == celFuncAnd {
+		return left.AND(right), nil
+	}
+	return left.OR(right), nil
+}
+
+// parseInOperator handles the "in" operator, whose meaning depends on the shape of
+// its right-hand side:
+//
+//	field in [a, b, c]   -> SQL "field IN (...)"          (createSQLInList)
+//	value in field.key   -> JSONB containment "@>"         (createJSONContains)
+//	value in field       -> Postgres array "= ANY(field)"  (createNativeArrayContains)
 func parseInOperator(args []*exprpb.Expr, mapping FieldMap) (jet.BoolExpression, error) {
 	if len(args) < 2 {
 		return nil, fmt.Errorf("invalid @in arguments")
@@ -130,6 +182,9 @@ func parseInOperator(args []*exprpb.Expr, mapping FieldMap) (jet.BoolExpression,
 	return nil, fmt.Errorf("unsupported right-hand expression for 'in' operator")
 }
 
+// createSQLInList builds "column IN (values...)" from a CEL list literal. The
+// element type is derived from the column type so literals are converted correctly
+// (UUID validation, string, integer).
 func createSQLInList(left *exprpb.Expr, listExpr *exprpb.Expr_CreateList, mapping FieldMap) (jet.BoolExpression, error) {
 	ident, ok := extractPath(left)
 	if !ok {
@@ -143,7 +198,7 @@ func createSQLInList(left *exprpb.Expr, listExpr *exprpb.Expr_CreateList, mappin
 
 	switch c := col.(type) {
 	case ColumnUUID:
-		var expressions []jet.Expression
+		expressions := make([]jet.Expression, 0, len(listExpr.Elements))
 		for _, elem := range listExpr.Elements {
 			val := elem.GetConstExpr().GetStringValue()
 			parsed, err := uuid.Parse(val)
@@ -153,15 +208,16 @@ func createSQLInList(left *exprpb.Expr, listExpr *exprpb.Expr_CreateList, mappin
 			expressions = append(expressions, jet.UUID(parsed))
 		}
 		return c.IN(expressions...), nil
+
 	case jet.ColumnString:
-		var expressions []jet.Expression
+		expressions := make([]jet.Expression, 0, len(listExpr.Elements))
 		for _, elem := range listExpr.Elements {
 			expressions = append(expressions, jet.String(elem.GetConstExpr().GetStringValue()))
 		}
 		return c.IN(expressions...), nil
 
 	case jet.ColumnInteger:
-		var expressions []jet.Expression
+		expressions := make([]jet.Expression, 0, len(listExpr.Elements))
 		for _, elem := range listExpr.Elements {
 			expressions = append(expressions, jet.Int(elem.GetConstExpr().GetInt64Value()))
 		}
@@ -172,22 +228,17 @@ func createSQLInList(left *exprpb.Expr, listExpr *exprpb.Expr_CreateList, mappin
 	}
 }
 
+// createNativeArrayContains builds "value = ANY(column)" for a Postgres array
+// column. The value must be a scalar constant.
 func createNativeArrayContains(left *exprpb.Expr, arrayCol jet.Column) (jet.BoolExpression, error) {
 	constVal := left.GetConstExpr()
 	if constVal == nil {
 		return nil, fmt.Errorf("left side of array search must be a constant")
 	}
 
-	var valExpr jet.Expression
-	switch v := constVal.ConstantKind.(type) {
-	case *exprpb.Constant_StringValue:
-		valExpr = jet.String(v.StringValue)
-	case *exprpb.Constant_Int64Value:
-		valExpr = jet.Int(v.Int64Value)
-	case *exprpb.Constant_BoolValue:
-		valExpr = jet.Bool(v.BoolValue)
-	default:
-		return nil, fmt.Errorf("unsupported array element type: %T", v)
+	valExpr, err := constToExpr(constVal)
+	if err != nil {
+		return nil, err
 	}
 
 	return jet.RawBool("#val# = ANY(#col#)", jet.RawArgs{
@@ -196,6 +247,8 @@ func createNativeArrayContains(left *exprpb.Expr, arrayCol jet.Column) (jet.Bool
 	}), nil
 }
 
+// createJSONContains builds a JSONB containment check "column @> '{...}'" used to
+// test whether a JSON array stored under column.key contains the given value.
 func createJSONContains(selectExpr *exprpb.Expr_Select, valueExpr *exprpb.Expr, mapping FieldMap) (jet.BoolExpression, error) {
 	baseField, ok := extractPath(selectExpr.Operand)
 	if !ok {
@@ -228,6 +281,12 @@ func createJSONContains(selectExpr *exprpb.Expr_Select, valueExpr *exprpb.Expr, 
 	}), nil
 }
 
+// createComparison handles the relational operators (==, !=, <, <=, >, >=).
+//
+// The left-hand side is resolved in two ways:
+//  1. As a direct column when its full dotted path is a key in the mapping.
+//  2. As a JSON field access "base.key" when only the base is a known column, in
+//     which case the comparison is applied to the extracted JSON value.
 func createComparison(op string, args []*exprpb.Expr, mapping FieldMap) (jet.BoolExpression, error) {
 	if len(args) < 2 {
 		return nil, fmt.Errorf("invalid operator arguments")
@@ -241,45 +300,31 @@ func createComparison(op string, args []*exprpb.Expr, mapping FieldMap) (jet.Boo
 		return nil, fmt.Errorf("invalid left-hand expression in comparison")
 	}
 
+	// Case 1: the whole path is a known column -> direct column comparison.
 	if col, exists := mapping[fullPath]; exists {
 		valExpr := rightExpr.GetConstExpr()
 		if valExpr == nil {
 			return nil, fmt.Errorf("right-hand side of comparison for %s must be a constant", fullPath)
 		}
-
-		switch c := col.(type) {
-		case ColumnUUID:
-			return mapUUIDOperations(fullPath, valExpr, c, op)
-		case jet.ColumnString:
-			return mapStringOperations(fullPath, valExpr, c, op)
-		case jet.ColumnInteger:
-			return mapIntOperations(fullPath, valExpr, c, op)
-		case jet.ColumnBool:
-			return mapBoolOperations(fullPath, valExpr, c, op)
-		case jet.ColumnTimestampz:
-			return mapTimestampOperations(fullPath, valExpr, c, op)
-		}
-		return nil, fmt.Errorf("unsupported column type %T for field %s", col, fullPath)
+		return mapColumnComparison(fullPath, valExpr, col, op)
 	}
 
+	// Case 2: "base.key" where base is a known column -> JSON field comparison.
 	if selectExpr := leftExpr.GetSelectExpr(); selectExpr != nil {
-		baseField, baseOk := extractPath(selectExpr.Operand)
-		if baseOk {
+		if baseField, baseOk := extractPath(selectExpr.Operand); baseOk {
 			if baseCol, exists := mapping[baseField]; exists {
-				jsonKey := selectExpr.Field
-				return createJSONComparison(op, baseCol, jsonKey, rightExpr)
+				return createJSONComparison(op, baseCol, selectExpr.Field, rightExpr)
 			}
 		}
 	}
 
-	ident := args[0].GetIdentExpr().Name
-	col, ok := mapping[ident]
-	if !ok {
-		return nil, fmt.Errorf("unknown field: %s", ident)
-	}
+	return nil, fmt.Errorf("unknown field: %s", fullPath)
+}
 
-	valExpr := args[1].GetConstExpr()
-
+// mapColumnComparison dispatches a comparison to the type-specific handler based on
+// the concrete column type. ColumnUUID must be checked before jet.ColumnString
+// because it embeds it.
+func mapColumnComparison(ident string, valExpr *exprpb.Constant, col jet.Column, op string) (jet.BoolExpression, error) {
 	switch c := col.(type) {
 	case ColumnUUID:
 		return mapUUIDOperations(ident, valExpr, c, op)
@@ -291,8 +336,9 @@ func createComparison(op string, args []*exprpb.Expr, mapping FieldMap) (jet.Boo
 		return mapBoolOperations(ident, valExpr, c, op)
 	case jet.ColumnTimestampz:
 		return mapTimestampOperations(ident, valExpr, c, op)
+	default:
+		return nil, fmt.Errorf("unsupported column type %T for field %s", col, ident)
 	}
-	return nil, fmt.Errorf("unsupported column type %T for field %s", col, ident)
 }
 
 func mapUUIDOperations(ident string, valExpr *exprpb.Constant, c ColumnUUID, op string) (jet.BoolExpression, error) {
@@ -303,9 +349,9 @@ func mapUUIDOperations(ident string, valExpr *exprpb.Constant, c ColumnUUID, op 
 	}
 	uuidLiteral := jet.UUID(parsedUUID)
 	switch op {
-	case "_==_":
+	case celFuncEq:
 		return c.EQ(uuidLiteral), nil
-	case "_!=_":
+	case celFuncNeq:
 		return c.NOT_EQ(uuidLiteral), nil
 	}
 	return nil, fmt.Errorf("unsupported operator '%s' for UUID field '%s'", op, ident)
@@ -314,13 +360,13 @@ func mapUUIDOperations(ident string, valExpr *exprpb.Constant, c ColumnUUID, op 
 func mapStringOperations(ident string, valExpr *exprpb.Constant, c jet.ColumnString, op string) (jet.BoolExpression, error) {
 	val := valExpr.GetStringValue()
 	switch op {
-	case "_==_":
+	case celFuncEq:
 		return c.EQ(jet.String(val)), nil
-	case "_!=_":
+	case celFuncNeq:
 		return c.NOT_EQ(jet.String(val)), nil
-	case "_>_":
+	case celFuncGt:
 		return c.GT(jet.String(val)), nil
-	case "_<_":
+	case celFuncLt:
 		return c.LT(jet.String(val)), nil
 	}
 	return nil, fmt.Errorf("unsupported operator '%s' for string field '%s'", op, ident)
@@ -329,17 +375,17 @@ func mapStringOperations(ident string, valExpr *exprpb.Constant, c jet.ColumnStr
 func mapIntOperations(ident string, valExpr *exprpb.Constant, c jet.ColumnInteger, op string) (jet.BoolExpression, error) {
 	val := valExpr.GetInt64Value()
 	switch op {
-	case "_==_":
+	case celFuncEq:
 		return c.EQ(jet.Int(val)), nil
-	case "_!=_":
+	case celFuncNeq:
 		return c.NOT_EQ(jet.Int(val)), nil
-	case "_>_":
+	case celFuncGt:
 		return c.GT(jet.Int(val)), nil
-	case "_>=_":
+	case celFuncGte:
 		return c.GT_EQ(jet.Int(val)), nil
-	case "_<_":
+	case celFuncLt:
 		return c.LT(jet.Int(val)), nil
-	case "_<=_":
+	case celFuncLte:
 		return c.LT_EQ(jet.Int(val)), nil
 	}
 	return nil, fmt.Errorf("unsupported operator '%s' for integer field '%s'", op, ident)
@@ -348,9 +394,9 @@ func mapIntOperations(ident string, valExpr *exprpb.Constant, c jet.ColumnIntege
 func mapBoolOperations(ident string, valExpr *exprpb.Constant, c jet.ColumnBool, op string) (jet.BoolExpression, error) {
 	val := valExpr.GetBoolValue()
 	switch op {
-	case "_==_":
+	case celFuncEq:
 		return c.EQ(jet.Bool(val)), nil
-	case "_!=_":
+	case celFuncNeq:
 		return c.NOT_EQ(jet.Bool(val)), nil
 	}
 	return nil, fmt.Errorf("unsupported operator '%s' for bool field '%s'", op, ident)
@@ -363,22 +409,25 @@ func mapTimestampOperations(ident string, valExpr *exprpb.Constant, c jet.Column
 	}
 	tsVal := jet.TimestampzT(t)
 	switch op {
-	case "_==_":
+	case celFuncEq:
 		return c.EQ(tsVal), nil
-	case "_!=_":
+	case celFuncNeq:
 		return c.NOT_EQ(tsVal), nil
-	case "_>_":
+	case celFuncGt:
 		return c.GT(tsVal), nil
-	case "_>=_":
+	case celFuncGte:
 		return c.GT_EQ(tsVal), nil
-	case "_<_":
+	case celFuncLt:
 		return c.LT(tsVal), nil
-	case "_<=_":
+	case celFuncLte:
 		return c.LT_EQ(tsVal), nil
 	}
 	return nil, fmt.Errorf("unsupported operator '%s' for timestamp field '%s'", op, ident)
 }
 
+// createJSONComparison compares a value extracted from a JSON object (base ->> key)
+// against a constant. The extracted text is cast to the appropriate SQL type based
+// on the constant kind (text, numeric, boolean).
 func createJSONComparison(op string, baseCol jet.Column, jsonKey string, rightExpr *exprpb.Expr) (jet.BoolExpression, error) {
 	constVal := rightExpr.GetConstExpr()
 	switch v := constVal.ConstantKind.(type) {
@@ -388,9 +437,9 @@ func createJSONComparison(op string, baseCol jet.Column, jsonKey string, rightEx
 			jet.RawArgs{"#baseCol#": baseCol, "#key#": jsonKey})
 
 		switch op {
-		case "_==_":
+		case celFuncEq:
 			return jsonTextVal.EQ(jet.String(val)), nil
-		case "_!=_":
+		case celFuncNeq:
 			return jsonTextVal.NOT_EQ(jet.String(val)), nil
 		}
 
@@ -400,17 +449,17 @@ func createJSONComparison(op string, baseCol jet.Column, jsonKey string, rightEx
 			jet.RawArgs{"#baseCol#": baseCol, "#key#": jsonKey})
 
 		switch op {
-		case "_==_":
+		case celFuncEq:
 			return jsonNumVal.EQ(jet.Float(float64(val))), nil
-		case "_!=_":
+		case celFuncNeq:
 			return jsonNumVal.NOT_EQ(jet.Float(float64(val))), nil
-		case "_>_":
+		case celFuncGt:
 			return jsonNumVal.GT(jet.Float(float64(val))), nil
-		case "_>=_":
+		case celFuncGte:
 			return jsonNumVal.GT_EQ(jet.Float(float64(val))), nil
-		case "_<_":
+		case celFuncLt:
 			return jsonNumVal.LT(jet.Float(float64(val))), nil
-		case "_<=_":
+		case celFuncLte:
 			return jsonNumVal.LT_EQ(jet.Float(float64(val))), nil
 		}
 
@@ -420,9 +469,9 @@ func createJSONComparison(op string, baseCol jet.Column, jsonKey string, rightEx
 			jet.RawArgs{"#baseCol#": baseCol, "#key#": jsonKey})
 
 		switch op {
-		case "_==_":
+		case celFuncEq:
 			return jsonBoolVal.EQ(jet.Bool(val)), nil
-		case "_!=_":
+		case celFuncNeq:
 			return jsonBoolVal.NOT_EQ(jet.Bool(val)), nil
 		}
 
@@ -432,6 +481,22 @@ func createJSONComparison(op string, baseCol jet.Column, jsonKey string, rightEx
 	return nil, fmt.Errorf("operator %s not supported for JSON key %s", op, jsonKey)
 }
 
+// constToExpr converts a scalar CEL constant into a jet literal expression.
+func constToExpr(constVal *exprpb.Constant) (jet.Expression, error) {
+	switch v := constVal.ConstantKind.(type) {
+	case *exprpb.Constant_StringValue:
+		return jet.String(v.StringValue), nil
+	case *exprpb.Constant_Int64Value:
+		return jet.Int(v.Int64Value), nil
+	case *exprpb.Constant_BoolValue:
+		return jet.Bool(v.BoolValue), nil
+	default:
+		return nil, fmt.Errorf("unsupported array element type: %T", v)
+	}
+}
+
+// extractTime parses a timestamp constant. It accepts an RFC3339 string or a Unix
+// epoch integer (seconds) and always returns the time in UTC.
 func extractTime(valExpr *exprpb.Constant, ident string) (time.Time, error) {
 	if strVal, ok := valExpr.ConstantKind.(*exprpb.Constant_StringValue); ok {
 		t, err := time.Parse(time.RFC3339, strVal.StringValue)
@@ -446,6 +511,9 @@ func extractTime(valExpr *exprpb.Constant, ident string) (time.Time, error) {
 	return time.Time{}, fmt.Errorf("expected RFC3339 string for timestamp comparison on field %s", ident)
 }
 
+// extractPath flattens an identifier or select chain into a dotted field path,
+// e.g. the expression "a.b.c" becomes the string "a.b.c". It returns false for any
+// other expression kind.
 func extractPath(e *exprpb.Expr) (string, bool) {
 	if ident := e.GetIdentExpr(); ident != nil {
 		return ident.Name, true
