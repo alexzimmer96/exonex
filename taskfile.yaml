@@ -1,11 +1,16 @@
 version: '3'
 
 tasks:
+  grpcui:
+    cmds:
+      - grpcui -plaintext -port 1337 localhost:8080
+  # =========================================================================================
   gen:
     cmds:
       - task: proto:gen
       - task: db:gen
       - task: format:sql
+  # =========================================================================================
   proto:gen:
     cmds:
       - rm -rf ./pkg/api

@@ -1,4 +1,4 @@
-package taxonomy
+package domain
 
 import (
 	"bytes"
@@ -45,12 +45,12 @@ type AnnotationValidation struct {
 	Max           float64 `json:"max"`
 }
 
-type Service struct {
+type TaxonomyService struct {
 	annotations map[string]AnnotationDefinition
 }
 
-func NewService() *Service {
-	return &Service{
+func NewTaxonomyService() *TaxonomyService {
+	return &TaxonomyService{
 		annotations: mustLoadStaticAnnotations(),
 	}
 }

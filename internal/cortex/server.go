@@ -14,7 +14,7 @@ import (
 	"connectrpc.com/grpcreflect"
 	"connectrpc.com/validate"
 	"github.com/alexzimmer96/exonex/internal/cortex/auth"
-	"github.com/alexzimmer96/exonex/internal/cortex/domain/document"
+	"github.com/alexzimmer96/exonex/internal/cortex/domain"
 	"github.com/alexzimmer96/exonex/internal/cortex/handler"
 	"github.com/alexzimmer96/exonex/internal/cortex/repository"
 	"github.com/alexzimmer96/exonex/pkg"
@@ -36,7 +36,7 @@ type repositories struct {
 }
 
 type services struct {
-	documentSvc *document.Service
+	documentSvc *domain.DocumentService
 }
 
 func NewServer(config Config) *Server {
@@ -105,7 +105,7 @@ func initRepositories(pool *pgxpool.Pool, filterBuilder *sql.FilterBuilder) repo
 
 func initServices(repos repositories, volumeManager *storage.VolumeManager) services {
 	return services{
-		documentSvc: document.NewService(repos.documentRepo, volumeManager),
+		documentSvc: domain.NewDocumentService(repos.documentRepo, volumeManager),
 	}
 }
 

@@ -5,7 +5,7 @@ import (
 	"errors"
 
 	"connectrpc.com/connect"
-	"github.com/alexzimmer96/exonex/internal/cortex/domain/document"
+	"github.com/alexzimmer96/exonex/internal/cortex/domain"
 	"github.com/alexzimmer96/exonex/pkg"
 	v1 "github.com/alexzimmer96/exonex/pkg/api/exonex/api/v1"
 	v1alpha1 "github.com/alexzimmer96/exonex/pkg/api/exonex/cortex/v1alpha1"
@@ -16,10 +16,10 @@ import (
 )
 
 type DocumentHandler struct {
-	documentSvc *document.Service
+	documentSvc *domain.DocumentService
 }
 
-func NewDocumentHandler(documentSvc *document.Service) *DocumentHandler {
+func NewDocumentHandler(documentSvc *domain.DocumentService) *DocumentHandler {
 	return &DocumentHandler{
 		documentSvc: documentSvc,
 	}
@@ -28,7 +28,7 @@ func NewDocumentHandler(documentSvc *document.Service) *DocumentHandler {
 // =====================================================================================================================
 
 func (h *DocumentHandler) ListDocuments(ctx context.Context, c *connect.Request[v1alpha1.ListDocumentsRequest]) (*connect.Response[v1alpha1.ListDocumentsResponse], error) {
-	action := document.ListDocumentsAction{
+	action := domain.ListDocumentsAction{
 		Filter:   c.Msg.GetFilter(),
 		ReadMask: grpc.ExtractReadMask(c),
 	}
@@ -72,7 +72,7 @@ func (h *DocumentHandler) CreateDocument(ctx context.Context, c *connect.Request
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("publisher_id field is malformed"))
 	}
 
-	action := document.CreateDocumentAction{
+	action := domain.CreateDocumentAction{
 		Annotations:   c.Msg.Annotations.AsMap(),
 		PublisherID:   publisherID,
 		FileMimeType:  c.Msg.GetFileMimeType(),
@@ -118,7 +118,7 @@ func (h *DocumentHandler) UpdateDocument(ctx context.Context, c *connect.Request
 
 // =====================================================================================================================
 
-func (h *DocumentHandler) mapToApiDocument(in document.Document) (*v1alpha1.Document, error) {
+func (h *DocumentHandler) mapToApiDocument(in domain.Document) (*v1alpha1.Document, error) {
 	annotations, err := structpb.NewStruct(in.Annotations)
 	if err != nil {
 		return nil, err

@@ -1,13 +1,15 @@
-package document
+package domain
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log/slog"
+	"strings"
 	"time"
 
-	"github.com/alexzimmer96/exonex/internal/cortex/domain"
 	"github.com/alexzimmer96/exonex/pkg"
+	"github.com/alexzimmer96/exonex/pkg/sql"
 	"github.com/alexzimmer96/exonex/pkg/storage"
 	"github.com/google/uuid"
 )
@@ -34,9 +36,9 @@ type Document struct {
 
 // =====================================================================================================================
 
-// Repository is the persistence boundary for Documents, implemented by
+// DocumentRepository is the persistence boundary for Documents, implemented by
 // the repository layer.
-type Repository interface {
+type DocumentRepository interface {
 	// ListDocuments returns documents matching the CEL filter expression,
 	// projecting only the requested fields.
 	ListDocuments(ctx context.Context, filter string, fields []string) ([]Document, error)
@@ -50,15 +52,15 @@ type Repository interface {
 
 // =====================================================================================================================
 
-// Service implements the business rules for documents on top of a Repository.
-type Service struct {
-	documentRepo  Repository
+// DocumentService implements the business rules for documents on top of a DocumentRepository.
+type DocumentService struct {
+	documentRepo  DocumentRepository
 	volumeManager *storage.VolumeManager
 }
 
-// NewService creates a Service backed by the given repository.
-func NewService(documentRepo Repository, volumeManager *storage.VolumeManager) *Service {
-	return &Service{
+// NewDocumentService creates a DocumentService backed by the given repository.
+func NewDocumentService(documentRepo DocumentRepository, volumeManager *storage.VolumeManager) *DocumentService {
+	return &DocumentService{
 		documentRepo:  documentRepo,
 		volumeManager: volumeManager,
 	}
@@ -76,12 +78,19 @@ type ListDocumentsAction struct {
 
 // ListDocuments returns all documents matching the action's filter, projecting
 // the requested fields.
-func (svc *Service) ListDocuments(ctx context.Context, action ListDocumentsAction) ([]Document, error) {
+func (svc *DocumentService) ListDocuments(ctx context.Context, action ListDocumentsAction) ([]Document, error) {
 	docs, err := svc.documentRepo.ListDocuments(ctx, action.Filter, action.ReadMask)
 	if err != nil {
+		if fieldsErr, ok := errors.AsType[sql.UnknownFieldsError](err); ok {
+			return nil, Error{
+				Kind:    ErrorKindInvalidArgument,
+				Message: fmt.Sprintf("field selector had unknown fields: %s", strings.Join(fieldsErr.Fields, ", ")),
+				Wrapped: fieldsErr,
+			}
+		}
 		slog.ErrorContext(ctx, "failed to list Documents from database", slog.String("error", err.Error()))
-		return nil, domain.Error{
-			Kind:    domain.ErrorKindInternal,
+		return nil, Error{
+			Kind:    ErrorKindInternal,
 			Message: "failed to list Documents from database",
 			Wrapped: err,
 		}
@@ -92,12 +101,12 @@ func (svc *Service) ListDocuments(ctx context.Context, action ListDocumentsActio
 // =====================================================================================================================
 
 // GetDocument returns a single document by ID, projecting the given fields.
-func (svc *Service) GetDocument(ctx context.Context, id uuid.UUID, readMask []string) (*Document, error) {
+func (svc *DocumentService) GetDocument(ctx context.Context, id uuid.UUID, readMask []string) (*Document, error) {
 	doc, err := svc.documentRepo.GetDocument(ctx, id, readMask)
 	if err != nil {
 		slog.ErrorContext(ctx, "failed to get Document from database", slog.String("error", err.Error()))
-		return nil, domain.Error{
-			Kind:    domain.ErrorKindInternal,
+		return nil, Error{
+			Kind:    ErrorKindInternal,
 			Message: "failed to get Document from database",
 			Wrapped: err,
 		}
@@ -118,18 +127,18 @@ type CreateDocumentAction struct {
 
 // CreateDocument validates the file metadata, allocates a UUIDv7 ID, derives the
 // storage location, and persists the new document.
-func (svc *Service) CreateDocument(ctx context.Context, action CreateDocumentAction) (*Document, error) {
+func (svc *DocumentService) CreateDocument(ctx context.Context, action CreateDocumentAction) (*Document, error) {
 	match, err := pkg.ExtensionMatchesMimeType(action.FileExtension, action.FileMimeType)
 	if err != nil {
-		return nil, domain.Error{
-			Kind:    domain.ErrorKindInvalidArgument,
+		return nil, Error{
+			Kind:    ErrorKindInvalidArgument,
 			Message: "invalid file MIME type",
 			Wrapped: err,
 		}
 	}
 	if !match {
-		return nil, domain.Error{
-			Kind:    domain.ErrorKindInvalidArgument,
+		return nil, Error{
+			Kind:    ErrorKindInvalidArgument,
 			Message: "fileExtension does not match MIME type",
 		}
 	}
@@ -141,8 +150,8 @@ func (svc *Service) CreateDocument(ctx context.Context, action CreateDocumentAct
 			"failed to generate new UUID for document creation",
 			slog.String("error", err.Error()),
 		)
-		return nil, domain.Error{
-			Kind:    domain.ErrorKindInternal,
+		return nil, Error{
+			Kind:    ErrorKindInternal,
 			Message: "failed to generate UUID",
 			Wrapped: err,
 		}
@@ -165,8 +174,8 @@ func (svc *Service) CreateDocument(ctx context.Context, action CreateDocumentAct
 			"failed to create new Document in database",
 			slog.String("error", err.Error()),
 		)
-		return nil, domain.Error{
-			Kind:    domain.ErrorKindInternal,
+		return nil, Error{
+			Kind:    ErrorKindInternal,
 			Message: "failed to create new Document in database",
 			Wrapped: err,
 		}
@@ -177,7 +186,7 @@ func (svc *Service) CreateDocument(ctx context.Context, action CreateDocumentAct
 
 // buildStorageKey derives the object-storage key for a document, partitioned by
 // publisher and year to spread keys across prefixes.
-func (svc *Service) buildStorageKey(publisherId, documentId uuid.UUID, fileExtension string) string {
+func (svc *DocumentService) buildStorageKey(publisherId, documentId uuid.UUID, fileExtension string) string {
 	return fmt.Sprintf("%s/%d/%s%s", publisherId.String(), time.Now().Year(), documentId, fileExtension)
 }
 
@@ -185,20 +194,20 @@ func (svc *Service) buildStorageKey(publisherId, documentId uuid.UUID, fileExten
 
 // CreateDocumentUploadURL creates a new Presigned Upload URL for the Document that can be used
 // to upload the File directly to S3.
-func (svc *Service) CreateDocumentUploadURL(ctx context.Context, id uuid.UUID) (string, time.Time, error) {
+func (svc *DocumentService) CreateDocumentUploadURL(ctx context.Context, id uuid.UUID) (string, time.Time, error) {
 	doc, err := svc.documentRepo.GetDocument(ctx, id, nil)
 	if err != nil {
 		slog.ErrorContext(ctx, "failed to get Document from database", slog.String("error", err.Error()))
-		return "", time.Time{}, domain.Error{
-			Kind:    domain.ErrorKindInternal,
+		return "", time.Time{}, Error{
+			Kind:    ErrorKindInternal,
 			Message: "failed to get Document from database",
 			Wrapped: err,
 		}
 	}
 
 	if doc.FileUploadCompleted {
-		return "", time.Time{}, domain.Error{
-			Kind:    domain.ErrorKindFailedPrecondition,
+		return "", time.Time{}, Error{
+			Kind:    ErrorKindFailedPrecondition,
 			Message: "File upload for Document has already been completed",
 		}
 	}
@@ -211,8 +220,8 @@ func (svc *Service) CreateDocumentUploadURL(ctx context.Context, id uuid.UUID) (
 			slog.String("volume", doc.FileStorageVolume),
 			slog.String("error", err.Error()),
 		)
-		return "", time.Time{}, domain.Error{
-			Kind:    domain.ErrorKindInternal,
+		return "", time.Time{}, Error{
+			Kind:    ErrorKindInternal,
 			Message: "failed to generate upload URL for document",
 			Wrapped: err,
 		}
@@ -228,8 +237,8 @@ func (svc *Service) CreateDocumentUploadURL(ctx context.Context, id uuid.UUID) (
 	})
 	if err != nil {
 		slog.ErrorContext(ctx, "failed to generate upload URL for Document", slog.String("error", err.Error()))
-		return "", time.Time{}, domain.Error{
-			Kind:    domain.ErrorKindInternal,
+		return "", time.Time{}, Error{
+			Kind:    ErrorKindInternal,
 			Message: "failed to generate upload URL for document",
 			Wrapped: err,
 		}
